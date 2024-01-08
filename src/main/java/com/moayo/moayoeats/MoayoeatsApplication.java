@@ -1,4 +1,4 @@
-package com.example.moayoeats;
+package com.moayo.moayoeats;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
