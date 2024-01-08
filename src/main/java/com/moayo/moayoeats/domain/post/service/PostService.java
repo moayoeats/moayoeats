@@ -8,6 +8,6 @@ public interface PostService {
      *
      * @param postReq : 글 작성에 필요한 dto
      */
-    public void createInvitation(PostRequest postReq);
+    public void createPost(PostRequest postReq);
 
 }

@@ -23,7 +23,7 @@ public class PostController {
     public ApiResponse<Void> createPost(
         @Valid @RequestBody PostRequest postReq
     ){
-        postService.createInvitation(postReq);
+        postService.createPost(postReq);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
