@@ -17,7 +17,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/users/login");
+        setFilterProcessesUrl("/api/v1/users/login");
     }
 
     @Override
@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    loginRequest.username(),
+                    loginRequest.email(),
                     loginRequest.password(),
                     null
                 )
@@ -43,9 +43,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, FilterChain chain, Authentication authResult) {
-        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        String email = ((UserDetailsImpl) authResult.getPrincipal()).getEmail();
 
-        String token = jwtUtil.createToken(username);
+        String token = jwtUtil.createToken(email);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
     }
 
