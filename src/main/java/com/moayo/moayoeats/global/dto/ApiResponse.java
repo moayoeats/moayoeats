@@ -1,4 +1,4 @@
-package com.example.moayoeats.global.dto;
+package com.moayo.moayoeats.global.dto;
 
 import lombok.Builder;
 

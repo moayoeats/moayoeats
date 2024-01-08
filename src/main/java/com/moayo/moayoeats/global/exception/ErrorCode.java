@@ -1,4 +1,4 @@
-package com.example.moayoeats.global.exception;
+package com.moayo.moayoeats.global.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
