@@ -13,9 +13,9 @@ public record PostRequest(
     @NotBlank
     String store,
     @NotNull
-    Long minPrice,
+    Integer minPrice,
     @NotNull
-    Long deliveryCost,
+    Integer deliveryCost,
 
     @NotNull
     @Max(59)
