@@ -64,7 +64,8 @@ public class WebSecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .permitAll() // resources 접근 허용 설정
                 .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/api/users/signup/**").permitAll() // singup이후로 접근 허가
+                .requestMatchers("/api/v1/users/sign-up/**").permitAll() // singup이후로 접근 허가
+                .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
