@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.example'
+group = 'com.moayo'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
    
@@ -33,19 +32,19 @@ dependencies {
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-    
+
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    
+
     // Thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    
+
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    
+
     // Security+Thymeleaf
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    
+
     // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     
@@ -56,7 +55,6 @@ dependencies {
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-
 }
 
 tasks.named('test') {
