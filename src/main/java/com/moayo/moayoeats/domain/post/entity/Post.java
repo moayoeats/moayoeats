@@ -33,10 +33,10 @@ public class Post {
     private String store;
 
     @Column(nullable = false)
-    private Long minPrice;
+    private Integer minPrice;
 
     @Column(nullable = false)
-    private Long deliveryCost;
+    private Integer deliveryCost;
 
     @Column
     private CategoryEnum category;
@@ -51,7 +51,7 @@ public class Post {
     private LocalDateTime deadline;
 
     @Builder
-    public Post(String address, String store, Long minPrice, Long deliveryCost, CategoryEnum category, LocalDateTime deadline){
+    public Post(String address, String store, Integer minPrice, Integer deliveryCost, CategoryEnum category, LocalDateTime deadline){
         this.address = address;
         this.store = store;
         this.minPrice = minPrice;
