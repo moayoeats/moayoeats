@@ -1,8 +1,13 @@
 package com.moayo.moayoeats.global.exception;
 
 import com.moayo.moayoeats.global.dto.ApiResponse;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Getter
@@ -10,11 +15,5 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalException extends RuntimeException {
 
     private final ErrorCode errorCode;
-
-    @ExceptionHandler(GlobalException.class)
-    public ApiResponse<?> handleGlobalException(GlobalException globalException){
-        ErrorCode errorCode = globalException.getErrorCode();
-        return new ApiResponse<>(errorCode.getHttpStatus(), errorCode.getMessage());
-    }
 
 }
