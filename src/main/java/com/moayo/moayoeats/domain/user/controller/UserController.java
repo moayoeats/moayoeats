@@ -2,8 +2,10 @@ package com.moayo.moayoeats.domain.user.controller;
 
 import com.moayo.moayoeats.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.domain.user.service.UserService;
+import com.moayo.moayoeats.global.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +19,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public void signup(@Valid @RequestBody SignupRequest signupReq) {
+    public ApiResponse<Void> signup(
+        @Valid @RequestBody SignupRequest signupReq
+    ) {
         userService.signup(signupReq);
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "회원가입을 성공했습니다.");
     }
 
 }
