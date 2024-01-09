@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.menu.service;
 
+import com.moayo.moayoeats.domain.menu.dto.request.MenuDeleteRequest;
 import com.moayo.moayoeats.domain.menu.dto.request.MenuRequest;
 import com.moayo.moayoeats.domain.user.entity.User;
 
@@ -11,5 +12,12 @@ public interface MenuService {
      * @param user : 메뉴를 생성하는 사용자
      */
     public void createMenu(MenuRequest menuReq, User user);
+
+    /**
+     *
+     * @param menuDeleteReq : menuId
+     * @param user : 메뉴를 삭제하는 사용자
+     */
+    public void deleteMenu(MenuDeleteRequest menuDeleteReq, User user);
 
 }
