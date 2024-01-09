@@ -7,4 +7,5 @@ public class UserDomainException extends GlobalException {
     public UserDomainException(final UserErrorCode userErrorCode) {
         super(userErrorCode);
     }
+
 }

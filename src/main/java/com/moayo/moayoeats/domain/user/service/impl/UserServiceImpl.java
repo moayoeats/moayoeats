@@ -19,11 +19,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void signup(SignupRequest signupRequest) {
-        String email = signupRequest.email();
-        String password = passwordEncoder.encode(signupRequest.password());
-        String checkPassword = signupRequest.checkPassword();
-        String nickname = signupRequest.nickname();
+    public void signup(SignupRequest signupReq) {
+        String email = signupReq.email();
+        String password = passwordEncoder.encode(signupReq.password());
+        String checkPassword = signupReq.checkPassword();
+        String nickname = signupReq.nickname();
 
         checkExistUser(email);
         checkMatchPassword(checkPassword, password);
@@ -38,13 +38,19 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkExistUser(String email) {
+
         if(userRepository.existsByEmail(email))
             throw new UserDomainException(ALREADY_EXIST_USER);
     }
 
-    private void checkMatchPassword(String rawPassword, String encodePassword) {
+    private void checkMatchPassword(
+        String rawPassword,
+        String encodePassword
+    ) {
+
         if (!passwordEncoder.matches(rawPassword, encodePassword)) {
             throw new UserDomainException(NOT_MATCH_PASSWORD);
         }
     }
+
 }
