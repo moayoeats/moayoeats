@@ -1,11 +1,10 @@
 package com.moayo.moayoeats.domain.post.dto.request;
 
-import com.moayo.moayoeats.domain.menu.entity.Menu;
 import com.moayo.moayoeats.domain.post.entity.CategoryEnum;
-import com.moayo.moayoeats.domain.post.entity.DeadlineEnum;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
+import jakarta.validation.constraints.Size;
 
 public record PostRequest(
 
@@ -17,7 +16,13 @@ public record PostRequest(
     Long minPrice,
     @NotNull
     Long deliveryCost,
-    DeadlineEnum deadline,
+
+    @NotNull
+    @Max(59)
+    Integer deadlineMins,
+    @NotNull
+    @Max(3)
+    Integer deadlineHours,
     CategoryEnum category
 
     ) {
