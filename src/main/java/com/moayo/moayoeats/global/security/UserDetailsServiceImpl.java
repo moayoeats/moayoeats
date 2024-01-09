@@ -1,10 +1,9 @@
 package com.moayo.moayoeats.global.security;
 
-import static com.moayo.moayoeats.domain.user.exception.UserErrorCode.NOT_EXIST_USER;
-
 import com.moayo.moayoeats.domain.user.entity.User;
-import com.moayo.moayoeats.domain.user.exception.UserDomainException;
+import com.moayo.moayoeats.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.domain.user.repository.UserRepository;
+import com.moayo.moayoeats.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserDomainException(NOT_EXIST_USER));
+            .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
 
         return new UserDetailsImpl(user);
     }

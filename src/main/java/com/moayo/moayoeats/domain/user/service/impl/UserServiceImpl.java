@@ -1,13 +1,11 @@
 package com.moayo.moayoeats.domain.user.service.impl;
 
-import static com.moayo.moayoeats.domain.user.exception.UserErrorCode.ALREADY_EXIST_USER;
-import static com.moayo.moayoeats.domain.user.exception.UserErrorCode.NOT_MATCH_PASSWORD;
-
 import com.moayo.moayoeats.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.domain.user.entity.User;
-import com.moayo.moayoeats.domain.user.exception.UserDomainException;
+import com.moayo.moayoeats.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.domain.user.service.UserService;
+import com.moayo.moayoeats.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,7 +38,7 @@ public class UserServiceImpl implements UserService {
     private void checkExistUser(String email) {
 
         if(userRepository.existsByEmail(email))
-            throw new UserDomainException(ALREADY_EXIST_USER);
+            throw new GlobalException(UserErrorCode.ALREADY_EXIST_USER);
     }
 
     private void checkMatchPassword(
@@ -49,7 +47,7 @@ public class UserServiceImpl implements UserService {
     ) {
 
         if (!passwordEncoder.matches(rawPassword, encodePassword)) {
-            throw new UserDomainException(NOT_MATCH_PASSWORD);
+            throw new GlobalException(UserErrorCode.NOT_MATCH_PASSWORD);
         }
     }
 
