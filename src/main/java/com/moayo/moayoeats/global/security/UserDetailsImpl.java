@@ -1,8 +1,11 @@
 package com.moayo.moayoeats.global.security;
-import java.util.*;
-import org.springframework.security.core.*;
-import org.springframework.security.core.authority.*;
-import org.springframework.security.core.userdetails.*;
+
+import com.moayo.moayoeats.domain.user.entity.User;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -12,9 +15,11 @@ public class UserDetailsImpl implements UserDetails {
         this.user = user;
     }
 
+
     public User getUser() {
         return user;
     }
+    public String getEmail() { return user.getEmail(); }
 
     @Override
     public String getPassword() {
@@ -23,12 +28,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getNickname();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String username = user.getUsername();
+        String username = user.getNickname();
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(username);
         Collection<GrantedAuthority> authorities = new ArrayList<>();

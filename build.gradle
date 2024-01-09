@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.example'
+group = 'com.moayo'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -56,7 +55,7 @@ dependencies {
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-
+    
     // Spring WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:webjars-locator-core'

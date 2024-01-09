@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.global.security;
 
 import com.fasterxml.jackson.databind.*;
+import com.moayo.moayoeats.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.global.jwt.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
