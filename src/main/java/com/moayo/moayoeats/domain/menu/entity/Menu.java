@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -36,6 +37,13 @@ public class Menu {
     private String menuname;
 
     @Column
-    private Long price;
+    private Integer price;
+
+    @Builder
+    public Menu(Post post, String menuname, Integer price){
+        this.post = post;
+        this.menuname = menuname;
+        this.price = price;
+    }
 
 }
