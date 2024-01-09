@@ -4,5 +4,10 @@ import com.moayo.moayoeats.domain.user.dto.request.SignupRequest;
 
 public interface UserService {
 
-    void signup(SignupRequest signupRequest);
+    /**
+     *
+     * @param signupReq : 회원가입에 필요한 요청 dto
+     */
+    void signup(SignupRequest signupReq);
+
 }
