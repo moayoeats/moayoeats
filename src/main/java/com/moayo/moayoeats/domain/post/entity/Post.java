@@ -12,13 +12,14 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "TB_POST")
+@Table(name = "tb_post")
 public class Post {
 
     @Id
@@ -37,6 +38,9 @@ public class Post {
     @Column(nullable = false)
     private Long deliveryCost;
 
+    @Column
+    private CategoryEnum category;
+
     @OneToMany(mappedBy = "post")
     private List<Menu> menus;
 
@@ -45,5 +49,15 @@ public class Post {
 
     @Column
     private LocalDateTime deadline;
+
+    @Builder
+    public Post(String address, String store, Long minPrice, Long deliveryCost, CategoryEnum category, LocalDateTime deadline){
+        this.address = address;
+        this.store = store;
+        this.minPrice = minPrice;
+        this.deliveryCost = deliveryCost;
+        this.deadline = deadline;
+        this.category = category;
+    }
 
 }
