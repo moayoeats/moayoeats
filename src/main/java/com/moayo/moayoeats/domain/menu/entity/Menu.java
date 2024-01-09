@@ -20,7 +20,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "TB_MENU")
+@Table(name = "tb_menu")
 public class Menu {
 
     @Id
