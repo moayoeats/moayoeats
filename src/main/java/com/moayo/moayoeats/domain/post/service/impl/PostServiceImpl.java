@@ -15,9 +15,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     public void createPost(PostRequest postReq){
-        //set deadline to mins after
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime deadline = now.plusMinutes(postReq.deadline().getMins());
+        //set deadline to hours and mins after now
+        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins()).plusHours(postReq.deadlineHours());
 
         Post post = Post.builder()
             .address(postReq.address())
