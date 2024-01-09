@@ -22,29 +22,41 @@ repositories {
 }
 
 dependencies {
-    // MySQL
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    //Spring Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    //Validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    //lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    //test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
 
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+   
+    // MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    
+    // JWT
+    compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+    
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+    // Thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // Security+Thymeleaf
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 tasks.named('test') {
