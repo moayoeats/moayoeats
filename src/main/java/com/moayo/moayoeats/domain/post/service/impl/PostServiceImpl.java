@@ -4,9 +4,11 @@ import com.moayo.moayoeats.domain.menu.dto.response.MenuResponse;
 import com.moayo.moayoeats.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.domain.menu.entity.Menu;
 import com.moayo.moayoeats.domain.menu.repository.MenuRepository;
+import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
+import com.moayo.moayoeats.domain.post.entity.CategoryEnum;
 import com.moayo.moayoeats.domain.post.entity.Post;
 import com.moayo.moayoeats.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.domain.post.repository.PostRepository;
@@ -59,21 +61,8 @@ public class PostServiceImpl implements PostService {
     }
 
     public List<BriefPostResponse> getPosts(User user){
-        List<Post> posts = postRepository.findAll();
-
-        List<BriefPostResponse> postResponses =
-        posts.stream()
-            .map((Post post)-> new BriefPostResponse(
-                post.getId(),
-                getAuthor(getUserPostsByPost(post)),
-                post.getAddress(),
-                post.getStore(),
-                post.getMinPrice(),
-                getSumPrice(getUserPostsByPost(post),post),
-                getDeadline(post)
-            )).toList();
-
-        return postResponses;
+        List<Post> posts = findAll();
+        return postsToBriefResponses(posts);
     }
 
     @Override
@@ -90,6 +79,37 @@ public class PostServiceImpl implements PostService {
             .sumPrice(getSumPrice(getUserPostsByPost(post),post))
             .deadline(getDeadline(post))
             .build();
+    }
+
+    @Override
+    public List<BriefPostResponse> getPostsByCategory(
+        PostCategoryRequest postCategoryReq,
+        User user
+    ) {
+        List<Post> posts;
+        if(postCategoryReq.category().equals(CategoryEnum.ALL)){
+            posts = findAll();
+        }else{
+            posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
+        }
+        return postsToBriefResponses(posts);
+    }
+
+    private List<Post> findAll(){
+        return postRepository.findAll();
+    }
+
+    private List<BriefPostResponse> postsToBriefResponses(List<Post> posts){
+        return posts.stream()
+                .map((Post post)-> new BriefPostResponse(
+                    post.getId(),
+                    getAuthor(getUserPostsByPost(post)),
+                    post.getAddress(),
+                    post.getStore(),
+                    post.getMinPrice(),
+                    getSumPrice(getUserPostsByPost(post),post),
+                    getDeadline(post)
+                )).toList();
     }
 
     private String getAuthor(List<UserPost> userPosts){
