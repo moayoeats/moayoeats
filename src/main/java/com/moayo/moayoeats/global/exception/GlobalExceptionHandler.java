@@ -22,9 +22,14 @@ public class GlobalExceptionHandler {
     public ApiResponse<List<String>> handleMethodArgumentNotValidException(
         BindingResult bindingResult) {
         List<String> errors = bindingResult.getFieldErrors().stream()
-            .map((FieldError fieldError) -> fieldError.getField() + fieldError.getDefaultMessage())
+            .map((FieldError fieldError) -> fieldError.getField() +" "+ fieldError.getDefaultMessage())
             .toList();
         return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "입력값이 잘못되었습니다", errors);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ApiResponse<String> handleALLException(Exception ex){
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "에러가 발생했습니다", ex.getMessage());
     }
 
 }
