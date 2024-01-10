@@ -146,15 +146,4 @@ public class PostServiceImpl implements PostService {
         return menuRepository.findAllByUserAndPost(user,post);
     }
 
-    private List<Menu> getMyMenus(User user, List<List<Menu>> allMenus){
-        for(List<Menu> menus : allMenus){
-            if(menus.size()>0){
-                if(menus.get(0).getUser().getId().equals(user.getId())){
-                    return menus;
-                }
-            }
-        }
-        return null;
-    }
-
 }
