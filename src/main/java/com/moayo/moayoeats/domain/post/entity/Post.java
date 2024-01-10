@@ -43,7 +43,6 @@ public class Post {
     @Column
     private CategoryEnum category;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "post")
     private List<Menu> menus;
 
