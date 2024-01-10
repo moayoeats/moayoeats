@@ -2,9 +2,11 @@ package com.moayo.moayoeats.domain.offer.controller;
 
 import com.moayo.moayoeats.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.domain.offer.service.OfferService;
+import com.moayo.moayoeats.global.dto.ApiResponse;
 import com.moayo.moayoeats.global.security.UserDetailsImpl;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,11 +22,13 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping()
-    public void applyToParticipate(
+    public ApiResponse<Void> applyToParticipate(
         @RequestBody OfferRequest offerReq,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
 
         offerService.applyToParticipate(offerReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "참가신청이 완료되었습니다.");
     }
 
 }
