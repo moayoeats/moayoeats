@@ -1,5 +1,7 @@
 package com.moayo.moayoeats.domain.post.service.impl;
 
+import com.moayo.moayoeats.domain.menu.dto.response.MenuResponse;
+import com.moayo.moayoeats.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.domain.menu.entity.Menu;
 import com.moayo.moayoeats.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
@@ -14,12 +16,10 @@ import com.moayo.moayoeats.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.domain.userpost.repository.UserPostRepository;
-import com.moayo.moayoeats.global.exception.ErrorCode;
 import com.moayo.moayoeats.global.exception.GlobalException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -81,16 +81,13 @@ public class PostServiceImpl implements PostService {
     public DetailedPostResponse getPost(Long postId, User user) {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
-        List<List<Menu>> allMenus = getAllMenus(userPosts);
 
         return DetailedPostResponse.builder()
             .address(post.getAddress())
             .store(post.getStore())
             .minPrice(post.getMinPrice())
             .deliveryCost(post.getDeliveryCost())
-            .participants(getParticipants(userPosts))
-            .menus(allMenus)
-            .myMenus(getMyMenus(user, allMenus))
+            .menus(getAllMenus(userPosts))
             .sumPrice(getSumPrice(getUserPostsByPost(post),post))
             .deadline(getDeadline(post))
             .build();
@@ -134,9 +131,16 @@ public class PostServiceImpl implements PostService {
         return userPostRepository.findAllByPost(post);
     }
 
-    private List<List<Menu>> getAllMenus(List<UserPost> userposts){
+    private List<NickMenusResponse> getAllMenus(List<UserPost> userposts){
 
-        List<List<Menu>> menus = userposts.stream().map((UserPost userpost)->userpost.getPost().getMenus()).toList();
+
+        List<NickMenusResponse> menus =
+            //List<UserPost> -> List<NickMenusResponse>
+            userposts.stream().map((UserPost userpost)->
+            new NickMenusResponse(userpost.getUser().getNickname(),
+                //List<Menu> menus -> List<MenuResponse>
+                userpost.getPost().getMenus().stream().map((Menu menu)->new MenuResponse(menu.getMenuname(),menu.getPrice())).toList()
+            )).toList();
         return menus;
     }
 
