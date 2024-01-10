@@ -24,6 +24,7 @@ public class OfferController {
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        offerService.applyToParticipate(offerReq, userDetails.getUser());
     }
 
 }
