@@ -4,6 +4,7 @@ import com.moayo.moayoeats.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.domain.user.service.UserService;
 import com.moayo.moayoeats.global.dto.ApiResponse;
+import com.moayo.moayoeats.global.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +31,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public void login(
+    public ApiResponse<Void> login(
         @RequestBody LoginRequest loginReq,
         HttpServletResponse res
     ) {
 
+        String token = userService.login(loginReq);
+        res.setHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "로그인을 성공했습니다.");
     }
 
 }
