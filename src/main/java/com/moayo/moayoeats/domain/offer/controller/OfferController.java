@@ -33,11 +33,13 @@ public class OfferController {
     }
 
     @DeleteMapping()
-    public void cancelParticipation(
+    public ApiResponse<Void> cancelParticipation(
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+
         offerService.cancelParticipation(offerReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "참가취소가 완료되었습니다.");
     }
 
 }
