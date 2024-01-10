@@ -23,12 +23,12 @@ public class OfferServiceImpl implements OfferService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    public void applyToParticipate(OfferRequest offerReq, User user) {
+    public void applyParticipation(OfferRequest offerReq, User user) {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
-        Post post = findPost(postId);
+        Post post = checkIfPostExists(postId);
         checkApplicationStatus(userId, postId);
 
         Offer offer = Offer.builder()
@@ -43,7 +43,7 @@ public class OfferServiceImpl implements OfferService {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
-        findPost(postId);
+        checkIfPostExists(postId);
         Offer offer = checkIfAlreadyApplied(userId, postId);
 
         offerRepository.delete(offer);
@@ -54,7 +54,7 @@ public class OfferServiceImpl implements OfferService {
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
     }
 
-    private Post findPost(Long postId) {
+    private Post checkIfPostExists(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
     }

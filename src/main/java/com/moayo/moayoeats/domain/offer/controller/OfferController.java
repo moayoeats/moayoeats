@@ -28,7 +28,7 @@ public class OfferController {
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        offerService.applyToParticipate(offerReq, userDetails.getUser());
+        offerService.applyParticipation(offerReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "참가신청이 완료되었습니다.");
     }
 
