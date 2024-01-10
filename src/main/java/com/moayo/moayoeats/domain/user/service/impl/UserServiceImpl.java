@@ -42,9 +42,7 @@ public class UserServiceImpl implements UserService {
         String email = loginReq.email();
         String password = loginReq.password();
 
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
-
+        User user = checkNotExistUser(email);
         checkMatchPassword(password, user.getPassword());
         return jwtUtil.createToken(email);
     }
@@ -54,6 +52,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(email)) {
             throw new GlobalException(UserErrorCode.ALREADY_EXIST_USER);
         }
+    }
+
+    private User checkNotExistUser(String email) {
+
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
     }
 
     private void checkMatchPassword(
