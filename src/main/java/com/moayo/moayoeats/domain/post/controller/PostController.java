@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.post.controller;
 
+import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
@@ -9,7 +10,6 @@ import com.moayo.moayoeats.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +51,15 @@ public class PostController {
         @PathVariable(name = "postId") Long postId
     ){
         return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",postService.getPost(postId, userDetails.getUser()));
+    }
+
+    //글 카테고리별 조회
+    @GetMapping("/posts/category")
+    public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody PostCategoryRequest postCategorySearchReq
+    ){
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
     }
 
 }
