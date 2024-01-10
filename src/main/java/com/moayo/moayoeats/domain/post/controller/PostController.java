@@ -2,6 +2,7 @@ package com.moayo.moayoeats.domain.post.controller;
 
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
+import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.domain.post.service.PostService;
 import com.moayo.moayoeats.global.dto.ApiResponse;
 import com.moayo.moayoeats.global.security.UserDetailsImpl;
@@ -41,6 +42,15 @@ public class PostController {
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",postService.getPosts(userDetails.getUser()));
+    }
+
+    //글 단독 조회, 글 상세페이지
+    @GetMapping("/posts/{postId}")
+    public ApiResponse<DetailedPostResponse> getPost(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "postId") Long postId
+    ){
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",postService.getPost(postId, userDetails.getUser()));
     }
 
 }
