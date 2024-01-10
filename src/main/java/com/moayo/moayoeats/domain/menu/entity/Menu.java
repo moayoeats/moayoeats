@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.moayo.moayoeats.domain.post.entity.Post;
 import com.moayo.moayoeats.domain.user.entity.User;
 import jakarta.persistence.Column;
