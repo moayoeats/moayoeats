@@ -18,7 +18,6 @@ import com.moayo.moayoeats.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.global.exception.GlobalException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -133,7 +132,6 @@ public class PostServiceImpl implements PostService {
 
     private List<NickMenusResponse> getAllMenus(List<UserPost> userposts){
 
-
         List<NickMenusResponse> menus =
             //List<UserPost> -> List<NickMenusResponse>
             userposts.stream().map((UserPost userpost)->
@@ -157,14 +155,6 @@ public class PostServiceImpl implements PostService {
             }
         }
         return null;
-    }
-
-    private List<String> getParticipants(List<UserPost> userPosts){
-        List<String> participants = new ArrayList<>();
-        for(UserPost userpost : userPosts){
-            participants.add(userpost.getUser().getNickname());
-        }
-        return participants;
     }
 
 }
