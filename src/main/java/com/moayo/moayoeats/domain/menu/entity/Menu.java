@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.moayo.moayoeats.domain.post.entity.Post;
 import com.moayo.moayoeats.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -29,6 +30,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "post_id", nullable = false)
