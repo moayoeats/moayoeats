@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
         String checkPassword = signupReq.checkPassword();
         String nickname = signupReq.nickname();
 
-        checkExistUser(email);
+        checkAlreadyExistUser(email);
         checkMatchPassword(checkPassword, password);
 
         User user = User.builder()
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         return jwtUtil.createToken(email);
     }
 
-    private void checkExistUser(String email) {
+    private void checkAlreadyExistUser(String email) {
 
         if (userRepository.existsByEmail(email)) {
             throw new GlobalException(UserErrorCode.ALREADY_EXIST_USER);
