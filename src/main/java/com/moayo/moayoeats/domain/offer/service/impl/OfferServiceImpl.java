@@ -27,21 +27,32 @@ public class OfferServiceImpl implements OfferService {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
-        User findUser = userRepository.findById(userId)
-            .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
-        Post findPost = postRepository.findById(postId)
-            .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
-
-        if(offerRepository.existsByUserIdAndPostId(userId, postId)) {
-            throw new GlobalException(OfferErrorCode.ALREADY_APPLIED_PARTICIPATION);
-        }
+        User findUser = checkUnauthorizedUser(userId);
+        Post post = findPost(postId);
+        checkApplicationStatus(userId, postId);
 
         Offer offer = Offer.builder()
-            .post(findPost)
+            .post(post)
             .user(findUser)
             .build();
 
         offerRepository.save(offer);
+    }
+
+    private User checkUnauthorizedUser(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
+    }
+
+    private Post findPost(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
+    }
+
+    private void checkApplicationStatus(Long userId, Long postId) {
+        if(offerRepository.existsByUserIdAndPostId(userId, postId)) {
+            throw new GlobalException(OfferErrorCode.ALREADY_APPLIED_PARTICIPATION);
+        }
     }
 
 }
