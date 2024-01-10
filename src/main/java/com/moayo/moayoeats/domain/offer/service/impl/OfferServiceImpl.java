@@ -43,11 +43,9 @@ public class OfferServiceImpl implements OfferService {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
-        User findUser = checkUnauthorizedUser(userId);
+        checkUnauthorizedUser(userId);
         Post post = findPost(postId);
-
-        Offer offer = offerRepository.findByPostId(postId)
-            .orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
+        Offer offer = findOffer(post.getId());
 
         offerRepository.delete(offer);
     }
@@ -66,6 +64,11 @@ public class OfferServiceImpl implements OfferService {
         if (offerRepository.existsByUserIdAndPostId(userId, postId)) {
             throw new GlobalException(OfferErrorCode.ALREADY_APPLIED_PARTICIPATION);
         }
+    }
+
+    private Offer findOffer(Long postId) {
+        return offerRepository.findByPostId(postId)
+            .orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
     }
 
 }

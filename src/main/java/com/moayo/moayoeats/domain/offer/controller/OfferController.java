@@ -37,7 +37,7 @@ public class OfferController {
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-
+        offerService.cancelParticipation(offerReq, userDetails.getUser());
     }
 
 }
