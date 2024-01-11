@@ -2,6 +2,7 @@ package com.moayo.moayoeats.domain.post.entity;
 
 
 import com.moayo.moayoeats.domain.menu.entity.Menu;
+import com.moayo.moayoeats.domain.offer.entity.Offer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,6 +51,9 @@ public class Post {
     @Column
     private LocalDateTime deadline;
 
+    @OneToMany(mappedBy = "post")
+    private List<Offer> offers;
+
     @Builder
     public Post(String address, String store, Integer minPrice, Integer deliveryCost, CategoryEnum category, LocalDateTime deadline){
         this.address = address;
@@ -58,6 +62,10 @@ public class Post {
         this.deliveryCost = deliveryCost;
         this.deadline = deadline;
         this.category = category;
+    }
+
+    public void addOffer(Offer offer) {
+        this.offers.add(offer);
     }
 
 }
