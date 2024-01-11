@@ -27,9 +27,4 @@ public class GlobalExceptionHandler {
         return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "입력값이 잘못되었습니다", errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ApiResponse<String> handleALLException(Exception ex){
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "에러가 발생했습니다", ex.getMessage());
-    }
-
 }
