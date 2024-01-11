@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.post.service;
 
+import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
@@ -28,5 +29,13 @@ public interface PostService {
      * @return DetailedPostResponse : 글 상세페이지 조회를 위한 dto
      */
     public DetailedPostResponse getPost(Long postId, User user);
+
+    /**
+     *
+     * @param postCategorySearchReq : 카테고리
+     * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @return
+     */
+    public List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategorySearchReq, User user);
 
 }
