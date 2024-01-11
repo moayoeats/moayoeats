@@ -33,7 +33,7 @@ public class OfferServiceImpl implements OfferService {
         Long postId = offerReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
-        Post post = checkIfPostExists(postId);
+        Post post = checkIfPostExistsAndGet(postId);
         checkApplicationStatus(userId, postId);
 
         Offer offer = Offer.builder()
@@ -41,7 +41,6 @@ public class OfferServiceImpl implements OfferService {
             .user(findUser)
             .build();
 
-        post.addOffer(offer);
         offerRepository.save(offer);
     }
 
@@ -59,10 +58,10 @@ public class OfferServiceImpl implements OfferService {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
-        Post post = checkIfPostExists(postId);
+        checkIfPostExists(postId);
         checkIfUserExistsAboutPost(userId);
 
-        List<Offer> offers = post.getOffers();
+        List<Offer> offers = offerRepository.findAllByPostId(postId);
         List<OfferResponse> offerResList = new ArrayList<>();
         offers.forEach(offer ->
             offerResList.add(
@@ -80,9 +79,15 @@ public class OfferServiceImpl implements OfferService {
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
     }
 
-    private Post checkIfPostExists(Long postId) {
+    private Post checkIfPostExistsAndGet(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
+    }
+
+    private void checkIfPostExists(Long postId) {
+        if (!postRepository.existsById(postId)) {
+            throw new GlobalException(PostErrorCode.NOT_FOUND_POST);
+        }
     }
 
     private void checkApplicationStatus(Long userId, Long postId) {
