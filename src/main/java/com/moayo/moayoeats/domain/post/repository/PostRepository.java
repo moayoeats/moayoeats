@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<List<Post>> findAllByCategoryEquals(CategoryEnum category);
+    Optional<Post> findById(Long postId);
 }
