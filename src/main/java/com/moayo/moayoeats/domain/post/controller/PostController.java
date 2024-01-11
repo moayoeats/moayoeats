@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.domain.post.controller;
 
 import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
+import com.moayo.moayoeats.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
@@ -12,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,6 +62,16 @@ public class PostController {
         @Valid @RequestBody PostCategoryRequest postCategorySearchReq
     ){
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
+    }
+
+    //글 삭제하기
+    @DeleteMapping("/posts")
+    public ApiResponse<Void> deletePost(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody PostIdRequest postIdReq
+    ){
+        postService.deletePost(postIdReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 삭제 성공했습니다.");
     }
 
 }
