@@ -12,4 +12,5 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     Optional<Offer> findByUserIdAndPostId(Long userId, Long postId);
 
     List<Offer> findAllByPostId(Long postId);
+    
 }
