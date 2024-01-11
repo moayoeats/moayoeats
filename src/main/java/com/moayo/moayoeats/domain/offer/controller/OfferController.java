@@ -1,9 +1,11 @@
 package com.moayo.moayoeats.domain.offer.controller;
 
 import com.moayo.moayoeats.domain.offer.dto.request.OfferRequest;
+import com.moayo.moayoeats.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.domain.offer.service.OfferService;
 import com.moayo.moayoeats.global.dto.ApiResponse;
 import com.moayo.moayoeats.global.security.UserDetailsImpl;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,11 +46,18 @@ public class OfferController {
     }
 
     @GetMapping()
-    public void viewApplication(
+    public ApiResponse<List<OfferResponse>> viewApplication(
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+        List<OfferResponse> offerResList = offerService.viewApplication(offerReq,
+            userDetails.getUser());
 
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "해당 게시글 참가신청 목록을 가져왔습니다.",
+            offerResList
+        );
     }
 
 }
