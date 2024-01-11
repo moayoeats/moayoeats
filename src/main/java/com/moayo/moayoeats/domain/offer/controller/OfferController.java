@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +23,23 @@ public class OfferController {
     private final OfferService offerService;
 
     @PostMapping()
-    public ApiResponse<Void> applyToParticipate(
+    public ApiResponse<Void> applyParticipation(
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        offerService.applyToParticipate(offerReq, userDetails.getUser());
+        offerService.applyParticipation(offerReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "참가신청이 완료되었습니다.");
+    }
+
+    @DeleteMapping()
+    public ApiResponse<Void> cancelParticipation(
+        @RequestBody OfferRequest offerReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        offerService.cancelParticipation(offerReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "참가취소가 완료되었습니다.");
     }
 
 }

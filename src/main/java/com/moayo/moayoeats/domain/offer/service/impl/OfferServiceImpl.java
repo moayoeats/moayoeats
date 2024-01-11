@@ -23,12 +23,12 @@ public class OfferServiceImpl implements OfferService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    public void applyToParticipate(OfferRequest offerReq, User user) {
+    public void applyParticipation(OfferRequest offerReq, User user) {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
-        Post post = findPost(postId);
+        Post post = checkIfPostExists(postId);
         checkApplicationStatus(userId, postId);
 
         Offer offer = Offer.builder()
@@ -39,20 +39,35 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.save(offer);
     }
 
+    public void cancelParticipation(OfferRequest offerReq, User user) {
+        Long userId = user.getId();
+        Long postId = offerReq.postId();
+
+        checkIfPostExists(postId);
+        Offer offer = checkIfAlreadyApplied(userId, postId);
+
+        offerRepository.delete(offer);
+    }
+
     private User checkUnauthorizedUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
     }
 
-    private Post findPost(Long postId) {
+    private Post checkIfPostExists(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
     }
 
     private void checkApplicationStatus(Long userId, Long postId) {
-        if(offerRepository.existsByUserIdAndPostId(userId, postId)) {
+        if (offerRepository.existsByUserIdAndPostId(userId, postId)) {
             throw new GlobalException(OfferErrorCode.ALREADY_APPLIED_PARTICIPATION);
         }
+    }
+
+    private Offer checkIfAlreadyApplied(Long userId, Long postId) {
+        return offerRepository.findByUserIdAndPostId(userId, postId)
+            .orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
     }
 
 }
