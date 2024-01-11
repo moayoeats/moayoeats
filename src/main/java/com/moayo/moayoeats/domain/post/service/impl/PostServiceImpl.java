@@ -5,6 +5,7 @@ import com.moayo.moayoeats.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.domain.menu.entity.Menu;
 import com.moayo.moayoeats.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
+import com.moayo.moayoeats.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
@@ -103,7 +104,7 @@ public class PostServiceImpl implements PostService {
         return posts.stream()
                 .map((Post post)-> new BriefPostResponse(
                     post.getId(),
-                    getAuthor(getUserPostsByPost(post)),
+                    getAuthor(getUserPostsByPost(post)).getNickname(),
                     post.getAddress(),
                     post.getStore(),
                     post.getMinPrice(),
@@ -112,10 +113,10 @@ public class PostServiceImpl implements PostService {
                 )).toList();
     }
 
-    private String getAuthor(List<UserPost> userPosts){
+    private User getAuthor(List<UserPost> userPosts){
         for(UserPost userpost : userPosts ){
             if(userpost.getRole().equals(UserPostRole.HOST)){
-                return userpost.getUser().getNickname();
+                return userpost.getUser();
             }
         }
         throw new GlobalException(UserPostErrorCode.NOT_FOUND_HOST);
