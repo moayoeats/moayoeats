@@ -64,8 +64,4 @@ public class Post {
         this.category = category;
     }
 
-    public void addOffer(Offer offer) {
-        this.offers.add(offer);
-    }
-
 }
