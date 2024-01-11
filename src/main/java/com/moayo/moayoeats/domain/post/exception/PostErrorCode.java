@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum PostErrorCode implements ErrorCode {
 
+    // 401
+    UNAUTHORIZED_USER_ABOUT_POST(HttpStatus.UNAUTHORIZED.value(), "해당 글에 대한 권한이 없습니다."),
+
     //404
     NOT_FOUND_POST(HttpStatus.NOT_FOUND.value(), "글을 찾지 못하였습니다.");
 
