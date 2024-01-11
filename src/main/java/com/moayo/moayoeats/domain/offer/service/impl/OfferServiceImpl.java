@@ -59,7 +59,6 @@ public class OfferServiceImpl implements OfferService {
         Long userId = user.getId();
         Long postId = offerReq.postId();
 
-        checkIfOfferExists(postId);
         Post post = checkIfPostExists(postId);
         checkIfUserExistsAboutPost(userId);
 
@@ -95,12 +94,6 @@ public class OfferServiceImpl implements OfferService {
     private Offer checkIfAlreadyApplied(Long userId, Long postId) {
         return offerRepository.findByUserIdAndPostId(userId, postId)
             .orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
-    }
-
-    private void checkIfOfferExists(Long postId) {
-        if (!offerRepository.existsByPostId(postId)) {
-            throw new GlobalException(OfferErrorCode.NOT_FOUND_OFFER);
-        }
     }
 
     private void checkIfUserExistsAboutPost(Long userId) {
