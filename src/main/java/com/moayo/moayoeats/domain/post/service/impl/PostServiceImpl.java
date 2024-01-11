@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
             .store(post.getStore())
             .minPrice(post.getMinPrice())
             .deliveryCost(post.getDeliveryCost())
-            .menus(getAllMenus(userPosts))
+            .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(getUserPostsByPost(post),post))
             .deadline(getDeadline(post))
             .build();
@@ -94,6 +94,22 @@ public class PostServiceImpl implements PostService {
             posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
         }
         return postsToBriefResponses(posts);
+    }
+
+    @Override
+    public void deletePost(PostIdRequest postIdReq, User user) {
+        //check if the post exists
+        Post post = getPostById(postIdReq.postId());
+        //check if the user has a relation with the post
+        List<UserPost> userPosts = getUserPostsByPost(post);
+        //check if the user is the host of the post
+        User host = getAuthor(userPosts);
+        if(!host.getId().equals(user.getId())){
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
+        }
+
+        userPostRepository.deleteAll(userPosts);
+        postRepository.delete(post);
     }
 
     private List<Post> findAll(){
@@ -151,14 +167,14 @@ public class PostServiceImpl implements PostService {
         return userPostRepository.findAllByPost(post);
     }
 
-    private List<NickMenusResponse> getAllMenus(List<UserPost> userposts){
+    private List<NickMenusResponse> getNickMenus(List<UserPost> userposts){
 
         List<NickMenusResponse> menus =
             //List<UserPost> -> List<NickMenusResponse>
             userposts.stream().map((UserPost userpost)->
             new NickMenusResponse(userpost.getUser().getNickname(),
                 //List<Menu> menus -> List<MenuResponse>
-                userpost.getPost().getMenus().stream().map((Menu menu)->new MenuResponse(menu.getMenuname(),menu.getPrice())).toList()
+                getUserMenus(userpost.getUser(),userpost.getPost()).stream().map((Menu menu)->new MenuResponse(menu.getMenuname(),menu.getPrice())).toList()
             )).toList();
         return menus;
     }
