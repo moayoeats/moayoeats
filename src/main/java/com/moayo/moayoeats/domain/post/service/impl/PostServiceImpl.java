@@ -87,7 +87,7 @@ public class PostServiceImpl implements PostService {
         User user
     ) {
         List<Post> posts;
-        if(postCategoryReq.category().equals(CategoryEnum.ALL)){
+        if(postCategoryReq.category().equals(CategoryEnum.ALL.toString())){
             posts = findAll();
         }else{
             posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);

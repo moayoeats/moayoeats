@@ -1,9 +1,10 @@
 package com.moayo.moayoeats.domain.post.dto.request;
 
-import com.moayo.moayoeats.domain.post.exception.validator.Enum;
+import com.moayo.moayoeats.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.domain.post.entity.CategoryEnum;
 
-public record PostCategoryRequest(
-    CategoryEnum category
+public record PostCategoryRequest (
+    @Category
+    String category
 ){
 }
