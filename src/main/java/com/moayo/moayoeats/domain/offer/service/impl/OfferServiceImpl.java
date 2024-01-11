@@ -59,7 +59,7 @@ public class OfferServiceImpl implements OfferService {
         Long postId = offerReq.postId();
 
         checkIfPostExists(postId);
-        checkIfUserExistsAboutPost(userId);
+        checkIfUserExistsAboutPost(userId, postId);
 
         List<Offer> offers = offerRepository.findAllByPostId(postId);
         List<OfferResponse> offerResList = new ArrayList<>();
@@ -101,8 +101,8 @@ public class OfferServiceImpl implements OfferService {
             .orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
     }
 
-    private void checkIfUserExistsAboutPost(Long userId) {
-        if (!userPostRepository.existsByUserId(userId)) {
+    private void checkIfUserExistsAboutPost(Long userId, Long postId) {
+        if (!userPostRepository.existsByUserIdAndPostId(userId, postId)) {
             throw new GlobalException(PostErrorCode.UNAUTHORIZED_USER_ABOUT_POST);
         }
     }

@@ -13,6 +13,6 @@ public interface UserPostRepository extends JpaRepository<UserPost, UserPostId> 
 
     List<UserPost> findAllByPost(Post post);
 
-    boolean existsByUserId(Long userId);
+    boolean existsByUserIdAndPostId(Long userId, Long postId);
 
 }
