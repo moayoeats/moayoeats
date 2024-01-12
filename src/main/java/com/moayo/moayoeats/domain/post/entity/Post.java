@@ -4,10 +4,13 @@ package com.moayo.moayoeats.domain.post.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.moayo.moayoeats.domain.menu.entity.Menu;
+import com.moayo.moayoeats.domain.offer.entity.Offer;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,14 +49,17 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private CategoryEnum category;
 
-    @OneToMany(mappedBy = "post")
-    private List<Menu> menus;
-
     @Column
     private Long sumPrice;
 
     @Column
     private LocalDateTime deadline;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,  cascade = CascadeType.ALL , orphanRemoval = true)
+    private List<Offer> offers;
 
     @Builder
     public Post(String address, String store, Integer minPrice, Integer deliveryCost, CategoryEnum category, LocalDateTime deadline){

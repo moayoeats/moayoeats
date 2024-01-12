@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.domain.post.service;
 
 import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
+import com.moayo.moayoeats.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
@@ -37,5 +38,12 @@ public interface PostService {
      * @return
      */
     public List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategorySearchReq, User user);
+
+    /**
+     *
+     * @param postIdReq : 글을 삭제하기 위한 postId
+     * @param user : 글 삭제자, 글 주인과 대조
+     */
+    public void deletePost(PostIdRequest postIdReq, User user);
 
 }
