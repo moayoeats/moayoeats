@@ -13,6 +13,7 @@ import com.moayo.moayoeats.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.domain.user.entity.User;
 import com.moayo.moayoeats.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.domain.user.repository.UserRepository;
+import com.moayo.moayoeats.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.global.exception.GlobalException;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     private void checkIfHost(Long userId, Long postId) {
-        if (userPostRepository.existsByUserIdAndPostId(userId, postId)) {
+        if (userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
             throw new GlobalException(OfferErrorCode.ALREADY_PARTICIPATE);
         }
     }
