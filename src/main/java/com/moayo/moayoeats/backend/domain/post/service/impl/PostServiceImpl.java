@@ -113,6 +113,20 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    @Override
+    public void closeApplication(PostIdRequest postIdReq, User user) {
+        //check if there is a post with the post id
+        Post post = getPostById(postIdReq.postId());
+        //check if the user is the host of the post
+        checkIfHost(user,post);
+        //check if the status is OPEN
+        if(post.getPostStatus()!=PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
+        }
+        post.closeApplication();
+        postRepository.save(post);
+    }
+
     private List<Post> findAll() {
         return postRepository.findAll();
     }
@@ -177,6 +191,12 @@ public class PostServiceImpl implements PostService {
 
     private List<Menu> getUserMenus(User user, Post post) {
         return menuRepository.findAllByUserAndPost(user, post);
+    }
+
+    private void checkIfHost(User user, Post post){
+        if(!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(), UserPostRole.HOST)){
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
+        }
     }
 
     //Test
