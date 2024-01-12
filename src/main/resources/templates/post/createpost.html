@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>Data Sending Page</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+<th:block th:fragment="content">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="card text-center">
+        <h5 class="card-header">글 작성 페이지</h5>
+        <div class="card-body">
+          <input id="address" placeholder="주소" type="text" class="form-control">
+          <input id="store" placeholder="가게" type="text" class="form-control">
+          <input id="minPrice" placeholder="최소주문금액" type="text" class="form-control">
+          <input id="deliveryCost" placeholder="배달비" type="text" class="form-control">
+          <input id="deadlineMins" placeholder="마감시간 시간" type="text" class="form-control">
+          <input id="deadlineHours" placeholder="마감시간 분" type="text" class="form-control">
+          <button class="btn btn-outline-secondary" type="button" onclick="dataSend()">작성 완료
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+<script th:inline="javascript">
+  function dataSend() {
+    let address = $('#address').val();
+    let store = $('#store').val();
+    let minPrice = $('#minPrice').val();
+    let deliveryCost = $('#deliveryCost').val();
+    let deadlineMins = $('#deadlineMins').val();
+    let deadlineHours = $('#deadlineHours').val();
+    $.ajax({
+      url: "/api/v1/test/posts",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        address: address,
+        store: store,
+        minPrice: minPrice,
+        deliveryCost: deliveryCost,
+        deadlineMins: deadlineMins,
+        deadlineHours: deadlineHours
+      }),
+      type: 'POST',
+      success: function(response) {
+        console.log('Success:', response);
+      },
+      error: function(error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+</script>
+
+</body>
+
+</html>
