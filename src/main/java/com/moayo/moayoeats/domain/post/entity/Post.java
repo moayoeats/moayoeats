@@ -1,6 +1,5 @@
 package com.moayo.moayoeats.domain.post.entity;
 
-
 import com.moayo.moayoeats.domain.menu.entity.Menu;
 import com.moayo.moayoeats.domain.offer.entity.Offer;
 import jakarta.persistence.CascadeType;
