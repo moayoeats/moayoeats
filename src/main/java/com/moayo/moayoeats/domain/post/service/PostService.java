@@ -46,4 +46,7 @@ public interface PostService {
      */
     public void deletePost(PostIdRequest postIdReq, User user);
 
+    //Test
+    public void createPostTest(PostRequest postReq);
+
 }

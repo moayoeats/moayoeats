@@ -15,6 +15,7 @@ import com.moayo.moayoeats.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.domain.post.service.PostService;
 import com.moayo.moayoeats.domain.user.entity.User;
+import com.moayo.moayoeats.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.domain.userpost.exception.UserPostErrorCode;
@@ -32,6 +33,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserPostRepository userPostRepository;
     private final MenuRepository menuRepository;
+    private final UserRepository userRepository;//Test
 
     public void createPost(PostRequest postReq, User user){
         //set deadline to hours and mins after now
@@ -181,6 +183,39 @@ public class PostServiceImpl implements PostService {
 
     private List<Menu> getUserMenus(User user, Post post){
         return menuRepository.findAllByUserAndPost(user,post);
+    }
+
+    //Test
+    public void createPostTest(PostRequest postReq){
+        //set fake user
+        Long l = 1L;
+        User user = userRepository.findById(l).orElse(null);
+
+        //set deadline to hours and mins after now
+        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins()).plusHours(postReq.deadlineHours());
+
+        //Build new post with the post request dto
+        Post post = Post.builder()
+            .address(postReq.address())
+            .store(postReq.store())
+            .deliveryCost(postReq.deliveryCost())
+            .minPrice(postReq.minPrice())
+            .deadline(deadline)
+            .category(postReq.category())
+            .build();
+
+        //save the post
+        postRepository.save(post);
+
+        //Build new relation between the post and the user
+        UserPost userpost = UserPost.builder()
+            .user(user)
+            .post(post)
+            .role(UserPostRole.HOST)
+            .build();
+
+        //save the relation
+        userPostRepository.save(userpost);
     }
 
 }
