@@ -36,8 +36,8 @@ public class OfferServiceImpl implements OfferService {
         Long postId = offerRelatedPostReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
-        checkIfHostAndThrowException(userId, postId);
         Post post = checkIfPostExistsAndGet(postId);
+        checkIfHostAndThrowException(userId, postId);
         checkApplicationStatus(userId, postId);
 
         Offer offer = Offer.builder()
