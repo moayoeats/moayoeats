@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.domain.menu.service.impl;
 
 import com.moayo.moayoeats.backend.domain.menu.exception.MenuErrorCode;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.menu.dto.request.MenuDeleteRequest;
@@ -24,6 +25,7 @@ public class MenuServiceImpl implements MenuService {
     public void createMenu(MenuRequest menuReq, User user) {
 
         Post post = findPostById(menuReq.postId());
+        checkIfPostIsClosed(post);
 
         Menu menu = Menu.builder().post(post).menuname(menuReq.name()).price(menuReq.price())
             .user(user).build();
@@ -33,7 +35,7 @@ public class MenuServiceImpl implements MenuService {
 
     public void deleteMenu(MenuDeleteRequest menuDeleteReq, User user) {
         Menu menu = findMenuById(menuDeleteReq.menuId(), user);
-
+        checkIfPostIsClosed(menu.getPost());
         menuRepository.delete(menu);
     }
 
@@ -50,6 +52,12 @@ public class MenuServiceImpl implements MenuService {
             throw new GlobalException(MenuErrorCode.FORBIDDEN_ACCESS);
         }
         return menu;
+    }
+    private void checkIfPostIsClosed(Post post){
+        //모집마감 후에는 메뉴를 생성/삭제할 수 없음
+        if(post.getPostStatus()!= PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.MENU_NOT_ALLOWED);
+        }
     }
 
 }
