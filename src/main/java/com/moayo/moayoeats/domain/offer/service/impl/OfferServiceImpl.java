@@ -50,7 +50,6 @@ public class OfferServiceImpl implements OfferService {
         Long offerId = offerReq.offerId();
 
         Offer offer = checkIfAlreadyApplied(userId, offerId);
-        checkIfPostExists(offer.getPost().getId());
 
         offerRepository.delete(offer);
     }
