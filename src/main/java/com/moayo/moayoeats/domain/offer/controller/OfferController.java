@@ -51,6 +51,7 @@ public class OfferController {
         @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+
         List<OfferResponse> offerResList = offerService.viewApplication(
             offerRelatedPostReq,
             userDetails.getUser()
@@ -61,6 +62,14 @@ public class OfferController {
             "해당 게시글 참가신청 목록을 가져왔습니다.",
             offerResList
         );
+    }
+
+    @PostMapping("/reject")
+    public void rejectApplication(
+        @RequestBody OfferRequest offerReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
     }
 
 }
