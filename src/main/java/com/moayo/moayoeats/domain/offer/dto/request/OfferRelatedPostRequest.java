@@ -1,7 +1,7 @@
 package com.moayo.moayoeats.domain.offer.dto.request;
 
-public record OfferRequest(
-    Long offerId
+public record OfferRelatedPostRequest (
+    Long postId
 ) {
 
 }

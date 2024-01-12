@@ -9,8 +9,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     boolean existsByUserIdAndPostId(Long userId, Long postId);
 
-    Optional<Offer> findByUserIdAndPostId(Long userId, Long postId);
+    Optional<Offer> findByUserIdAndId(Long userId, Long offerId);
 
     List<Offer> findAllByPostId(Long postId);
-    
+
 }
