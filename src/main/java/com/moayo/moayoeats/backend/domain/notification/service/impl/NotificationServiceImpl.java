@@ -8,16 +8,10 @@ import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
-import com.moayo.moayoeats.backend.domain.notification.dto.response.*;
-import com.moayo.moayoeats.backend.domain.notification.entity.*;
-import com.moayo.moayoeats.backend.domain.notification.repository.*;
-import com.moayo.moayoeats.backend.domain.notification.service.*;
-import com.moayo.moayoeats.backend.domain.user.entity.*;
-import com.moayo.moayoeats.backend.domain.user.exception.*;
-import com.moayo.moayoeats.backend.domain.user.repository.*;
-import java.util.*;
-import lombok.*;
-import org.springframework.stereotype.*;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service

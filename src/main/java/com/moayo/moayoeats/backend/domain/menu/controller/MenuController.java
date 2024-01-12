@@ -27,8 +27,8 @@ public class MenuController {
     public ApiResponse<Void> createMenu(
         @Valid @RequestBody MenuRequest menuReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        menuService.createMenu(menuReq,userDetails.getUser());
+    ) {
+        menuService.createMenu(menuReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "메뉴를 추가했습니다.");
     }
 
@@ -37,8 +37,8 @@ public class MenuController {
     public ApiResponse<Void> deleteMenu(
         @Valid @RequestBody MenuDeleteRequest menuDeleteReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        menuService.deleteMenu(menuDeleteReq,userDetails.getUser());
+    ) {
+        menuService.deleteMenu(menuDeleteReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "메뉴를 삭제했습니다.");
     }
 

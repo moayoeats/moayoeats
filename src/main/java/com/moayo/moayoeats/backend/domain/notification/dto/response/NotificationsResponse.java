@@ -3,10 +3,8 @@ package com.moayo.moayoeats.backend.domain.notification.dto.response;
 import com.moayo.moayoeats.backend.domain.notification.entity.Notification;
 import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
-import com.moayo.moayoeats.backend.domain.notification.entity.*;
-import com.moayo.moayoeats.backend.domain.user.entity.*;
-import java.time.*;
-import lombok.*;
+import java.time.LocalDateTime;
+import lombok.Builder;
 
 @Builder
 public record NotificationsResponse(

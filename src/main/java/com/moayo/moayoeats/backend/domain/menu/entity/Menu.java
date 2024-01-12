@@ -44,7 +44,7 @@ public class Menu {
     private Integer price;
 
     @Builder
-    public Menu(Post post, String menuname, Integer price, User user){
+    public Menu(Post post, String menuname, Integer price, User user) {
         this.post = post;
         this.menuname = menuname;
         this.price = price;

@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.offer.service.impl;
 
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
+import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.backend.domain.offer.entity.Offer;
 import com.moayo.moayoeats.backend.domain.offer.exception.OfferErrorCode;
@@ -9,12 +10,12 @@ import com.moayo.moayoeats.backend.domain.offer.service.OfferService;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
-import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
-import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
-import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
+import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
+import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
+import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ public class OfferServiceImpl implements OfferService {
         Long postId = offerRelatedPostReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
-        checkIfHost(userId, postId);
         Post post = checkIfPostExistsAndGet(postId);
+        checkIfHostAndThrowException(userId, postId);
         checkApplicationStatus(userId, postId);
 
         Offer offer = Offer.builder()
@@ -77,6 +78,24 @@ public class OfferServiceImpl implements OfferService {
         return offerResList;
     }
 
+
+    public void approveApplication(OfferRequest offerReq, User user) {
+        Long offerId = offerReq.offerId();
+        Long userId = user.getId();
+
+        Offer offer = checkIfOfferExistsAndGet(offerId);
+        checkIfNotHostAndThrowException(userId, offer.getPost().getId());
+
+        UserPost userPost = UserPost.builder()
+            .user(offer.getUser())
+            .post(offer.getPost())
+            .role(UserPostRole.PARTICIPANT)
+            .build();
+
+        userPostRepository.save(userPost);
+        offerRepository.delete(offer);
+    }
+
     private User checkUnauthorizedUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
@@ -85,6 +104,11 @@ public class OfferServiceImpl implements OfferService {
     private Post checkIfPostExistsAndGet(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
+    }
+
+    private Offer checkIfOfferExistsAndGet(Long offerId) {
+        return offerRepository.findById(offerId).
+            orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
     }
 
     private void checkIfPostExists(Long postId) {
@@ -110,9 +134,15 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private void checkIfHost(Long userId, Long postId) {
+    private void checkIfHostAndThrowException(Long userId, Long postId) {
         if (userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
             throw new GlobalException(OfferErrorCode.ALREADY_PARTICIPATE);
+        }
+    }
+
+    private void checkIfNotHostAndThrowException(Long userId, Long postId) {
+        if (!userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
+            throw new GlobalException(PostErrorCode.UNAUTHORIZED_USER_ABOUT_POST);
         }
     }
 

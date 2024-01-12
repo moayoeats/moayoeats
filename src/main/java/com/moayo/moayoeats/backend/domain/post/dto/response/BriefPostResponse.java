@@ -10,5 +10,6 @@ public record BriefPostResponse(
     Integer minPrice,
     Integer sumPrice,
     LocalDateTime deadline
-){
+) {
+
 }

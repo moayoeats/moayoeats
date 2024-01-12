@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.notification.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor

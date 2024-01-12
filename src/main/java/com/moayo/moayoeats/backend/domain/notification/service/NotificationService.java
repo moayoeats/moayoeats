@@ -2,9 +2,7 @@ package com.moayo.moayoeats.backend.domain.notification.service;
 
 import com.moayo.moayoeats.backend.domain.notification.dto.response.NotificationsResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
-import com.moayo.moayoeats.backend.domain.notification.dto.response.*;
-import com.moayo.moayoeats.backend.domain.user.entity.*;
-import java.util.*;
+import java.util.List;
 
 public interface NotificationService {
 
