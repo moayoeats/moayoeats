@@ -34,35 +34,31 @@ public class PostServiceImpl implements PostService {
     private final UserPostRepository userPostRepository;
     private final MenuRepository menuRepository;
 
-    public void createPost(PostRequest postReq, User user){
+
+    @Override
+    public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins()).plusHours(postReq.deadlineHours());
+        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
+            .plusHours(postReq.deadlineHours());
 
         //Build new post with the post request dto
-        Post post = Post.builder()
-            .address(postReq.address())
-            .store(postReq.store())
-            .deliveryCost(postReq.deliveryCost())
-            .minPrice(postReq.minPrice())
-            .deadline(deadline)
-            .category(postReq.category())
-            .build();
+        Post post = Post.builder().address(postReq.address()).store(postReq.store())
+            .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
+            .category(postReq.category()).build();
 
         //save the post
         postRepository.save(post);
 
         //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder()
-            .user(user)
-            .post(post)
-            .role(UserPostRole.HOST)
+        UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
             .build();
 
         //save the relation
         userPostRepository.save(userpost);
     }
 
-    public List<BriefPostResponse> getPosts(User user){
+    @Override
+    public List<BriefPostResponse> getPosts(User user) {
         List<Post> posts = findAll();
         return postsToBriefResponses(posts);
     }
@@ -72,26 +68,19 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
 
-        return DetailedPostResponse.builder()
-            .address(post.getAddress())
-            .store(post.getStore())
-            .minPrice(post.getMinPrice())
-            .deliveryCost(post.getDeliveryCost())
-            .menus(getNickMenus(userPosts))
-            .sumPrice(getSumPrice(getUserPostsByPost(post),post))
-            .deadline(getDeadline(post))
-            .build();
+        return DetailedPostResponse.builder().address(post.getAddress()).store(post.getStore())
+            .minPrice(post.getMinPrice()).deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts)).sumPrice(getSumPrice(getUserPostsByPost(post), post))
+            .deadline(getDeadline(post)).build();
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(
-        PostCategoryRequest postCategoryReq,
-        User user
-    ) {
+    public List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategoryReq,
+        User user) {
         List<Post> posts;
-        if(postCategoryReq.category().equals(CategoryEnum.ALL.toString())){
+        if (postCategoryReq.category().equals(CategoryEnum.ALL.toString())) {
             posts = findAll();
-        }else{
+        } else {
             posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
         }
         return postsToBriefResponses(posts);
@@ -102,7 +91,8 @@ public class PostServiceImpl implements PostService {
         //get all posts
         List<Post> posts = findAll();
         //filter by search keyword
-        List<Post> filtered = posts.stream().filter(post->post.getStore().contains(postSearchReq.keyword())).toList();
+        List<Post> filtered = posts.stream()
+            .filter(post -> post.getStore().contains(postSearchReq.keyword())).toList();
         //List<Post> -> List<BriefPostResponse>
         return postsToBriefResponses(filtered);
     }
@@ -115,7 +105,7 @@ public class PostServiceImpl implements PostService {
         List<UserPost> userPosts = getUserPostsByPost(post);
         //check if the user is the host of the post
         User host = getAuthor(userPosts);
-        if(!host.getId().equals(user.getId())){
+        if (!host.getId().equals(user.getId())) {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
         }
 
@@ -123,39 +113,33 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
-    private List<Post> findAll(){
+    private List<Post> findAll() {
         return postRepository.findAll();
     }
 
-    private List<BriefPostResponse> postsToBriefResponses(List<Post> posts){
-        return posts.stream()
-                .map((Post post)-> new BriefPostResponse(
-                    post.getId(),
-                    getAuthor(getUserPostsByPost(post)).getNickname(),
-                    post.getAddress(),
-                    post.getStore(),
-                    post.getMinPrice(),
-                    getSumPrice(getUserPostsByPost(post),post),
-                    getDeadline(post)
-                )).toList();
+    private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
+        return posts.stream().map((Post post) -> new BriefPostResponse(post.getId(),
+                getAuthor(getUserPostsByPost(post)).getNickname(), post.getAddress(), post.getStore(),
+                post.getMinPrice(), getSumPrice(getUserPostsByPost(post), post), getDeadline(post)))
+            .toList();
     }
 
-    private User getAuthor(List<UserPost> userPosts){
-        for(UserPost userpost : userPosts ){
-            if(userpost.getRole().equals(UserPostRole.HOST)){
+    private User getAuthor(List<UserPost> userPosts) {
+        for (UserPost userpost : userPosts) {
+            if (userpost.getRole().equals(UserPostRole.HOST)) {
                 return userpost.getUser();
             }
         }
         throw new GlobalException(UserPostErrorCode.NOT_FOUND_HOST);
     }
 
-    private int getSumPrice(List<UserPost> userposts, Post post){
+    private int getSumPrice(List<UserPost> userposts, Post post) {
         int sumPrice = 0;
 
         //add all prices from the menus from the users who are participating/hosting a post
-        for(UserPost userpost : userposts){
+        for (UserPost userpost : userposts) {
             List<Menu> menus = getUserMenus(userpost.getUser(), post);
-            for(Menu menu : menus){
+            for (Menu menu : menus) {
                 sumPrice += menu.getPrice();
             }
         }
@@ -163,35 +147,36 @@ public class PostServiceImpl implements PostService {
         return sumPrice;
     }
 
-    private LocalDateTime getDeadline(Post post){
+    private LocalDateTime getDeadline(Post post) {
         //remove nano sencods from the LocalDateTime
         return post.getDeadline().withNano(0);
     }
 
-    private Post getPostById(Long postId){
-        Post post = postRepository.findById(postId).orElseThrow(()-> new GlobalException(
-            PostErrorCode.NOT_FOUND_POST));
+    private Post getPostById(Long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
         return post;
     }
 
-    private List<UserPost> getUserPostsByPost(Post post){
+    private List<UserPost> getUserPostsByPost(Post post) {
         return userPostRepository.findAllByPost(post);
     }
 
-    private List<NickMenusResponse> getNickMenus(List<UserPost> userposts){
+    private List<NickMenusResponse> getNickMenus(List<UserPost> userposts) {
 
         List<NickMenusResponse> menus =
             //List<UserPost> -> List<NickMenusResponse>
-            userposts.stream().map((UserPost userpost)->
-            new NickMenusResponse(userpost.getUser().getNickname(),
-                //List<Menu> menus -> List<MenuResponse>
-                getUserMenus(userpost.getUser(),userpost.getPost()).stream().map((Menu menu)->new MenuResponse(menu.getMenuname(),menu.getPrice())).toList()
-            )).toList();
+            userposts.stream()
+                .map((UserPost userpost) -> new NickMenusResponse(userpost.getUser().getNickname(),
+                    //List<Menu> menus -> List<MenuResponse>
+                    getUserMenus(userpost.getUser(), userpost.getPost()).stream()
+                        .map((Menu menu) -> new MenuResponse(menu.getMenuname(), menu.getPrice()))
+                        .toList())).toList();
         return menus;
     }
 
-    private List<Menu> getUserMenus(User user, Post post){
-        return menuRepository.findAllByUserAndPost(user,post);
+    private List<Menu> getUserMenus(User user, Post post) {
+        return menuRepository.findAllByUserAndPost(user, post);
     }
 
 }

@@ -31,55 +31,51 @@ public class PostController {
 
     // 글 생성하기
     @PostMapping("/posts")
-    public ApiResponse<Void> createPost(
-        @Valid @RequestBody PostRequest postReq,
-        @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        postService.createPost(postReq,userDetails.getUser());
+    public ApiResponse<Void> createPost(@Valid @RequestBody PostRequest postReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        postService.createPost(postReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
     // 모든 글 조회하기
     @GetMapping("/posts")
     public ApiResponse<List<BriefPostResponse>> getPosts(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",postService.getPosts(userDetails.getUser()));
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
+            postService.getPosts(userDetails.getUser()));
     }
 
     //글 단독 조회, 글 상세페이지
     @GetMapping("/posts/{postId}")
     public ApiResponse<DetailedPostResponse> getPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable(name = "postId") Long postId
-    ){
-        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",postService.getPost(postId, userDetails.getUser()));
+        @PathVariable(name = "postId") Long postId) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
+            postService.getPost(postId, userDetails.getUser()));
     }
 
     //글 카테고리별 조회
     @GetMapping("/posts/category")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody PostCategoryRequest postCategorySearchReq
-    ){
-        return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
+        @Valid @RequestBody PostCategoryRequest postCategorySearchReq) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
+            postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
     }
 
     //글 검색하기
     @GetMapping("/posts/search")
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PostSearchRequest postSearchReq
-    ){
-        return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",postService.searchPost(postSearchReq, userDetails.getUser()));
+        @RequestBody PostSearchRequest postSearchReq) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
+            postService.searchPost(postSearchReq, userDetails.getUser()));
     }
 
     //글 삭제하기
     @DeleteMapping("/posts")
-    public ApiResponse<Void> deletePost(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PostIdRequest postIdReq
-    ){
+    public ApiResponse<Void> deletePost(@AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody PostIdRequest postIdReq) {
         postService.deletePost(postIdReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "글 삭제 성공했습니다.");
     }

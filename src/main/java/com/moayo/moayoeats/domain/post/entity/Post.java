@@ -55,11 +55,12 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menus;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY,  cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers;
 
     @Builder
-    public Post(String address, String store, Integer minPrice, Integer deliveryCost, CategoryEnum category, LocalDateTime deadline){
+    public Post(String address, String store, Integer minPrice, Integer deliveryCost,
+        CategoryEnum category, LocalDateTime deadline) {
         this.address = address;
         this.store = store;
         this.minPrice = minPrice;
