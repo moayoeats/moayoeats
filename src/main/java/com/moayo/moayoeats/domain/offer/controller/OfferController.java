@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.offer.controller;
 
+import com.moayo.moayoeats.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.domain.offer.service.OfferService;
@@ -27,11 +28,11 @@ public class OfferController {
 
     @PostMapping()
     public ApiResponse<Void> applyParticipation(
-        @RequestBody OfferRequest offerReq,
+        @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        offerService.applyParticipation(offerReq, userDetails.getUser());
+        offerService.applyParticipation(offerRelatedPostReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "참가신청이 완료되었습니다.");
     }
 
@@ -47,11 +48,13 @@ public class OfferController {
 
     @GetMapping()
     public ApiResponse<List<OfferResponse>> viewApplication(
-        @RequestBody OfferRequest offerReq,
+        @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        List<OfferResponse> offerResList = offerService.viewApplication(offerReq,
-            userDetails.getUser());
+        List<OfferResponse> offerResList = offerService.viewApplication(
+            offerRelatedPostReq,
+            userDetails.getUser()
+        );
 
         return new ApiResponse<>(
             HttpStatus.OK.value(),
