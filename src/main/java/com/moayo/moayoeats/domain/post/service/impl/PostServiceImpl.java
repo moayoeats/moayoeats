@@ -7,6 +7,7 @@ import com.moayo.moayoeats.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
+import com.moayo.moayoeats.domain.post.dto.request.PostSearchRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.domain.post.entity.CategoryEnum;
@@ -94,6 +95,16 @@ public class PostServiceImpl implements PostService {
             posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
         }
         return postsToBriefResponses(posts);
+    }
+
+    @Override
+    public List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user) {
+        //get all posts
+        List<Post> posts = findAll();
+        //filter by search keyword
+        List<Post> filtered = posts.stream().filter(post->post.getStore().contains(postSearchReq.keyword())).toList();
+        //List<Post> -> List<BriefPostResponse>
+        return postsToBriefResponses(filtered);
     }
 
     @Override
