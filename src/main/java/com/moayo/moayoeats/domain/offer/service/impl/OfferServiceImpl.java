@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.domain.offer.service.impl;
 
+import com.moayo.moayoeats.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.domain.offer.entity.Offer;
@@ -28,9 +29,9 @@ public class OfferServiceImpl implements OfferService {
     private final PostRepository postRepository;
     private final UserPostRepository userPostRepository;
 
-    public void applyParticipation(OfferRequest offerReq, User user) {
+    public void applyParticipation(OfferRelatedPostRequest offerRelatedPostReq, User user) {
         Long userId = user.getId();
-        Long postId = offerReq.postId();
+        Long postId = offerRelatedPostReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
         Post post = checkIfPostExistsAndGet(postId);
@@ -46,17 +47,18 @@ public class OfferServiceImpl implements OfferService {
 
     public void cancelParticipation(OfferRequest offerReq, User user) {
         Long userId = user.getId();
-        Long postId = offerReq.postId();
+        Long offerId = offerReq.offerId();
 
-        checkIfPostExists(postId);
-        Offer offer = checkIfAlreadyApplied(userId, postId);
+        Offer offer = checkIfAlreadyApplied(userId, offerId);
+        checkIfPostExists(offer.getPost().getId());
 
         offerRepository.delete(offer);
     }
 
-    public List<OfferResponse> viewApplication(OfferRequest offerReq, User user) {
+    public List<OfferResponse> viewApplication(OfferRelatedPostRequest offerRelatedPostReq,
+        User user) {
         Long userId = user.getId();
-        Long postId = offerReq.postId();
+        Long postId = offerRelatedPostReq.postId();
 
         checkIfPostExists(postId);
         checkIfUserExistsAboutPost(userId, postId);
@@ -96,8 +98,8 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private Offer checkIfAlreadyApplied(Long userId, Long postId) {
-        return offerRepository.findByUserIdAndPostId(userId, postId)
+    private Offer checkIfAlreadyApplied(Long userId, Long offerId) {
+        return offerRepository.findByUserIdAndId(userId, offerId)
             .orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
     }
 
