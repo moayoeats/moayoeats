@@ -35,7 +35,7 @@ public class OfferServiceImpl implements OfferService {
         Long postId = offerRelatedPostReq.postId();
 
         User findUser = checkUnauthorizedUser(userId);
-        checkIfHost(userId, postId);
+        checkIfHostAndThrowException(userId, postId);
         Post post = checkIfPostExistsAndGet(postId);
         checkApplicationStatus(userId, postId);
 
@@ -110,7 +110,7 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private void checkIfHost(Long userId, Long postId) {
+    private void checkIfHostAndThrowException(Long userId, Long postId) {
         if (userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
             throw new GlobalException(OfferErrorCode.ALREADY_PARTICIPATE);
         }
