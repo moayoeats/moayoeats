@@ -63,4 +63,12 @@ public class OfferController {
         );
     }
 
+    @PostMapping("/approve")
+    public void approveApplication(
+        @RequestBody OfferRequest offerRequest,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+    }
+
 }
