@@ -13,6 +13,7 @@ import com.moayo.moayoeats.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.domain.user.entity.User;
 import com.moayo.moayoeats.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.domain.user.repository.UserRepository;
+import com.moayo.moayoeats.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.global.exception.GlobalException;
@@ -77,6 +78,26 @@ public class OfferServiceImpl implements OfferService {
         return offerResList;
     }
 
+
+    public void approveApplication(OfferRequest offerReq, User user) {
+        Long offerId = offerReq.offerId();
+        Long userId = user.getId();
+
+        Offer offer = offerRepository.findById(offerId).
+            orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
+
+        checkIfNotHostAndThrowException(userId, offer.getPost().getId());
+
+        UserPost userPost = UserPost.builder()
+            .user(offer.getUser())
+            .post(offer.getPost())
+            .role(UserPostRole.PARTICIPANT)
+            .build();
+
+        userPostRepository.save(userPost);
+        offerRepository.delete(offer);
+    }
+
     private User checkUnauthorizedUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
@@ -113,6 +134,12 @@ public class OfferServiceImpl implements OfferService {
     private void checkIfHostAndThrowException(Long userId, Long postId) {
         if (userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
             throw new GlobalException(OfferErrorCode.ALREADY_PARTICIPATE);
+        }
+    }
+
+    private void checkIfNotHostAndThrowException(Long userId, Long postId) {
+        if (!userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
+            throw new GlobalException(PostErrorCode.UNAUTHORIZED_USER_ABOUT_POST);
         }
     }
 

@@ -64,11 +64,16 @@ public class OfferController {
     }
 
     @PostMapping("/approve")
-    public void approveApplication(
-        @RequestBody OfferRequest offerRequest,
+    public ApiResponse<Void> approveApplication(
+        @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+        offerService.approveApplication(offerReq, userDetails.getUser());
 
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "참가 신청을 승인하였습니다."
+        );
     }
 
 }
