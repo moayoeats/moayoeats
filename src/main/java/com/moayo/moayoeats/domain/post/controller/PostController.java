@@ -3,6 +3,7 @@ package com.moayo.moayoeats.domain.post.controller;
 import com.moayo.moayoeats.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.domain.post.dto.request.PostRequest;
+import com.moayo.moayoeats.domain.post.dto.request.PostSearchRequest;
 import com.moayo.moayoeats.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.domain.post.service.PostService;
@@ -62,6 +63,15 @@ public class PostController {
         @Valid @RequestBody PostCategoryRequest postCategorySearchReq
     ){
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
+    }
+
+    //글 검색하기
+    @GetMapping("/posts/search")
+    public ApiResponse<List<BriefPostResponse>> searchPost(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody PostSearchRequest postSearchReq
+    ){
+        return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",postService.searchPost(postSearchReq, userDetails.getUser()));
     }
 
     //글 삭제하기
