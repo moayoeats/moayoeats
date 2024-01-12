@@ -88,13 +88,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user) {
-        //get all posts
-        List<Post> posts = findAll();
-        //filter by search keyword
-        List<Post> filtered = posts.stream()
-            .filter(post -> post.getStore().contains(postSearchReq.keyword())).toList();
+        //get all posts filtered by search keyword
+        List<Post> posts = postRepository.findPostByStoreContaining(postSearchReq.keyword()).orElse(null);
         //List<Post> -> List<BriefPostResponse>
-        return postsToBriefResponses(filtered);
+        return postsToBriefResponses(posts);
     }
 
     @Override
