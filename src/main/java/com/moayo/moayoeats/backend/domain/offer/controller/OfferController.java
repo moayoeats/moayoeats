@@ -78,11 +78,16 @@ public class OfferController {
     }
 
     @PostMapping("/reject")
-    public void rejectApplication(
+    public ApiResponse<Void> rejectApplication(
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+        offerService.rejectApplication(offerReq, userDetails.getUser());
 
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "참가 신청을 거부하였습니다."
+        );
     }
 
 }

@@ -95,6 +95,16 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
+    public void rejectApplication(OfferRequest offerReq, User user) {
+        Long userId = user.getId();
+        Long offerId = offerReq.offerId();
+
+        Offer offer = checkIfOfferExistsAndGet(offerId);
+        checkIfNotHostAndThrowException(userId, offer.getPost().getId());
+
+        offerRepository.delete(offer);
+    }
+
     private User checkUnauthorizedUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
