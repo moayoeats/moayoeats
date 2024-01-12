@@ -4,6 +4,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
@@ -46,7 +47,7 @@ public class PostServiceImpl implements PostService {
         //Build new post with the post request dto
         Post post = Post.builder().address(postReq.address()).store(postReq.store())
             .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
-            .category(postReq.category()).build();
+            .category(postReq.category()).postStatus(PostStatusEnum.OPEN).build();
 
         //save the post
         postRepository.save(post);
@@ -195,6 +196,7 @@ public class PostServiceImpl implements PostService {
             .minPrice(postReq.minPrice())
             .deadline(deadline)
             .category(postReq.category())
+            .postStatus(PostStatusEnum.OPEN)
             .build();
 
         //save the post
