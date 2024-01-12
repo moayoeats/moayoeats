@@ -83,9 +83,7 @@ public class OfferServiceImpl implements OfferService {
         Long offerId = offerReq.offerId();
         Long userId = user.getId();
 
-        Offer offer = offerRepository.findById(offerId).
-            orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
-
+        Offer offer = checkIfOfferExistsAndGet(offerId);
         checkIfNotHostAndThrowException(userId, offer.getPost().getId());
 
         UserPost userPost = UserPost.builder()
@@ -106,6 +104,11 @@ public class OfferServiceImpl implements OfferService {
     private Post checkIfPostExistsAndGet(Long postId) {
         return postRepository.findById(postId)
             .orElseThrow(() -> new GlobalException(PostErrorCode.NOT_FOUND_POST));
+    }
+
+    private Offer checkIfOfferExistsAndGet(Long offerId) {
+        return offerRepository.findById(offerId).
+            orElseThrow(() -> new GlobalException(OfferErrorCode.NOT_FOUND_OFFER));
     }
 
     private void checkIfPostExists(Long postId) {
