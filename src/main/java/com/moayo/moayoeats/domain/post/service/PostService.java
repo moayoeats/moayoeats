@@ -50,4 +50,7 @@ public interface PostService {
      */
     void deletePost(PostIdRequest postIdReq, User user);
 
+    //Test
+    public void createPostTest(PostRequest postReq);
+
 }

@@ -61,6 +61,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/v1/users/sign-up/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/api/v1/test/**").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
