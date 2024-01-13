@@ -15,6 +15,6 @@ public class PostFrontController {
 
     @GetMapping("/test/createpost")
     public String createPostPage(){
-        return "/post/createpost";
+        return "domain/post/createpost";
     }
 }
