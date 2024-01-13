@@ -98,6 +98,16 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.OK.value(), "모집이 마감되었습니다.");
     }
 
+    //주문 완료
+    @PatchMapping("/posts/complete-order")
+    public ApiResponse<Void> completeOrder(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody PostIdRequest postIdReq
+    ) {
+        postService.completeOrder(postIdReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "주문완료 처리가 되었습니다.");
+    }
+
     //Test
     @PostMapping("/test/posts")
     public ApiResponse<Void> createPostTest(
