@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record DetailedPostResponse (
+public record DetailedPostResponse(
     String address,
     String store,
     Integer minPrice,
@@ -14,5 +14,6 @@ public record DetailedPostResponse (
     List<NickMenusResponse> menus,
     Integer sumPrice,
     LocalDateTime deadline
-){
+) {
+
 }

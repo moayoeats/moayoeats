@@ -28,24 +28,30 @@ public class MenuController {
 
     // 글에 본인이 주문할 Menu 추가하기
     @PostMapping("/menus")
-    public ApiResponse<Void> createMenu(@Valid @RequestBody MenuRequest menuReq,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<Void> createMenu(
+        @Valid @RequestBody MenuRequest menuReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         menuService.createMenu(menuReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "메뉴를 추가했습니다.");
     }
 
     // 글에 본인이 주문할 Menu 삭제하기
     @DeleteMapping("/menus")
-    public ApiResponse<Void> deleteMenu(@Valid @RequestBody MenuDeleteRequest menuDeleteReq,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<Void> deleteMenu(
+        @Valid @RequestBody MenuDeleteRequest menuDeleteReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         menuService.deleteMenu(menuDeleteReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "메뉴를 삭제했습니다.");
     }
 
     //자신의 메뉴 조회
     @GetMapping("/menus")
-    public ApiResponse<List<MenuResponse>> getMenus(@Valid @RequestBody MenuReadRequest menuReadReq,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<List<MenuResponse>> getMenus(
+        @Valid @RequestBody MenuReadRequest menuReadReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "나의 메뉴 조회",
             menuService.getMenus(menuReadReq, userDetails.getUser()));
     }

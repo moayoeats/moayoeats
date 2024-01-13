@@ -1,18 +1,20 @@
 package com.moayo.moayoeats.backend.global.security;
 
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
-import com.moayo.moayoeats.backend.global.jwt.*;
-import io.jsonwebtoken.*;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import java.io.*;
-import lombok.extern.slf4j.*;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.*;
-import org.springframework.security.core.context.*;
-import org.springframework.security.core.userdetails.*;
-import org.springframework.util.*;
-import org.springframework.web.filter.*;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {

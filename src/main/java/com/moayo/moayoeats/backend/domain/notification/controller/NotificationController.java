@@ -4,13 +4,13 @@ import com.moayo.moayoeats.backend.domain.notification.dto.response.Notification
 import com.moayo.moayoeats.backend.domain.notification.service.NotificationService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
-import com.moayo.moayoeats.backend.domain.notification.dto.response.*;
-import com.moayo.moayoeats.backend.domain.notification.service.*;
-import java.util.*;
-import lombok.*;
-import org.springframework.http.*;
-import org.springframework.security.core.annotation.*;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
