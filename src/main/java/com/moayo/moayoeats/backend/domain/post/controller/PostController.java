@@ -72,7 +72,7 @@ public class PostController {
     @GetMapping("/posts/search")
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PostSearchRequest postSearchReq
+        @Valid @RequestBody PostSearchRequest postSearchReq
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
             postService.searchPost(postSearchReq, userDetails.getUser()));
@@ -82,7 +82,7 @@ public class PostController {
     @DeleteMapping("/posts")
     public ApiResponse<Void> deletePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PostIdRequest postIdReq
+        @Valid @RequestBody PostIdRequest postIdReq
     ) {
         postService.deletePost(postIdReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "글 삭제 성공했습니다.");
@@ -90,8 +90,9 @@ public class PostController {
 
     //모집 마감
     @PatchMapping("/posts/close")
-    public ApiResponse<Void> closeApplication(@AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody PostIdRequest postIdReq
+    public ApiResponse<Void> closeApplication(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody PostIdRequest postIdReq
     ) {
         postService.closeApplication(postIdReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "모집이 마감되었습니다.");
