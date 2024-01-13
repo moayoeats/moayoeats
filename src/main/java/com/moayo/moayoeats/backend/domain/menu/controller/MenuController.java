@@ -44,7 +44,7 @@ public class MenuController {
 
     //자신의 메뉴 조회
     @GetMapping("/menus")
-    ApiResponse<List<MenuResponse>> getMenus(@Valid @RequestBody MenuReadRequest menuReadReq,
+    public ApiResponse<List<MenuResponse>> getMenus(@Valid @RequestBody MenuReadRequest menuReadReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return new ApiResponse<>(HttpStatus.OK.value(), "나의 메뉴 조회",
             menuService.getMenus(menuReadReq, userDetails.getUser()));
