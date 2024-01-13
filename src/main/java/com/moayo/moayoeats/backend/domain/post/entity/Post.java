@@ -58,15 +58,24 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Offer> offers;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PostStatusEnum postStatus;
+
     @Builder
     public Post(String address, String store, Integer minPrice, Integer deliveryCost,
-        CategoryEnum category, LocalDateTime deadline) {
+        CategoryEnum category, LocalDateTime deadline,PostStatusEnum postStatus) {
         this.address = address;
         this.store = store;
         this.minPrice = minPrice;
         this.deliveryCost = deliveryCost;
         this.deadline = deadline;
         this.category = category;
+        this.postStatus = postStatus;
+    }
+
+    public void closeApplication(){
+        this.postStatus = PostStatusEnum.CLOSED;
     }
 
 }

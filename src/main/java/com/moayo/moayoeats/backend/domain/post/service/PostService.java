@@ -50,6 +50,13 @@ public interface PostService {
      */
     void deletePost(PostIdRequest postIdReq, User user);
 
+    /**
+     *
+     * @param postIdReq : postId
+     * @param user : 글 작성자
+     */
+    public void closeApplication(PostIdRequest postIdReq, User user);
+
     //Test
     public void createPostTest(PostRequest postReq);
 

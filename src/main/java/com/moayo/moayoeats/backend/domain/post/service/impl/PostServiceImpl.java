@@ -4,6 +4,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
@@ -46,7 +47,7 @@ public class PostServiceImpl implements PostService {
         //Build new post with the post request dto
         Post post = Post.builder().address(postReq.address()).store(postReq.store())
             .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
-            .category(postReq.category()).build();
+            .category(postReq.category()).postStatus(PostStatusEnum.OPEN).build();
 
         //save the post
         postRepository.save(post);
@@ -110,6 +111,20 @@ public class PostServiceImpl implements PostService {
 
         userPostRepository.deleteAll(userPosts);
         postRepository.delete(post);
+    }
+
+    @Override
+    public void closeApplication(PostIdRequest postIdReq, User user) {
+        //check if there is a post with the post id
+        Post post = getPostById(postIdReq.postId());
+        //check if the user is the host of the post
+        checkIfHost(user,post);
+        //check if the status is OPEN
+        if(post.getPostStatus()!=PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
+        }
+        post.closeApplication();
+        postRepository.save(post);
     }
 
     private List<Post> findAll() {
@@ -178,6 +193,12 @@ public class PostServiceImpl implements PostService {
         return menuRepository.findAllByUserAndPost(user, post);
     }
 
+    private void checkIfHost(User user, Post post){
+        if(!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(), UserPostRole.HOST)){
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
+        }
+    }
+
     //Test
     public void createPostTest(PostRequest postReq){
         //set fake user
@@ -195,6 +216,7 @@ public class PostServiceImpl implements PostService {
             .minPrice(postReq.minPrice())
             .deadline(deadline)
             .category(postReq.category())
+            .postStatus(PostStatusEnum.OPEN)
             .build();
 
         //save the post
