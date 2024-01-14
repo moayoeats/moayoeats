@@ -106,7 +106,7 @@ public class PostServiceImpl implements PostService {
         //check if the user is the host of the post
         User host = getAuthor(userPosts);
         if (!host.getId().equals(user.getId())) {
-            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
 
         userPostRepository.deleteAll(userPosts);
@@ -133,7 +133,7 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(postIdReq.postId());
         //check if the user is the host of the post
         checkIfHost(user,post);
-        //check if the status is OPEN
+        //check the status
         if(post.getPostStatus()==PostStatusEnum.OPEN){
             throw new GlobalException(PostErrorCode.CLOSE_FIRST);
         }else if(post.getPostStatus()==PostStatusEnum.ORDERED||post.getPostStatus()==PostStatusEnum.RECEIVED){
@@ -211,7 +211,7 @@ public class PostServiceImpl implements PostService {
 
     private void checkIfHost(User user, Post post){
         if(!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(), UserPostRole.HOST)){
-            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
     }
 
