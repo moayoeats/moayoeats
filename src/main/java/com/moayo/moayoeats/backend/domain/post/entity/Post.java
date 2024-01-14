@@ -78,4 +78,8 @@ public class Post {
         this.postStatus = PostStatusEnum.CLOSED;
     }
 
+    public void completeOrder() {
+        this.postStatus = PostStatusEnum.ORDERED;
+    }
+
 }

@@ -127,6 +127,22 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
     }
 
+    @Override
+    public void completeOrder(PostIdRequest postIdReq, User user) {
+        //check if there is a post with the post id
+        Post post = getPostById(postIdReq.postId());
+        //check if the user is the host of the post
+        checkIfHost(user,post);
+        //check if the status is OPEN
+        if(post.getPostStatus()==PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.CLOSE_FIRST);
+        }else if(post.getPostStatus()==PostStatusEnum.ORDERED||post.getPostStatus()==PostStatusEnum.RECEIVED){
+            throw new GlobalException(PostErrorCode.POST_ALREADY_COMPLETED_ORDER);
+        }
+        post.completeOrder();
+        postRepository.save(post);
+    }
+
     private List<Post> findAll() {
         return postRepository.findAll();
     }
