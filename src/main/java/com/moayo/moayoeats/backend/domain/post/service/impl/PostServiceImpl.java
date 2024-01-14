@@ -4,6 +4,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
@@ -46,7 +47,7 @@ public class PostServiceImpl implements PostService {
         //Build new post with the post request dto
         Post post = Post.builder().address(postReq.address()).store(postReq.store())
             .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
-            .category(postReq.category()).build();
+            .category(postReq.category()).postStatus(PostStatusEnum.OPEN).build();
 
         //save the post
         postRepository.save(post);
@@ -105,11 +106,51 @@ public class PostServiceImpl implements PostService {
         //check if the user is the host of the post
         User host = getAuthor(userPosts);
         if (!host.getId().equals(user.getId())) {
-            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS);
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
 
         userPostRepository.deleteAll(userPosts);
         postRepository.delete(post);
+    }
+
+    @Override
+    public void closeApplication(PostIdRequest postIdReq, User user) {
+        //check if there is a post with the post id
+        Post post = getPostById(postIdReq.postId());
+        //check if the user is the host of the post
+        checkIfHost(user,post);
+        //check if the status is OPEN
+        if(post.getPostStatus()!=PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
+        }
+        post.closeApplication();
+        postRepository.save(post);
+    }
+
+    @Override
+    public void completeOrder(PostIdRequest postIdReq, User user) {
+        //check if there is a post with the post id
+        Post post = getPostById(postIdReq.postId());
+        //check if the user is the host of the post
+        checkIfHost(user,post);
+        //check the status
+        if(post.getPostStatus()==PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.CLOSE_FIRST);
+        }else if(post.getPostStatus()==PostStatusEnum.ORDERED||post.getPostStatus()==PostStatusEnum.RECEIVED){
+            throw new GlobalException(PostErrorCode.POST_ALREADY_COMPLETED_ORDER);
+        }
+        post.completeOrder();
+        postRepository.save(post);
+    }
+
+    @Override
+    public void exit(PostIdRequest postIdReq, User user) {
+        Post post = getPostById(postIdReq.postId());
+        UserPost userPost = userPostRepository.findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT).orElseThrow(()->
+            new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
+        );
+        menuRepository.deleteAll(getUserMenus(user,post));
+        userPostRepository.delete(userPost);
     }
 
     private List<Post> findAll() {
@@ -178,6 +219,12 @@ public class PostServiceImpl implements PostService {
         return menuRepository.findAllByUserAndPost(user, post);
     }
 
+    private void checkIfHost(User user, Post post){
+        if(!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(), UserPostRole.HOST)){
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
+        }
+    }
+
     //Test
     public void createPostTest(PostRequest postReq){
         //set fake user
@@ -187,14 +234,26 @@ public class PostServiceImpl implements PostService {
         //set deadline to hours and mins after now
         LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins()).plusHours(postReq.deadlineHours());
 
+        //get latitude and longitude from the coordinate
+        String address = postReq.address();
+        address = address.replace("(lat:","");
+        address = address.replace("lng:","");
+        address = address.replace(")","");
+        String [] location = address.split(",");
+        double latitude = Double.valueOf(location[0]);
+        double longitude = Double.valueOf(location[1]);
+
         //Build new post with the post request dto
         Post post = Post.builder()
-            .address(postReq.address())
+            .address(address)
+            .latitude(latitude)
+            .longitude(longitude)
             .store(postReq.store())
             .deliveryCost(postReq.deliveryCost())
             .minPrice(postReq.minPrice())
             .deadline(deadline)
             .category(postReq.category())
+            .postStatus(PostStatusEnum.OPEN)
             .build();
 
         //save the post
