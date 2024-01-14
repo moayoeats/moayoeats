@@ -38,4 +38,9 @@ public interface OfferService {
      */
     void rejectApplication(OfferRequest offerReq, User user);
 
+    /**
+     * @param offerRelatedPostReq : 참가 승인을 받은 후 마감 전 참가 취소시 필요한 요청 dto
+     * @param user                : 해당 계정으로 로그인한 사용자
+     */
+    void cancelAfterApproval(OfferRelatedPostRequest offerRelatedPostReq, User user);
 }

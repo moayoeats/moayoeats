@@ -91,11 +91,16 @@ public class OfferController {
     }
 
     @DeleteMapping("/after")
-    public void cancelAfterApproval(
+    public ApiResponse<Void> cancelAfterApproval(
         @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+        offerService.cancelAfterApproval(offerRelatedPostReq, userDetails.getUser());
 
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "승인 후 참가 취소가 완료되었습니다."
+        );
     }
 
 }
