@@ -30,8 +30,14 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String address;
+
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
 
     @Column(nullable = false)
     private String store;
@@ -64,7 +70,7 @@ public class Post {
 
     @Builder
     public Post(String address, String store, Integer minPrice, Integer deliveryCost,
-        CategoryEnum category, LocalDateTime deadline,PostStatusEnum postStatus) {
+        CategoryEnum category, LocalDateTime deadline,PostStatusEnum postStatus , Double latitude, Double longitude) {
         this.address = address;
         this.store = store;
         this.minPrice = minPrice;
@@ -72,6 +78,8 @@ public class Post {
         this.deadline = deadline;
         this.category = category;
         this.postStatus = postStatus;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void closeApplication(){

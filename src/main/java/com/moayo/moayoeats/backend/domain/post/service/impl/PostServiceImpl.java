@@ -234,9 +234,20 @@ public class PostServiceImpl implements PostService {
         //set deadline to hours and mins after now
         LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins()).plusHours(postReq.deadlineHours());
 
+        //get latitude and longitude from the coordinate
+        String address = postReq.address();
+        address = address.replace("(lat:","");
+        address = address.replace("lng:","");
+        address = address.replace(")","");
+        String [] location = address.split(",");
+        double latitude = Double.valueOf(location[0]);
+        double longitude = Double.valueOf(location[1]);
+
         //Build new post with the post request dto
         Post post = Post.builder()
-            .address(postReq.address())
+            .address(address)
+            .latitude(latitude)
+            .longitude(longitude)
             .store(postReq.store())
             .deliveryCost(postReq.deliveryCost())
             .minPrice(postReq.minPrice())

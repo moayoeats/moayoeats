@@ -1,40 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html>
 <head>
-  <title>Data Sending Page</title>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+        name="viewport">
+  <title>글 작성하기</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv&submodules=geocoder"
+          type="text/javascript"></script>
 </head>
 <body>
-<th:block th:fragment="content">
-  <div class="container">
-    <div class="row mt-3">
-      <div class="card text-center">
-        <h5 class="card-header">글 작성 페이지</h5>
-        <div class="card-body">
-          <input id="address" placeholder="주소" type="text" class="form-control">
-          <input id="store" placeholder="가게" type="text" class="form-control">
-          <input id="minPrice" placeholder="최소주문금액" type="text" class="form-control">
-          <input id="deliveryCost" placeholder="배달비" type="text" class="form-control">
-          <input id="deadlineMins" placeholder="마감시간 시간" type="text" class="form-control">
-          <input id="deadlineHours" placeholder="마감시간 분" type="text" class="form-control">
-          <button class="btn btn-outline-secondary" type="button" onclick="dataSend()">작성 완료
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</th:block>
+<div class="card-body">
+  <input class="form-control" id="store" placeholder="가게" type="text">
+  <input class="form-control" id="minPrice" placeholder="최소주문금액" type="text">
+  <input class="form-control" id="deliveryCost" placeholder="배달비" type="text">
+  <input class="form-control" id="deadlineMins" placeholder="마감시간 시간" type="text">
+  <input class="form-control" id="deadlineHours" placeholder="마감시간 분" type="text">
+</div>
+<button class="btn btn-outline-secondary" onclick="sendData()" type="button">작성 완료</button>
+
+<div id="map" style="width:100%; height:800px;"></div>
+
 <script th:inline="javascript">
-  function dataSend() {
-    let address = $('#address').val();
+  var map = new naver.maps.Map("map", {
+        center: new naver.maps.LatLng(37.5666103, 126.9783882),
+        zoom: 16
+      }),
+      infoWindow = null;
+
+  var latlng;
+
+  function initGeocoder() {
+    latlng = map.getCenter();
+
+    infoWindow = new naver.maps.InfoWindow({
+      content: ''
+    });
+
+    map.addListener('click', function (e) {
+      latlng = e.coord;
+
+      infoWindow.setContent([
+        '<div style="padding:10px;width:380px;font-size:14px;line-height:20px;">',
+        '<div> ' + ' ' + '</div>',
+        '</div>'
+      ].join(''));
+      infoWindow.open(map, latlng);
+    });
+  }
+
+  naver.maps.onJSContentLoaded = initGeocoder;
+
+  function sendData() {
+
+    let address = latlng.toString();
     let store = $('#store').val();
     let minPrice = $('#minPrice').val();
     let deliveryCost = $('#deliveryCost').val();
     let deadlineMins = $('#deadlineMins').val();
     let deadlineHours = $('#deadlineHours').val();
     $.ajax({
+      type: 'POST',
       url: "/api/v1/test/posts",
+      dataType: "json",
       contentType: 'application/json',
       data: JSON.stringify({
         address: address,
@@ -44,11 +72,10 @@
         deadlineMins: deadlineMins,
         deadlineHours: deadlineHours
       }),
-      type: 'POST',
-      success: function(response) {
+      success: function (response) {
         console.log('Success:', response);
       },
-      error: function(error) {
+      error: function (error) {
         console.error('Error:', error);
       }
     });
@@ -56,5 +83,4 @@
 </script>
 
 </body>
-
 </html>
