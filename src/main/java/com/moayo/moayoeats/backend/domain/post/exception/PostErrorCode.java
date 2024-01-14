@@ -19,7 +19,8 @@ public enum PostErrorCode implements ErrorCode {
     UNAUTHORIZED_USER_ABOUT_POST(HttpStatus.UNAUTHORIZED.value(), "해당 글에 대한 권한이 없습니다."),
 
     //403
-    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN.value(), "작성자만 할 수 있는 기능입니다."),
+    FORBIDDEN_ACCESS_HOST(HttpStatus.FORBIDDEN.value(), "작성자만 할 수 있는 기능입니다."),
+    FORBIDDEN_ACCESS_PARTICIPANT(HttpStatus.FORBIDDEN.value(), "참가자만 할 수 있는 기능입니다."),
 
     //404
     NOT_FOUND_POST(HttpStatus.NOT_FOUND.value(), "글을 찾을 수 없습니다.");
