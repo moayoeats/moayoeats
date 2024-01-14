@@ -108,6 +108,16 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.OK.value(), "주문완료 처리가 되었습니다.");
     }
 
+    //나가기 기능
+    @DeleteMapping("/posts/exit")
+    public ApiResponse<Void> exit(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody PostIdRequest postIdReq
+    ) {
+        postService.exit(postIdReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "글에서 나가기 되었습니다.");
+    }
+
     //Test
     @PostMapping("/test/posts")
     public ApiResponse<Void> createPostTest(
