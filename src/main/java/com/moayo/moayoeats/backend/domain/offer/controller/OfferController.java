@@ -90,4 +90,12 @@ public class OfferController {
         );
     }
 
+    @DeleteMapping("/after")
+    public void cancelAfterApproval(
+        @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+    }
+
 }
