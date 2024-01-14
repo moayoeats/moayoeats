@@ -143,6 +143,16 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
     }
 
+    @Override
+    public void exit(PostIdRequest postIdReq, User user) {
+        Post post = getPostById(postIdReq.postId());
+        UserPost userPost = userPostRepository.findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT).orElseThrow(()->
+            new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
+        );
+        menuRepository.deleteAll(getUserMenus(user,post));
+        userPostRepository.delete(userPost);
+    }
+
     private List<Post> findAll() {
         return postRepository.findAll();
     }
