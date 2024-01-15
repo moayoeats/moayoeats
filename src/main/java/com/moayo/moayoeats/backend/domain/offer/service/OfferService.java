@@ -43,4 +43,5 @@ public interface OfferService {
      * @param user                : 해당 계정으로 로그인한 사용자
      */
     void cancelAfterApproval(OfferRelatedPostRequest offerRelatedPostReq, User user);
+
 }
