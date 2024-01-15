@@ -118,11 +118,30 @@ public class PostServiceImpl implements PostService {
         //check if there is a post with the post id
         Post post = getPostById(postIdReq.postId());
         //check if the user is the host of the post
-        checkIfHost(user,post);
+        List<UserPost> userPosts = getUserPostsByPost(post);
+        User host = getAuthor(userPosts);
+        checkIfHost(user,host);
+
         //check if the status is OPEN
         if(post.getPostStatus()!=PostStatusEnum.OPEN){
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
+        //delete all menus which are not made by participants
+        List<Menu> menus = menuRepository.findAllByPost(post);
+        List<Menu> menusWithoutRelation;
+        for(Menu menu : menus){
+            boolean hasRelation = false;
+            for(UserPost userPost:userPosts){
+                if(userPost.getUser().getId().equals(menu.getUser().getId())){
+                    hasRelation = true;
+                    break;
+                }
+            }
+            if(!hasRelation){
+                menuRepository.delete(menu);
+            }
+        }
+
         post.closeApplication();
         postRepository.save(post);
     }
@@ -221,6 +240,12 @@ public class PostServiceImpl implements PostService {
 
     private void checkIfHost(User user, Post post){
         if(!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(), UserPostRole.HOST)){
+            throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
+        }
+    }
+
+    private void checkIfHost(User user, User host){
+        if(!user.getId().equals(host.getId())){
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
     }
