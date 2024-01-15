@@ -8,6 +8,7 @@ import com.moayo.moayoeats.backend.domain.offer.exception.OfferErrorCode;
 import com.moayo.moayoeats.backend.domain.offer.repository.OfferRepository;
 import com.moayo.moayoeats.backend.domain.offer.service.OfferService;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -38,6 +39,7 @@ public class OfferServiceImpl implements OfferService {
 
         User findUser = checkUnauthorizedUser(userId);
         Post post = checkIfPostExistsAndGet(postId);
+        checkPostStatus(post);
         checkIfHostAndThrowException(userId, postId);
         checkApplicationStatus(userId, postId);
 
@@ -168,6 +170,12 @@ public class OfferServiceImpl implements OfferService {
         return userPostRepository
             .findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT)
             .orElseThrow(() -> new GlobalException(UserPostErrorCode.NOT_FOUND_USERPOST));
+    }
+
+    private void checkPostStatus(Post post) {
+        if (!post.getPostStatus().equals(PostStatusEnum.OPEN)) {
+            throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
+        }
     }
 
 }
