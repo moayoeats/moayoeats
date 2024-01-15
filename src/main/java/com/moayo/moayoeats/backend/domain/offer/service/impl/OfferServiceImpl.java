@@ -173,7 +173,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     private void checkPostStatus(Post post) {
-        if (post.getPostStatus() == PostStatusEnum.CLOSED) {
+        if (post.getPostStatus() != PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
     }
