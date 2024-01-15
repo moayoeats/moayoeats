@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.domain.user.service;
 
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 
@@ -23,4 +24,11 @@ public interface UserService {
      * @param user          : 해당 계정으로 로그인한 사용자
      */
     void updateInfo(InfoUpdateRequest infoUpdateReq, User user);
+
+    /**
+     * @param passwordUpdateReq : 비밀번호 수정에 필요한 요청 dto
+     * @param user              : 해당 계정으로 로그인한 사용자
+     */
+    void updatePassword(PasswordUpdateRequest passwordUpdateReq, User user);
+
 }

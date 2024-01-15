@@ -61,11 +61,13 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public void updatePassword(
+    public ApiResponse<Void> updatePassword(
         @Valid @RequestBody PasswordUpdateRequest passwordUpdateReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
+        userService.updatePassword(passwordUpdateReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "비밀번호를 수정하였습니다.");
     }
 
 }
