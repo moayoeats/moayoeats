@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.domain.user.controller;
 
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.service.UserService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
@@ -57,6 +58,16 @@ public class UserController {
 
         userService.updateInfo(infoUpdateReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "회원정보를 수정하였습니다.");
+    }
+
+    @PatchMapping("/password")
+    public ApiResponse<Void> updatePassword(
+        @Valid @RequestBody PasswordUpdateRequest passwordUpdateReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        userService.updatePassword(passwordUpdateReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "비밀번호를 수정하였습니다.");
     }
 
 }
