@@ -1,9 +1,11 @@
 package com.moayo.moayoeats.backend.domain.menu.entity;
 
+import com.moayo.moayoeats.backend.domain.order.entity.Order;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,12 +29,15 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "post_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -49,6 +54,13 @@ public class Menu {
         this.menuname = menuname;
         this.price = price;
         this.user = user;
+    }
+
+    public Menu receive(Order order){
+        this.order = order;
+        this.post.dismissMenu(this);
+        this.post = null;
+        return this;
     }
 
 }

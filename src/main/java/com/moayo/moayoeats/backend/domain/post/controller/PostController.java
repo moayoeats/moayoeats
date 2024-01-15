@@ -118,6 +118,16 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.OK.value(), "글에서 나가기 되었습니다.");
     }
 
+    //수령 완료
+    @DeleteMapping("/posts/received")
+    public ApiResponse<Void> receiveOrder(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody PostIdRequest postIdReq
+    ) {
+        postService.receiveOrder(postIdReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "수령완료 처리가 되었습니다.");
+    }
+
     //Test
     @PostMapping("/test/posts")
     public ApiResponse<Void> createPostTest(
