@@ -78,7 +78,6 @@ public class OfferServiceImpl implements OfferService {
         return offerResList;
     }
 
-
     public void approveApplication(OfferRequest offerReq, User user) {
         Long offerId = offerReq.offerId();
         Long userId = user.getId();
@@ -93,6 +92,16 @@ public class OfferServiceImpl implements OfferService {
             .build();
 
         userPostRepository.save(userPost);
+        offerRepository.delete(offer);
+    }
+
+    public void rejectApplication(OfferRequest offerReq, User user) {
+        Long userId = user.getId();
+        Long offerId = offerReq.offerId();
+
+        Offer offer = checkIfOfferExistsAndGet(offerId);
+        checkIfNotHostAndThrowException(userId, offer.getPost().getId());
+
         offerRepository.delete(offer);
     }
 

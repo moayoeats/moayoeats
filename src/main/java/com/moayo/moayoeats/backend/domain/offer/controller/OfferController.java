@@ -51,6 +51,7 @@ public class OfferController {
         @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
+
         List<OfferResponse> offerResList = offerService.viewApplication(
             offerRelatedPostReq,
             userDetails.getUser()
@@ -73,6 +74,19 @@ public class OfferController {
         return new ApiResponse<>(
             HttpStatus.OK.value(),
             "참가 신청을 승인하였습니다."
+        );
+    }
+
+    @PostMapping("/reject")
+    public ApiResponse<Void> rejectApplication(
+        @RequestBody OfferRequest offerReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        offerService.rejectApplication(offerReq, userDetails.getUser());
+
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "참가 신청을 거부하였습니다."
         );
     }
 
