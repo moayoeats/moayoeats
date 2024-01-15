@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -80,6 +81,11 @@ public class Post {
         this.postStatus = postStatus;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    @Transactional
+    public void dismissMenu(Menu menu){
+        this.menus.remove(menu);
     }
 
     public void closeApplication(){
