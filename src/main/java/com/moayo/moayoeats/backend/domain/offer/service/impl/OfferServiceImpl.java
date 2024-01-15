@@ -15,6 +15,7 @@ import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
+import com.moayo.moayoeats.backend.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import java.util.ArrayList;
@@ -105,6 +106,14 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
+    public void cancelAfterApproval(OfferRelatedPostRequest offerRelatedPostReq, User user) {
+        Long postId = offerRelatedPostReq.postId();
+
+        Post post = checkIfPostExistsAndGet(postId);
+        UserPost userPost = findUserPostIfParticipant(post, user);
+        userPostRepository.delete(userPost);
+    }
+
     private User checkUnauthorizedUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
@@ -153,6 +162,12 @@ public class OfferServiceImpl implements OfferService {
         if (!userPostRepository.existsByUserIdAndPostIdAndRole(userId, postId, UserPostRole.HOST)) {
             throw new GlobalException(PostErrorCode.UNAUTHORIZED_USER_ABOUT_POST);
         }
+    }
+
+    private UserPost findUserPostIfParticipant(Post post, User user) {
+        return userPostRepository
+            .findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT)
+            .orElseThrow(() -> new GlobalException(UserPostErrorCode.NOT_FOUND_USERPOST));
     }
 
 }
