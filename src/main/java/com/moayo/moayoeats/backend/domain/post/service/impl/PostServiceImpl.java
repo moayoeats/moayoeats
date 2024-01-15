@@ -132,7 +132,6 @@ public class PostServiceImpl implements PostService {
         }
         //delete all menus which are not made by participants
         List<Menu> menus = menuRepository.findAllByPost(post);
-        List<Menu> menusWithoutRelation;
         for(Menu menu : menus){
             boolean hasRelation = false;
             for(UserPost userPost:userPosts){
