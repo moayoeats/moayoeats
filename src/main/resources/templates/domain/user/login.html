@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>모아요이츠 | 로그인</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+<div id="login-form">
+  <div>
+    <div>이메일</div>
+    <input type="email" name="email" id="email" class="login-input">
+
+    <div>비밀번호</div>
+    <input type="password" name="password" id="password" class="login-input">
+
+    <button id="login-submit" onclick="login()">로그인</button>
+  </div>
+
+</div>
+</body>
+
+<script>
+  const host = 'http://' + window.location.host;
+
+  function login() {
+    let email = $('#email').val();
+    let login = $('#login-submit');
+    let password = $('#password').val();
+
+    $.ajax({
+      type: "POST",
+      url: `/api/v1/users/login`,
+      contentType: "application/json",
+      data: JSON.stringify({
+        email: email,
+        password: password
+      }),
+    })
+    .done(function (res, status, xhr) {
+      if (res.status === 200) {
+        const token = xhr.getResponseHeader('Authorization');
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+          jqXHR.setRequestHeader('Authorization', token);
+        });
+        alert(res.message);
+        window.location.href = host + '/api/v1/test/createpost';
+      } else if (res.status === 400 || res.status === 404) {
+        alert(res.message);
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+      }
+    })
+    .fail(function (jqXHR, textStatus) {
+      alert("요청에 실패하였습니다.");
+      window.location.href = host + '/api/user/login-page?error'
+    });
+  }
+</script>
+</html>
