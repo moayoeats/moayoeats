@@ -110,7 +110,7 @@ public class OfferServiceImpl implements OfferService {
         Long postId = offerRelatedPostReq.postId();
 
         Post post = checkIfPostExistsAndGet(postId);
-        UserPost userPost = hasUserPostRole(post, user);
+        UserPost userPost = findUserPostIfParticipant(post, user);
         userPostRepository.delete(userPost);
     }
 
@@ -164,7 +164,7 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private UserPost hasUserPostRole(Post post, User user) {
+    private UserPost findUserPostIfParticipant(Post post, User user) {
         return userPostRepository
             .findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT)
             .orElseThrow(() -> new GlobalException(UserPostErrorCode.NOT_FOUND_USERPOST));
