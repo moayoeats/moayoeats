@@ -1,5 +1,7 @@
 package com.moayo.moayoeats.backend.domain.post.service.impl;
 
+import com.moayo.moayoeats.backend.domain.order.entity.Order;
+import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
@@ -23,6 +25,7 @@ import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.backend.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserPostRepository userPostRepository;
     private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
     private final UserRepository userRepository;//Test
 
 
@@ -165,11 +169,48 @@ public class PostServiceImpl implements PostService {
     @Override
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
-        UserPost userPost = userPostRepository.findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT).orElseThrow(()->
-            new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
-        );
+        UserPost userPost = getUserPostIfParticipant(user,post);
         menuRepository.deleteAll(getUserMenus(user,post));
         userPostRepository.delete(userPost);
+    }
+
+    @Transactional
+    @Override
+    public void receiveOrder(PostIdRequest postIdReq, User user) {
+        Post post = getPostById(postIdReq.postId());
+
+        //get relations
+        List<UserPost> userPosts = getUserPostsByPost(post);
+        UserPost userpost = getUserPostByUserIfParticipant(user, userPosts);
+        User host = getAuthor(userPosts);
+
+        //make order for me to review
+        Order order = makeOrder(post, host, user, UserPostRole.PARTICIPANT);
+        orderRepository.save(order);
+        //make order for host to review
+        Order hostOrder = makeOrder(post, user, host, UserPostRole.HOST);
+        orderRepository.save(hostOrder);
+
+        //remove menus from the post
+        List<Menu> menus = getUserMenus(user,post);
+        menus.forEach(menu->menuRepository.save(menu.receive(order)));
+
+        if(userPosts.size()<=2){
+            userPostRepository.deleteAll(userPosts);
+            postRepository.delete(post);
+            return;
+        }
+        userPostRepository.delete(userpost);
+
+    }
+
+    private Order makeOrder(Post post, User receiver, User user, UserPostRole role){
+        return Order.builder()
+            .receiver(receiver)
+            .user(user)
+            .store(post.getStore())
+            .senderRole(role)
+            .build();
     }
 
     private List<Post> findAll() {
@@ -248,6 +289,24 @@ public class PostServiceImpl implements PostService {
         if(!user.getId().equals(host.getId())){
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
+    }
+
+    private UserPost getUserPostByUserIfParticipant(User user, List<UserPost> userPosts){
+        for(UserPost userPost : userPosts){
+            if(userPost.getRole().equals(UserPostRole.HOST)){
+                continue;
+            }
+            if(user.getId().equals(userPost.getUser().getId())){
+                return userPost;
+            }
+        }
+        throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT);
+    }
+
+    private UserPost getUserPostIfParticipant(User user, Post post){
+        return userPostRepository.findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT).orElseThrow(()->
+            new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
+        );
     }
 
     //Test
