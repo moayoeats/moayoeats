@@ -37,4 +37,8 @@ public class User {
         this.nickname = nickname;
     }
 
+    public void updateInfo(String nickname) {
+        this.nickname = nickname;
+    }
+
 }
