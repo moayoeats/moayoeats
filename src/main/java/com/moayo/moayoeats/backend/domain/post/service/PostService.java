@@ -59,5 +59,6 @@ public interface PostService {
 
     //Test
     public void createPostTest(PostRequest postReq);
+    public DetailedPostResponse getPostTest(Long postId);
 
 }
