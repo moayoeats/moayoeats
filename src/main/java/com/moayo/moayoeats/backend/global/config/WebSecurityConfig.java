@@ -2,8 +2,8 @@ package com.moayo.moayoeats.backend.global.config;
 
 
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
-import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
+import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -58,6 +58,7 @@ public class WebSecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .permitAll() // resources 접근 허용 설정
                 .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
+                .requestMatchers("/api/v1/login-page").permitAll() // 메인 페이지 요청 허가
                 .requestMatchers("/api/v1/users/sign-up/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
