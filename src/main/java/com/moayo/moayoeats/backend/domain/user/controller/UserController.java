@@ -50,11 +50,13 @@ public class UserController {
 
 
     @PatchMapping()
-    public void updateInfo(
+    public ApiResponse<Void> updateInfo(
         @Valid @RequestBody InfoUpdateRequest infoUpdateReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
+        userService.updateInfo(infoUpdateReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "회원정보를 수정하였습니다.");
     }
 
 }
