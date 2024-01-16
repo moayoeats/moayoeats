@@ -117,6 +117,10 @@ public class OfferServiceImpl implements OfferService {
         Offer offer = checkIfOfferExistsAndGet(offerId);
         checkIfNotHostAndThrowException(userId, offer.getPost().getId());
 
+        //해당 참가자한테 알림
+        User participant = userRepository.findByOfferId(offerId);
+        publisher.publishEvent(new Event(participant, NotificationType.PARTICIPANT_REJECTED));
+
         offerRepository.delete(offer);
     }
 
