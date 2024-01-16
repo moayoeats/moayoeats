@@ -1,13 +1,10 @@
 package com.moayo.moayoeats.backend.domain.userpost.repository;
 
-import com.moayo.moayoeats.backend.domain.post.entity.Post;
-import com.moayo.moayoeats.backend.domain.user.entity.User;
-import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
-import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostId;
-import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.moayo.moayoeats.backend.domain.post.entity.*;
+import com.moayo.moayoeats.backend.domain.user.entity.*;
+import com.moayo.moayoeats.backend.domain.userpost.entity.*;
+import java.util.*;
+import org.springframework.data.jpa.repository.*;
 
 public interface UserPostRepository extends JpaRepository<UserPost, UserPostId> {
 
@@ -20,4 +17,7 @@ public interface UserPostRepository extends JpaRepository<UserPost, UserPostId> 
     boolean existsByUserIdAndPostIdAndRole(Long userId, Long postId, UserPostRole role);
 
     Optional<UserPost> findByPostAndUserAndRoleEquals(Post post, User user, UserPostRole role);
+
+    @Query("SELECT u FROM User u JOIN UserPost up ON u.id = up.user.id WHERE up.role = :role AND up.post.id = :postId")
+    User findByPostIdAndRole(Long postId, UserPostRole role);
 }

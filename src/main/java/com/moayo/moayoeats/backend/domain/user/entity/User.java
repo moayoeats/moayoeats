@@ -2,6 +2,8 @@ package com.moayo.moayoeats.backend.domain.user.entity;
 
 import com.moayo.moayoeats.backend.domain.review.entity.Review;
 import jakarta.persistence.CascadeType;
+import com.moayo.moayoeats.backend.domain.offer.entity.Offer;
+import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,8 +37,17 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<Review> reviews;
+
+    //TODO: offerId를 통해 User를 찾기 위한 연관관계
+    @OneToMany(mappedBy = "user")
+    private List<Offer> offers;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserPost> userPosts;
+
 
     @Builder
     public User(String email, String password, String nickname) {

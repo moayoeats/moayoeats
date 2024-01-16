@@ -4,6 +4,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.service.UserService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +70,19 @@ public class UserController {
 
         userService.updatePassword(passwordUpdateReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "비밀번호를 수정하였습니다.");
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<MyPageResponse> openMyPage(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        MyPageResponse myPageRes = userService.openMyPage(userDetails.getUser());
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "마이페이지를 가져왔습니다.",
+            myPageRes
+        );
     }
 
 }
