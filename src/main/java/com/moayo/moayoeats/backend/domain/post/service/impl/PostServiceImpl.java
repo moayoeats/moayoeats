@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.backend.domain.post.service.impl;
 
+import com.moayo.moayoeats.backend.domain.chat.service.ChatRoomService;
 import com.moayo.moayoeats.backend.domain.order.entity.Order;
 import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
@@ -45,6 +46,7 @@ public class PostServiceImpl implements PostService {
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
     private final UserRepository userRepository;//Test
+    private final ChatRoomService chatRoomService;
 
 
     @Override
@@ -60,6 +62,9 @@ public class PostServiceImpl implements PostService {
 
         //save the post
         postRepository.save(post);
+
+        //create chatRoom
+        chatRoomService.createRoom(post.getId());
 
         //Build new relation between the post and the user
         UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
@@ -133,6 +138,7 @@ public class PostServiceImpl implements PostService {
             .forEach(publishEventToEachParticipants());
 
         userPostRepository.deleteAll(userPosts);
+        chatRoomService.deleteRoom(post.getId());
         postRepository.delete(post);
     }
 
