@@ -1,6 +1,8 @@
 package com.moayo.moayoeats.backend.domain.user.service.impl;
 
+import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
@@ -11,6 +13,7 @@ import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -45,6 +48,30 @@ public class UserServiceImpl implements UserService {
         User user = checkNotExistUser(email);
         checkMatchPassword(password, user.getPassword());
         return jwtUtil.createToken(email);
+    }
+
+    @Transactional
+    public void updateInfo(InfoUpdateRequest infoUpdateReq, User user) {
+        String nickname = infoUpdateReq.nickname();
+        String password = infoUpdateReq.password();
+
+        checkMatchPassword(password, user.getPassword());
+        user.updateInfo(nickname);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updatePassword(PasswordUpdateRequest passwordUpdateReq, User user) {
+
+        String newPassword = passwordEncoder.encode(passwordUpdateReq.newPassword());
+        String checkPassword = passwordUpdateReq.checkPassword();
+        String password = passwordUpdateReq.password();
+
+        checkMatchPassword(password, user.getPassword()); // 원래 비밀번호에 대한 확인
+        checkMatchPassword(checkPassword, newPassword); // 새로 설정할 비밀번호에 대한 확인
+
+        user.updatePassword(newPassword);
+        userRepository.save(user);
     }
 
     private void checkAlreadyExistUser(String email) {

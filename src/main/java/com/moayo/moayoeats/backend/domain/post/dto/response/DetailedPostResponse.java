@@ -8,6 +8,8 @@ import lombok.Builder;
 @Builder
 public record DetailedPostResponse(
     String address,
+    Double latitude,
+    Double longitude,
     String store,
     Integer minPrice,
     Integer deliveryCost,

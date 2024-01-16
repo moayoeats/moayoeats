@@ -118,6 +118,16 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.OK.value(), "글에서 나가기 되었습니다.");
     }
 
+    //수령 완료
+    @DeleteMapping("/posts/received")
+    public ApiResponse<Void> receiveOrder(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @Valid @RequestBody PostIdRequest postIdReq
+    ) {
+        postService.receiveOrder(postIdReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "수령완료 처리가 되었습니다.");
+    }
+
     //Test
     @PostMapping("/test/posts")
     public ApiResponse<Void> createPostTest(
@@ -125,6 +135,15 @@ public class PostController {
     ) {
         postService.createPostTest(postReq);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
+    }
+
+    //Test
+    @GetMapping("/test/posts/{postId}")
+    public ApiResponse<DetailedPostResponse> getPostTest(
+        @PathVariable(name = "postId") Long postId
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
+            postService.getPostTest(postId));
     }
 
 }
