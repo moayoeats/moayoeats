@@ -155,8 +155,14 @@ public class PostServiceImpl implements PostService {
         if (post.getPostStatus() != PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
-        //delete all menus which are not made by participants
+
         List<Menu> menus = menuRepository.findAllByPost(post);
+        //check if sumPrice>minPrice
+        if (getSumPrice(userPosts,menus)< post.getMinPrice()) {
+            throw new GlobalException(PostErrorCode.LOWER_THAN_MINIMUM_PRICE);
+        }
+
+        //delete all menus which are not made by participants
         for(Menu menu : menus){
             boolean hasRelation = false;
             for(UserPost userPost:userPosts){
