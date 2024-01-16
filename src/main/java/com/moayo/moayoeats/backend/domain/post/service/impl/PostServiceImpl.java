@@ -127,6 +127,13 @@ public class PostServiceImpl implements PostService {
         if (post.getPostStatus() != PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
+
+        //참가자들에게 알림
+        userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT)
+            .stream()
+            .map(UserPost::getUser)
+            .forEach(publishEventToEachParticipants());
+
         post.closeApplication();
         postRepository.save(post);
     }
