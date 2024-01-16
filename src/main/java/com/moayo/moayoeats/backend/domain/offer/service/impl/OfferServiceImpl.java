@@ -102,6 +102,10 @@ public class OfferServiceImpl implements OfferService {
             .role(UserPostRole.PARTICIPANT)
             .build();
 
+        //해당 참가자한테 알림
+        User participant = userRepository.findByOfferId(offerId);
+        publisher.publishEvent(new Event(participant, NotificationType.PARTICIPANT_APPROVED));
+
         userPostRepository.save(userPost);
         offerRepository.delete(offer);
     }
