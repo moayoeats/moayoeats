@@ -75,10 +75,17 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
 
-        return DetailedPostResponse.builder().address(post.getAddress()).store(post.getStore())
-            .minPrice(post.getMinPrice()).deliveryCost(post.getDeliveryCost())
-            .menus(getNickMenus(userPosts)).sumPrice(getSumPrice(getUserPostsByPost(post), post))
-            .deadline(getDeadline(post)).build();
+        return DetailedPostResponse.builder()
+            .longitude(post.getLongitude())
+            .latitude(post.getLatitude())
+            .address(post.getAddress())
+            .store(post.getStore())
+            .minPrice(post.getMinPrice())
+            .deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts))
+            .sumPrice(getSumPrice(userPosts, post))
+            .deadline(getDeadline(post))
+            .build();
     }
 
     @Override
@@ -351,6 +358,24 @@ public class PostServiceImpl implements PostService {
 
         //save the relation
         userPostRepository.save(userpost);
+    }
+
+    @Override
+    public DetailedPostResponse getPostTest(Long postId) {
+        Post post = getPostById(postId);
+        List<UserPost> userPosts = getUserPostsByPost(post);
+
+        return DetailedPostResponse.builder()
+            .longitude(post.getLongitude())
+            .latitude(post.getLatitude())
+            .address(post.getAddress())
+            .store(post.getStore())
+            .minPrice(post.getMinPrice())
+            .deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts))
+            .sumPrice(getSumPrice(userPosts, post))
+            .deadline(getDeadline(post))
+            .build();
     }
 
 }

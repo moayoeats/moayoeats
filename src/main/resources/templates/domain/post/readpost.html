@@ -1,0 +1,111 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+        name="viewport">
+  <title>글 상세페이지</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv"
+          type="text/javascript"></script>
+</head>
+<body>
+<div style="padding:10px;width:1000px; height:max-content">
+  <div id="field" style="width:1000px; height:min-content;"></div>
+  <div>모인 메뉴</div>
+  <div id="menus" style="width:1000px; height:min-content;"></div>
+</div>
+<div style="padding:10px;width:1000px;height:min-content;">
+  <div>주소</div>
+  <div id="map" style="width:100%; height:500px;"></div>
+</div>
+<script th:inline="javascript">
+
+  $(document).ready(function () {
+    getData();
+  });
+
+  function getData() {
+
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/test/posts/[[${postId}]]`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+        latitude = response.data.latitude;
+        longitude = response.data.longitude
+
+        deadline = response.data.deadline;
+        deliveryCost = response.data.deliveryCost;
+        minPrice = response.data.minPrice;
+        store = response.data.store;
+        sumPrice = response.data.sumPrice;
+        nickmenus = response.data.menus;
+
+        drawMap(latitude, longitude);
+
+        drawField(store,sumPrice,minPrice,deliveryCost,minPrice,deadline);
+
+        drawMenus(nickmenus);
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function drawMap(lat, lng) {
+    var map = new naver.maps.Map('map', {
+      center: new naver.maps.LatLng(lat, lng),
+      zoom: 15
+    });
+
+    var marker = new naver.maps.Marker({
+      position: new naver.maps.LatLng(lat, lng),
+      map: map
+    });
+  }
+
+  function drawField(store,sumPrice,minPrice,deliveryCost,minPrice,deadline) {
+    var temp = `
+<div>
+  <div>가게</div>
+  <div>${store}</div>
+  <div>합계 금액</div>
+  <div>${sumPrice}</div>
+  <div>최소주문금액</div>
+  <div>${minPrice}</div>
+  <div>배달비</div>
+  <div>${deliveryCost}</div>
+  <div>마감 기한</div>
+  <div>${deadline}</div>
+ </div>
+`
+    $('#field').append(temp)
+  }
+  function drawMenus(nickmenus) {
+    nickmenus.forEach((nickmenu,index)=>
+        $('#menus').append(
+            `
+            <div>닉네임</div>
+  <div id = ${index}>${nickmenu.nickname}</div>
+            `
+        )
+    )
+    nickmenus.forEach((nickmenu,index)=>
+        nickmenu.menus.forEach(
+            (menu)=>
+                $(`#${index}`).append(
+                    `<div>${menu.menuname}</div>
+                     <div>${menu.price}</div>`
+                )
+        )
+    )
+  }
+
+</script>
+
+</body>
+</html>

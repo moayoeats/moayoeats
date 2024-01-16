@@ -137,4 +137,13 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
+    //Test
+    @GetMapping("/test/posts/{postId}")
+    public ApiResponse<DetailedPostResponse> getPostTest(
+        @PathVariable(name = "postId") Long postId
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
+            postService.getPostTest(postId));
+    }
+
 }
