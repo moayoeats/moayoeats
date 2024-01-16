@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>모아요이츠 | 회원가입</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+<div id="sign-up-form">
+  <div>
+    <div>이메일</div>
+    <input type="email" name="email" id="email" class="sing-up-input">
+
+    <div>비밀번호</div>
+    <input type="password" name="password" id="password" class="sing-up-input">
+
+    <div>비밀번호 확인</div>
+    <input type="input" name="password-check" id="password-check" class="sing-up-input">
+
+    <div>닉네임</div>
+    <input type="input" name="nickname" id="nickname" class="sing-up-input">
+
+    <button id="social-sign-up-submit" onclick="">소셜 회원가입</button>
+    <button id="sign-up-submit" onclick="signup()">회원가입</button>
+  </div>
+</div>
+</body>
+
+<script>
+  const host = 'http://' + window.location.host;
+
+  function signup() {
+    let email = $('#email').val();
+    let password = $('#password').val();
+    let checkPassword = $('#password-check').val();
+    let nickname = $('#nickname').val();
+
+    $.ajax({
+      type: "POST",
+      url: `/api/v1/users/sign-up`,
+      contentType: "application/json",
+      data: JSON.stringify({
+        email: email,
+        password: password,
+        checkPassword: checkPassword,
+        nickname: nickname
+      }),
+    })
+    .done(function (res, status, xhr) {
+      if (res.status === 201) {
+        alert(res.message);
+        window.location.href = host + '/api/v1/login';
+      } else if (res.status === 400) {
+        alert(res.data);
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+      }
+    })
+    .fail(function (jqXHR, testStatus) {
+      alert("요청에 실패하였습니다.");
+      window.location.href = host + '/api/v1/sign-up-page?error'
+    });
+  }
+</script>
+</html>
