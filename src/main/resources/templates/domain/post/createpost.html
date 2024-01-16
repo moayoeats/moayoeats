@@ -2,24 +2,85 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-        name="viewport">
+  <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+      name="viewport">
+  <!-- Bootstrap CSS -->
+  <link crossorigin="anonymous"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        rel="stylesheet">
+  <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
   <title>글 작성하기</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv&submodules=geocoder"
-          type="text/javascript"></script>
+  <script
+      src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv&submodules=geocoder"
+      type="text/javascript"></script>
 </head>
 <body>
-<div class="card-body">
-  <input class="form-control" id="store" placeholder="가게" type="text">
-  <input class="form-control" id="minPrice" placeholder="최소주문금액" type="text">
-  <input class="form-control" id="deliveryCost" placeholder="배달비" type="text">
-  <input class="form-control" id="deadlineMins" placeholder="마감시간 시간" type="text">
-  <input class="form-control" id="deadlineHours" placeholder="마감시간 분" type="text">
-</div>
-<button class="btn btn-outline-secondary" onclick="sendData()" type="button">작성 완료</button>
 
-<div id="map" style="width:100%; height:800px;"></div>
+<div style="padding:10px;width:1000px; height:max-content; margin:auto">
+  <h1>글 작성하기</h1>
+  <div class="card-body">
+    <div class="input-group mb-3">
+      <span class="input-group-text">가게</span>
+      <input aria-describedby="inputGroup-sizing-default" aria-label="Sizing example input"
+             class="form-control" id="store"
+             type="text">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">최소주문금액</span>
+      <input aria-describedby="inputGroup-sizing-default" aria-label="Sizing example input"
+             class="form-control" id="minPrice"
+             type="text">
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text">배달비</span>
+      <input aria-describedby="inputGroup-sizing-default" aria-label="Sizing example input"
+             class="form-control" id="deliveryCost"
+             type="text">
+    </div>
+    <div class="input-group">
+      <span class="input-group-text">마감시간</span>
+      <input aria-label="시간" placeholder="시간" class="form-control" id="deadlineHours"
+             type="text">
+      <input aria-label="분" placeholder="분" class="form-control" id="deadlineMins" type="text">
+    </div>
+    <div>카테고리 선택</div>
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" name="btnradio" onclick="etc()" id="else" autocomplete="off" checked>
+      <label class="btn btn-outline-secondary" for="else">기타</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="burger()" id="burger" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="burger">버거</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="chicken()" id="chicken" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="korean()" id="korean" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="korean">한식</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="western()" id="western" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="western">양식</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="asian()" id="asian" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="asian">아시안</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="snack()" id="snack" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="snack">분식</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="japanese()" id="japanese" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="japanese">일식</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="chinese()" id="chinese" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chinese">중식</label>
+      <input type="radio" class="btn-check" name="btnradio" onclick="lunchbox()" id="lunchbox" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+    </div>
+
+  </div>
+
+  <div style="padding:10px;width:1000px; height:max-content; margin:auto">
+    <div>지도를 클릭해서 장소를 지정해 주세요!</div>
+    <div id="map" padding = "10px"; style="width:1000px; height:450px;"></div>
+    <button class="btn btn-outline-secondary" onclick="sendData()" type="button">작성 완료</button>
+  </div>
+
+  </div>
+</div>
 
 <script th:inline="javascript">
   var map = new naver.maps.Map("map", {
@@ -29,6 +90,7 @@
       infoWindow = null;
 
   var latlng;
+  var categoryEnum;
 
   function initGeocoder() {
     latlng = map.getCenter();
@@ -59,6 +121,7 @@
     let deliveryCost = $('#deliveryCost').val();
     let deadlineMins = $('#deadlineMins').val();
     let deadlineHours = $('#deadlineHours').val();
+    let category = categoryEnum;
     $.ajax({
       type: 'POST',
       url: "/api/v1/test/posts",
@@ -70,7 +133,8 @@
         minPrice: minPrice,
         deliveryCost: deliveryCost,
         deadlineMins: deadlineMins,
-        deadlineHours: deadlineHours
+        deadlineHours: deadlineHours,
+        category: category
       }),
       success: function (response) {
         console.log('Success:', response);
@@ -79,6 +143,37 @@
         console.error('Error:', error);
       }
     });
+  }
+
+  function etc(){
+    categoryEnum = null;
+  }
+  function burger(){
+    categoryEnum = "BURGER";
+  }
+  function chicken(){
+    categoryEnum = "CHICKEN";
+  }
+  function korean(){
+    categoryEnum = "KOREAN";
+  }
+  function western(){
+    categoryEnum = "WESTERN";
+  }
+  function asian(){
+    categoryEnum = "ASIAN";
+  }
+  function snack(){
+    categoryEnum = "SNACK";
+  }
+  function japanese(){
+    categoryEnum = "JAPANESE";
+  }
+  function chinese(){
+    categoryEnum = "CHINESE";
+  }
+  function lunchbox(){
+    categoryEnum = "LUNCHBOX";
   }
 </script>
 
