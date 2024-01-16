@@ -13,17 +13,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class PostFrontController {
 
     @GetMapping("/test/createpost")
-    public String createPostPage(){
+    public String createPostPage() {
         return "domain/post/createpost";
     }
 
     @GetMapping("/test/readpost/{postId}")
-    //@RequestMapping(value = "postId", method = RequestMethod.GET)
-    public String readpostPage(
-        @PathVariable(name = "postId") Long postId
-    ){
+    public String readpostPage(@PathVariable(name = "postId") Long postId) {
         ModelAndView mav = new ModelAndView("postId");
-        mav.addObject("postId",postId);
+        mav.addObject("postId", postId);
         return "domain/post/readpost";
     }
 }
