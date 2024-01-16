@@ -31,10 +31,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;  
-import com.moayo.moayoeats.backend.domain.notification.event.Event;
-import java.util.function.Consumer;
-import org.springframework.context.ApplicationEventPublisher;
+import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
+import com.moayo.moayoeats.backend.domain.notification.event.Event;
+import java.util.function.Consumer;
+import org.springframework.context.ApplicationEventPublisher;
 
 @RequiredArgsConstructor
 @Service
