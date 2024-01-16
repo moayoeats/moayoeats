@@ -1,32 +1,28 @@
 package com.moayo.moayoeats.backend.domain.post.service.impl;
 
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
-import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
-import com.moayo.moayoeats.backend.domain.post.entity.Post;
-import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
-import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
-import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
-import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
-import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
-import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
-import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostIdRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
-import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
-import com.moayo.moayoeats.backend.domain.post.service.PostService;
-import com.moayo.moayoeats.backend.domain.user.entity.User;
-import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
-import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
-import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
-import com.moayo.moayoeats.backend.domain.userpost.exception.UserPostErrorCode;
-import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
-import com.moayo.moayoeats.backend.global.exception.GlobalException;
-import java.time.LocalDateTime;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.moayo.moayoeats.backend.domain.menu.dto.response.*;
+import com.moayo.moayoeats.backend.domain.menu.entity.*;
+import com.moayo.moayoeats.backend.domain.menu.repository.*;
+import com.moayo.moayoeats.backend.domain.notification.entity.*;
+import com.moayo.moayoeats.backend.domain.notification.event.*;
+import com.moayo.moayoeats.backend.domain.post.dto.request.*;
+import com.moayo.moayoeats.backend.domain.post.dto.response.*;
+import com.moayo.moayoeats.backend.domain.post.entity.*;
+import com.moayo.moayoeats.backend.domain.post.exception.*;
+import com.moayo.moayoeats.backend.domain.post.repository.*;
+import com.moayo.moayoeats.backend.domain.post.service.*;
+import com.moayo.moayoeats.backend.domain.user.entity.*;
+import com.moayo.moayoeats.backend.domain.user.repository.*;
+import com.moayo.moayoeats.backend.domain.userpost.entity.*;
+import com.moayo.moayoeats.backend.domain.userpost.exception.*;
+import com.moayo.moayoeats.backend.domain.userpost.repository.*;
+import com.moayo.moayoeats.backend.global.exception.*;
+import java.time.*;
+import java.util.*;
+import java.util.function.*;
+import lombok.*;
+import org.springframework.context.*;
+import org.springframework.stereotype.*;
 
 @RequiredArgsConstructor
 @Service
@@ -35,6 +31,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserPostRepository userPostRepository;
     private final MenuRepository menuRepository;
+    private final ApplicationEventPublisher publisher;
     private final UserRepository userRepository;//Test
 
 
@@ -92,7 +89,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user) {
         //get all posts filtered by search keyword
-        List<Post> posts = postRepository.findPostByStoreContaining(postSearchReq.keyword()).orElse(null);
+        List<Post> posts = postRepository.findPostByStoreContaining(postSearchReq.keyword())
+            .orElse(null);
         //List<Post> -> List<BriefPostResponse>
         return postsToBriefResponses(posts);
     }
@@ -109,6 +107,12 @@ public class PostServiceImpl implements PostService {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
 
+        //참가자들에게 알림
+        userPosts.stream()
+            .filter(userPost -> userPost.getRole().equals(UserPostRole.PARTICIPANT))
+            .map(UserPost::getUser)
+            .forEach(publishEventToEachParticipants());
+
         userPostRepository.deleteAll(userPosts);
         postRepository.delete(post);
     }
@@ -118,9 +122,9 @@ public class PostServiceImpl implements PostService {
         //check if there is a post with the post id
         Post post = getPostById(postIdReq.postId());
         //check if the user is the host of the post
-        checkIfHost(user,post);
+        checkIfHost(user, post);
         //check if the status is OPEN
-        if(post.getPostStatus()!=PostStatusEnum.OPEN){
+        if (post.getPostStatus() != PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
         post.closeApplication();
@@ -132,11 +136,12 @@ public class PostServiceImpl implements PostService {
         //check if there is a post with the post id
         Post post = getPostById(postIdReq.postId());
         //check if the user is the host of the post
-        checkIfHost(user,post);
+        checkIfHost(user, post);
         //check the status
-        if(post.getPostStatus()==PostStatusEnum.OPEN){
+        if (post.getPostStatus() == PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.CLOSE_FIRST);
-        }else if(post.getPostStatus()==PostStatusEnum.ORDERED||post.getPostStatus()==PostStatusEnum.RECEIVED){
+        } else if (post.getPostStatus() == PostStatusEnum.ORDERED
+            || post.getPostStatus() == PostStatusEnum.RECEIVED) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_COMPLETED_ORDER);
         }
         post.completeOrder();
@@ -146,10 +151,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
-        UserPost userPost = userPostRepository.findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT).orElseThrow(()->
+        UserPost userPost = userPostRepository.findByPostAndUserAndRoleEquals(post, user,
+            UserPostRole.PARTICIPANT).orElseThrow(() ->
             new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
         );
-        menuRepository.deleteAll(getUserMenus(user,post));
+        menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
     }
 
@@ -219,27 +225,29 @@ public class PostServiceImpl implements PostService {
         return menuRepository.findAllByUserAndPost(user, post);
     }
 
-    private void checkIfHost(User user, Post post){
-        if(!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(), UserPostRole.HOST)){
+    private void checkIfHost(User user, Post post) {
+        if (!userPostRepository.existsByUserIdAndPostIdAndRole(user.getId(), post.getId(),
+            UserPostRole.HOST)) {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
     }
 
     //Test
-    public void createPostTest(PostRequest postReq){
+    public void createPostTest(PostRequest postReq) {
         //set fake user
         Long l = 1L;
         User user = userRepository.findById(l).orElse(null);
 
         //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins()).plusHours(postReq.deadlineHours());
+        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
+            .plusHours(postReq.deadlineHours());
 
         //get latitude and longitude from the coordinate
         String address = postReq.address();
-        address = address.replace("(lat:","");
-        address = address.replace("lng:","");
-        address = address.replace(")","");
-        String [] location = address.split(",");
+        address = address.replace("(lat:", "");
+        address = address.replace("lng:", "");
+        address = address.replace(")", "");
+        String[] location = address.split(",");
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
@@ -268,6 +276,11 @@ public class PostServiceImpl implements PostService {
 
         //save the relation
         userPostRepository.save(userpost);
+    }
+
+    private Consumer<User> publishEventToEachParticipants() {
+        return participant -> publisher.publishEvent(
+            new Event(participant, NotificationType.MEETING_DELETED));
     }
 
 }
