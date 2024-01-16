@@ -33,6 +33,9 @@ public class Review extends BaseTime {
     private Integer score;
 
     @Column
+    private Integer count;
+
+    @Column
     private Integer goodmanner;
 
     @Column
@@ -55,5 +58,56 @@ public class Review extends BaseTime {
 
     @Column
     private Integer badmanner;
+
+    public Review(User user) {
+        this.user = user;
+        this.score = 0;
+        this.count = 0;
+        this.goodmanner = 0;
+        this.goodtime = 0;
+        this.goodcomm = 0;
+        this.badtime = 0;
+        this.noshow = 0;
+        this.nomoney = 0;
+        this.badcomm = 0;
+        this.badmanner = 0;
+    }
+
+    public void increaseScoreAndCount(ScoreEnum scoreEnum) {
+        this.score += scoreEnum.getScore();
+        this.count += 1;
+    }
+
+    public void increaseGoodmanner() {
+        this.goodmanner++;
+    }
+
+    public void increaseGoodtime() {
+        this.goodtime++;
+    }
+
+    public void increaseGoodcomm() {
+        this.goodcomm++;
+    }
+
+    public void increaseBadtime() {
+        this.badtime++;
+    }
+
+    public void increaseNoshow() {
+        this.noshow++;
+    }
+
+    public void increaseNomoney() {
+        this.nomoney++;
+    }
+
+    public void increaseBadcomm() {
+        this.badcomm++;
+    }
+
+    public void increaseBadmanner() {
+        this.badmanner++;
+    }
 
 }

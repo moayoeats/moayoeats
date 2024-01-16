@@ -1,5 +1,7 @@
 package com.moayo.moayoeats.backend.domain.offer.service.impl;
 
+import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
+import com.moayo.moayoeats.backend.domain.notification.event.Event;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
@@ -22,6 +24,7 @@ import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class OfferServiceImpl implements OfferService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final UserPostRepository userPostRepository;
+    private final ApplicationEventPublisher publisher;
 
     public void applyParticipation(OfferRelatedPostRequest offerRelatedPostReq, User user) {
         Long userId = user.getId();
@@ -47,6 +51,10 @@ public class OfferServiceImpl implements OfferService {
             .post(post)
             .user(findUser)
             .build();
+
+        //방장에게 알림
+        User targetHost = userPostRepository.findByPostIdAndRole(postId, UserPostRole.HOST);
+        publisher.publishEvent(new Event(targetHost, NotificationType.PARTICIPANT_JOIN_REQUEST));
 
         offerRepository.save(offer);
     }
@@ -94,6 +102,10 @@ public class OfferServiceImpl implements OfferService {
             .role(UserPostRole.PARTICIPANT)
             .build();
 
+        //해당 참가자한테 알림
+        User participant = offerRepository.findByOfferId(offerId);
+        publisher.publishEvent(new Event(participant, NotificationType.PARTICIPANT_APPROVED));
+
         userPostRepository.save(userPost);
         offerRepository.delete(offer);
     }
@@ -104,6 +116,10 @@ public class OfferServiceImpl implements OfferService {
 
         Offer offer = checkIfOfferExistsAndGet(offerId);
         checkIfNotHostAndThrowException(userId, offer.getPost().getId());
+
+        //해당 참가자한테 알림
+        User participant = offerRepository.findByOfferId(offerId);
+        publisher.publishEvent(new Event(participant, NotificationType.PARTICIPANT_REJECTED));
 
         offerRepository.delete(offer);
     }
