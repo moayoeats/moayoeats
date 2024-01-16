@@ -138,8 +138,10 @@
       }),
       success: function (response) {
         console.log('Success:', response);
+        alert(response.message);
       },
-      error: function (error) {
+      error: function (error,response) {
+        alert(response.message);
         console.error('Error:', error);
       }
     });
