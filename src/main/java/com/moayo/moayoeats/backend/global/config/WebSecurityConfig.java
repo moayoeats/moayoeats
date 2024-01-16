@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                 .permitAll() // resources 접근 허용 설정
                 .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
                 .requestMatchers("/api/v1/login-page").permitAll() // 메인 페이지 요청 허가
+                .requestMatchers("/api/v1/sign-up-page").permitAll() // 메인 페이지 요청 허가
                 .requestMatchers("/api/v1/users/sign-up/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
