@@ -47,6 +47,9 @@ public class Post {
     private Integer minPrice;
 
     @Column(nullable = false)
+    private Boolean amountIsSatisfied;
+
+    @Column(nullable = false)
     private Integer deliveryCost;
 
     @Column
@@ -71,10 +74,12 @@ public class Post {
 
     @Builder
     public Post(String address, String store, Integer minPrice, Integer deliveryCost,
-        CategoryEnum category, LocalDateTime deadline,PostStatusEnum postStatus , Double latitude, Double longitude) {
+        CategoryEnum category, LocalDateTime deadline, PostStatusEnum postStatus, Double latitude,
+        Double longitude) {
         this.address = address;
         this.store = store;
         this.minPrice = minPrice;
+        this.amountIsSatisfied = false;
         this.deliveryCost = deliveryCost;
         this.deadline = deadline;
         this.category = category;
@@ -84,11 +89,11 @@ public class Post {
     }
 
     @Transactional
-    public void dismissMenu(Menu menu){
+    public void dismissMenu(Menu menu) {
         this.menus.remove(menu);
     }
 
-    public void closeApplication(){
+    public void closeApplication() {
         this.postStatus = PostStatusEnum.CLOSED;
     }
 
@@ -96,4 +101,7 @@ public class Post {
         this.postStatus = PostStatusEnum.ORDERED;
     }
 
+    public void changeAmountGoalStatus() {
+        this.amountIsSatisfied = !amountIsSatisfied;
+    }
 }
