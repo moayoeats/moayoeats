@@ -122,4 +122,13 @@ public class ReviewServiceImpl implements ReviewService {
             .build();
     }
 
+    public int getAvgScore(User user) {
+
+        Review review = findReviewByUser(user);
+        if (review.getCount() == 0) {
+            return 0;
+        }
+        return review.getScore() / review.getCount();
+    }
+
 }

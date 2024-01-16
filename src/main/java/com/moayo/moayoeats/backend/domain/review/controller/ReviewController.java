@@ -55,10 +55,15 @@ public class ReviewController {
     }
 
     @GetMapping("/score")
-    public void getScore(
+    public ApiResponse<Integer> getScore(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "평점을 가져왔습니다.",
+            reviewService.getAvgScore(userDetails.getUser())
+        );
     }
 
 }
