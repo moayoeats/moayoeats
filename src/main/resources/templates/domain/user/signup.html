@@ -49,7 +49,7 @@
     .done(function (res, status, xhr) {
       if (res.status === 201) {
         alert(res.message);
-        window.location.href = host + '/api/v1/login';
+        window.location.href = host + '/login';
       } else if (res.status === 400) {
         alert(res.data);
       } else {
@@ -58,7 +58,7 @@
     })
     .fail(function (jqXHR, testStatus) {
       alert("요청에 실패하였습니다.");
-      window.location.href = host + '/api/v1/sign-up-page?error'
+      window.location.href = host + '/signup?error'
     });
   }
 </script>
