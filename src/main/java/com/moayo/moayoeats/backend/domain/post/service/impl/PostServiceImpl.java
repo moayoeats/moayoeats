@@ -264,14 +264,21 @@ public class PostServiceImpl implements PostService {
         throw new GlobalException(UserPostErrorCode.NOT_FOUND_HOST);
     }
 
-    private int getSumPrice(List<UserPost> userposts, Post post) {
+    private int getSumPrice(List<UserPost> userposts, Post post){
+        List<Menu> menus = menuRepository.findAllByPost(post);
+        return getSumPrice(userposts, menus);
+    }
+
+    private int getSumPrice(List<UserPost> userposts, List<Menu> menus) {
         int sumPrice = 0;
 
         //add all prices from the menus from the users who are participating/hosting a post
-        for (UserPost userpost : userposts) {
-            List<Menu> menus = getUserMenus(userpost.getUser(), post);
-            for (Menu menu : menus) {
-                sumPrice += menu.getPrice();
+        for(Menu menu: menus){
+            for(UserPost userpost : userposts){
+                if(userpost.getUser().getId().equals(menu.getUser().getId())){
+                    sumPrice += menu.getPrice();
+                    break;
+                }
             }
         }
 
