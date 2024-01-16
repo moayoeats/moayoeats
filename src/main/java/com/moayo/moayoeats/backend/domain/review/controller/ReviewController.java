@@ -21,7 +21,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰를 작성할 Order들 조회하기
-    @GetMapping("/reviews")
+    @GetMapping("")
     public ApiResponse<List<OrderResponse>> getOrders(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
