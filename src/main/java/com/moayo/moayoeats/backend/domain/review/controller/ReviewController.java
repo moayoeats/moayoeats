@@ -54,4 +54,11 @@ public class ReviewController {
         );
     }
 
+    @GetMapping("/score")
+    public void getScore(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+    }
+
 }
