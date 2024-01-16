@@ -1,7 +1,6 @@
 package com.moayo.moayoeats.backend.domain.review.controller;
 
 import com.moayo.moayoeats.backend.domain.order.dto.response.OrderResponse;
-import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.review.dto.request.ReviewRequest;
 import com.moayo.moayoeats.backend.domain.review.service.ReviewService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
@@ -38,8 +37,15 @@ public class ReviewController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody ReviewRequest reviewReq
     ) {
-        reviewService.review(reviewReq,userDetails.getUser());
+        reviewService.review(reviewReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "리뷰를 성공적으로 전송했습니다.");
+    }
+
+    @GetMapping("/all")
+    public void getReviews(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
     }
 
 }
