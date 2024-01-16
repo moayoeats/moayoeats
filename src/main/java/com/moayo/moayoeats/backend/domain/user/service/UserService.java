@@ -4,6 +4,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 
 public interface UserService {
@@ -31,4 +32,9 @@ public interface UserService {
      */
     void updatePassword(PasswordUpdateRequest passwordUpdateReq, User user);
 
+    /**
+     * @param user : 해당 계정으로 로그인한 사용자
+     * @return : 마이페이지 열람 응답 dto
+     */
+    MyPageResponse openMyPage(User user);
 }

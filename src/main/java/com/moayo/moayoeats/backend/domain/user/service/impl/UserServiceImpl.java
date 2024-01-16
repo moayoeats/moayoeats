@@ -1,9 +1,11 @@
 package com.moayo.moayoeats.backend.domain.user.service.impl;
 
+import com.moayo.moayoeats.backend.domain.review.service.impl.ReviewServiceImpl;
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -22,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final ReviewServiceImpl reviewServiceImpl;
 
     public void signup(SignupRequest signupReq) {
         String email = signupReq.email();
@@ -72,6 +75,16 @@ public class UserServiceImpl implements UserService {
 
         user.updatePassword(newPassword);
         userRepository.save(user);
+    }
+
+    public MyPageResponse openMyPage(User user) {
+
+        User existUser = checkNotExistUser(user.getEmail());
+        return MyPageResponse.builder()
+            .nickname(existUser.getNickname())
+            .email(existUser.getEmail())
+            .pastOrderList(reviewServiceImpl.getOrders(existUser))
+            .build();
     }
 
     private void checkAlreadyExistUser(String email) {
