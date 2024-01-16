@@ -57,7 +57,17 @@ public class MenuServiceImpl implements MenuService {
     public void deleteMenu(MenuDeleteRequest menuDeleteReq, User user) {
         Menu menu = findMenuById(menuDeleteReq.menuId(), user);
         checkIfPostIsClosed(menu.getPost());
+
         menuRepository.delete(menu);
+
+        //모인금액이 목표가격 미만일 시, 방장에 알림
+        int sumPrice = getSumPrice(menu.getPost());
+        if (sumPrice < menu.getPost().getMinPrice() && menu.getPost().getAmountIsSatisfied()) {
+            menu.getPost().changeAmountGoalStatus(); //포스트의 amountIsSatisfied를 false로 변경
+            User targetHost = userPostRepository.findByPostIdAndRole(menu.getPost().getId(),
+                UserPostRole.HOST);
+            publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
+        }
     }
 
     @Override
