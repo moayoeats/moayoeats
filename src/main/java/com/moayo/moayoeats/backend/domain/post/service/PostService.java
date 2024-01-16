@@ -71,7 +71,15 @@ public interface PostService {
      */
     public void exit(PostIdRequest postIdReq, User user);
 
+    /**
+     *
+     * @param postIdReq : postId
+     * @param user : 주문완료 처리를 하려는 참가자
+     */
+    public void receiveOrder(PostIdRequest postIdReq, User user );
+
     //Test
     public void createPostTest(PostRequest postReq);
+    public DetailedPostResponse getPostTest(Long postId);
 
 }

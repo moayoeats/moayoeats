@@ -1,19 +1,10 @@
 package com.moayo.moayoeats.backend.domain.offer.entity;
 
-import com.moayo.moayoeats.backend.domain.post.entity.Post;
-import com.moayo.moayoeats.backend.domain.user.entity.User;
-import com.moayo.moayoeats.backend.global.entity.BaseTime;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.moayo.moayoeats.backend.domain.post.entity.*;
+import com.moayo.moayoeats.backend.domain.user.entity.*;
+import com.moayo.moayoeats.backend.global.entity.*;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,9 +17,11 @@ public class Offer extends BaseTime {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @Builder

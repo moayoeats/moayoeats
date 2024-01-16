@@ -10,4 +10,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     List<Menu> findAllByUserAndPost(User user, Post post);
 
+    List<Menu> findAllByPost(Post post);
+
 }
