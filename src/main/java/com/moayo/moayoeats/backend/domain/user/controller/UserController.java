@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +69,14 @@ public class UserController {
 
         userService.updatePassword(passwordUpdateReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "비밀번호를 수정하였습니다.");
+    }
+
+    @GetMapping("/me")
+    public void openMyPage(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+
     }
 
 }
