@@ -75,6 +75,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<BriefPostResponse> getPostsForAnyone() {
+        List<Post> posts = findAll();
+        return postsToBriefResponses(posts);
+    }
+
+    @Override
     public List<BriefPostResponse> getPosts(User user) {
         List<Post> posts = findAll();
         return postsToBriefResponses(posts);

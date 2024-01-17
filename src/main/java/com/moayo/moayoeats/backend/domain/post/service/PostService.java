@@ -16,9 +16,14 @@ public interface PostService {
      */
     void createPost(PostRequest postReq, User user);
 
+    /** 인증정보 없이 전체 글 조회
+     * @return Lists of brief information about the post
+     */
+    List<BriefPostResponse> getPostsForAnyone();
+
     /**
      * @param user : login info to sort posts by current location
-     * @return Lists of brief informations about the post
+     * @return Lists of brief information about the post
      */
     List<BriefPostResponse> getPosts(User user);
 
