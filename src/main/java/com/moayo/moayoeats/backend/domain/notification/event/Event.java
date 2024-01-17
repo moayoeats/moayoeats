@@ -12,10 +12,4 @@ public record Event(
     NotificationType notificationType
 ) {
 
-    public static Event formWith(User user, NotificationType type) {
-        return Event.builder()
-            .user(user)
-            .notificationType(type)
-            .build();
-    }
 }
