@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.chat.controlloer;
 
-import com.moayo.moayoeats.backend.domain.chat.dto.ChatMessage;
+import com.moayo.moayoeats.backend.domain.chat.dto.ChatMessageDTO;
+import com.moayo.moayoeats.backend.domain.chat.service.ChatMessageService;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,28 +16,30 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatController {
 
+    private final ChatMessageService chatMessageService;
+
     @MessageMapping("/chats/join")
     @SendTo("/sub/chats/room/{postId}")
-    public ChatMessage join(
+    public ChatMessageDTO join(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @DestinationVariable(value = "postId") Long postId
     ) {
         String username = userDetails.getUsername();
 
-        return new ChatMessage(postId, username + "님이 입장하셨습니다.", username);
+        return chatMessageService.saveChatMessage(postId, username + "님이 입장하셨습니다.", username);
     }
 
     @MessageMapping("/chats/message")
     @SendTo("/sub/chats/room/{postId}")
-    public ChatMessage message(
+    public ChatMessageDTO message(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @DestinationVariable(value = "postId") Long postId,
-        ChatMessage message
+        ChatMessageDTO message
     ) {
         String username = userDetails.getUsername();
         String formattedContent = username + " : " + message.content();
 
-        return new ChatMessage(postId, formattedContent, username);
+        return chatMessageService.saveChatMessage(postId, formattedContent, username);
     }
 
 }

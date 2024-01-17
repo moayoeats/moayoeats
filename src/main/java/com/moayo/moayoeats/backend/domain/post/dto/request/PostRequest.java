@@ -7,10 +7,13 @@ import jakarta.validation.constraints.NotNull;
 
 public record PostRequest(
 
-    @NotBlank String address, @NotBlank String store, @NotNull Integer minPrice,
+    @NotBlank String address,
+    @NotBlank String store,
+    @NotNull Integer minPrice,
     @NotNull Integer deliveryCost,
 
-    @NotNull @Max(59) Integer deadlineMins, @NotNull @Max(3) Integer deadlineHours,
+    @NotNull @Max(59) Integer deadlineMins,
+    @NotNull @Max(3) Integer deadlineHours,
     CategoryEnum category
 
 ) {

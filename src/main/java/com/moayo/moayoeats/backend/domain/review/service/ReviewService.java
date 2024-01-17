@@ -24,11 +24,11 @@ public interface ReviewService {
      * @param user : 조회되는 마이페이지의 주인
      * @return : ReviewResponse
      */
-    ReviewResponse getReviews(User user);
+    //ReviewResponse getReviews(User user);
 
     /**
      * @param user : 조회되는 마이페이지의 주인
      * @return : user의 평점
      */
-    int getAvgScore(User user);
+    //int getAvgScore(User user);
 }

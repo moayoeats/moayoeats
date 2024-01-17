@@ -25,7 +25,6 @@
 
   function login() {
     let email = $('#email').val();
-    let login = $('#login-submit');
     let password = $('#password').val();
 
     $.ajax({
@@ -53,7 +52,7 @@
     })
     .fail(function (jqXHR, textStatus) {
       alert("요청에 실패하였습니다.");
-      window.location.href = host + '/api/user/login-page?error'
+      window.location.href = host + '/login?error'
     });
   }
 </script>
