@@ -50,12 +50,12 @@ public class ReviewServiceImpl implements ReviewService {
     public void review(ReviewRequest reviewReq, User user) {
         Order order = findOrderById(reviewReq.orderId());
         //check if the receiver exists, to clarify that the review hasn't been made, not because the user doesn't exist
-        if(!order.getUser().getId().equals(user.getId())){
+        if (!order.getUser().getId().equals(user.getId())) {
             throw new GlobalException(OrderErrorCode.FORBIDDEN_ACCESS);
         }
         User receiver = order.getReceiver();
         checkIfUserExists(receiver.getId());
-        updateScore(reviewReq.score(),receiver);
+        updateScore(reviewReq.score(), receiver);
         updateReview(reviewReq, receiver);
         orderRepository.delete(order);
     }
@@ -71,25 +71,25 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    private void updateScore(ScoreEnum scoreEnum, User user){
+    private void updateScore(ScoreEnum scoreEnum, User user) {
         Score score = findScoreByUser(user);
         score.update(scoreEnum);
         scoreRepository.save(score);
     }
 
-    private Score findScoreByUser(User user){
+    private Score findScoreByUser(User user) {
         return scoreRepository.findByUser(user).orElse(new Score(user));
     }
 
     private Review findReviewByContent(List<Review> reviews, ReviewEnum content, User user) {
         //get Review when exists, make a new one when not
-        for(Review review : reviews){
-            if(review.getContent().equals(content)){
+        for (Review review : reviews) {
+            if (review.getContent().equals(content)) {
                 reviews.remove(review);
                 return review;
             }
         }
-        return new Review(user,content);
+        return new Review(user, content);
     }
 
     private void updateReview(ReviewRequest reviewReq, User receiver) {
@@ -98,50 +98,59 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> updated = new ArrayList<>();
 
         if (reviewReq.goodmanner()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.GOODMANNER,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.GOODMANNER, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.goodcomm()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.GOODCOMM,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.GOODCOMM, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.goodtime()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.GOODTIME,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.GOODTIME, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.badtime()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.BADTIME,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.BADTIME, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.noshow()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.NOSHOW,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.NOSHOW, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.nomoney()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.NOMONEY,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.NOMONEY, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.badcomm()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.BADCOMM,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.BADCOMM, receiver);
             review.increaseCount();
             updated.add(review);
         }
         if (reviewReq.badmanner()) {
-            Review review = findReviewByContent(reviews,ReviewEnum.BADMANNER,receiver);
+            Review review = findReviewByContent(reviews, ReviewEnum.BADMANNER, receiver);
             review.increaseCount();
             updated.add(review);
         }
         reviewRepository.saveAll(updated);
     }
 
-    public void getReviews(User user) {
+    public ReviewResponse getReviews(User user) {
+        List<Review> reviews = reviewRepository.findAllByUser(user);
+        Map<String, Integer> reviewMap = new HashMap<>();
 
+        for (Review review : reviews) {
+            reviewMap.put(review.getContent().getComment(), review.getCount());
+        }
+
+        return ReviewResponse.builder()
+            .reviews(reviewMap)
+            .build();
     }
 
 }
