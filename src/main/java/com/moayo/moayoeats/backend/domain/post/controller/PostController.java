@@ -40,6 +40,14 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
+    // 인증정보 없이 모든 글 조회하기
+    @GetMapping("/readonly/posts")
+    public ApiResponse<List<BriefPostResponse>> getPostsForAnyone() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
+            postService.getPostsForAnyone());
+    }
+
+
     // 모든 글 조회하기
     @GetMapping("/posts")
     public ApiResponse<List<BriefPostResponse>> getPosts(
