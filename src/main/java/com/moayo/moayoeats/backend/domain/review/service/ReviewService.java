@@ -25,4 +25,10 @@ public interface ReviewService {
      * @return : ReviewResponse
      */
     ReviewResponse getReviews(User user);
+
+    /**
+     * @param user : 조회되는 마이페이지의 주인
+     * @return : 평점(Double)
+     */
+    Double getAvgScore(User user);
 }

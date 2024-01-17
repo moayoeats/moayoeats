@@ -141,6 +141,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     public ReviewResponse getReviews(User user) {
+
         List<Review> reviews = reviewRepository.findAllByUser(user);
         Map<String, Integer> reviewMap = new HashMap<>();
 
@@ -151,6 +152,17 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewResponse.builder()
             .reviews(reviewMap)
             .build();
+    }
+
+    public Double getAvgScore(User user) {
+
+        Score score = findScoreByUser(user);
+        double total = score.getTotal();
+        double count = score.getCount();
+        if (count == 0) {
+            return 0.0;
+        }
+        return total / count;
     }
 
 }
