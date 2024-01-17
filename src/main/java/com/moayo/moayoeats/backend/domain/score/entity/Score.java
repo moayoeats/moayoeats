@@ -1,10 +1,8 @@
-package com.moayo.moayoeats.backend.domain.review.entity;
+package com.moayo.moayoeats.backend.domain.score.entity;
 
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,15 +11,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "tb_review")
-public class Review {
+@Table(name = "tb_score")
+public class Score {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,20 +29,19 @@ public class Review {
     private User user;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private ReviewEnum content;
+    private Integer total;
 
     @Column
     private Integer count;
 
-    @Builder
-    public Review(User user, ReviewEnum content) {
+    public Score(User user) {
         this.user = user;
-        this.content = content;
+        this.total = 0;
         this.count = 0;
     }
 
-    public void increaseCount(){
+    public void update(ScoreEnum score){
+        this.total += score.getScore();
         this.count++;
     }
 

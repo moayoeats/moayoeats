@@ -1,4 +1,4 @@
-package com.moayo.moayoeats.backend.domain.review.entity;
+package com.moayo.moayoeats.backend.domain.score.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
