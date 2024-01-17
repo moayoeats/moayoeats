@@ -5,6 +5,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.service.UserService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
@@ -87,11 +88,18 @@ public class UserController {
     }
 
     @GetMapping("/profile/{otherUserId}")
-    public void openOtherUserPage(
+    public ApiResponse<OtherUserPageResponse> openOtherUserPage(
         @PathVariable Long otherUserId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
+        OtherUserPageResponse otherUserPageRes =
+            userService.openOtherUserPage(otherUserId, userDetails.getUser());
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "다른사람 페이지를 가져왔습니다.",
+            otherUserPageRes
+        );
     }
 
 }

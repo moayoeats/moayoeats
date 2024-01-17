@@ -6,6 +6,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -86,6 +87,22 @@ public class UserServiceImpl implements UserService {
             .score(reviewServiceImpl.getAvgScore(existUser))
             .reviews(reviewServiceImpl.getReviews(existUser))
             .pastOrderList(reviewServiceImpl.getOrders(existUser))
+            .build();
+    }
+
+    public OtherUserPageResponse openOtherUserPage(Long otherUserId, User user) {
+
+        if (!userRepository.existsByEmail(user.getEmail())) {
+            throw new GlobalException(UserErrorCode.NOT_EXIST_USER);
+        }
+
+        User otherUser = userRepository.findById(otherUserId)
+            .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
+
+        return OtherUserPageResponse.builder()
+            .nickname(otherUser.getNickname())
+            .score(reviewServiceImpl.getAvgScore(otherUser))
+            .reviews(reviewServiceImpl.getReviews(otherUser))
             .build();
     }
 
