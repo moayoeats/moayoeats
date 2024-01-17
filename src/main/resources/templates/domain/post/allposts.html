@@ -1,0 +1,74 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+      name="viewport">
+  <title>글 전체페이지</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+<div style="padding:10px;width:1000px; height:max-content">
+  <div id="posts" style="width:1000px; height:min-content;"></div>
+</div>
+<script th:inline="javascript">
+
+  $(document).ready(function () {
+    getData();
+  });
+
+  function getData() {
+
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/readonly/posts`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+
+        drawAllPosts(response.data);
+
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function drawAllPosts(data) {
+    data.forEach((post) =>
+        $('#posts').append(
+            `
+              <div style="padding:10px;width:1000px; height:max-content; margin:auto">
+                <div>작성자</div>
+                <div>${post.author}</div>
+                <div>가게</div>
+                <div>${post.store}</div>
+                <div>합계 금액</div>
+                <div>${post.sumPrice}</div>
+                <div>최소주문금액</div>
+                <div>${post.minPrice}</div>
+                <div>마감 기한</div>
+                <div>${post.deadline}</div>
+                <button id = "${post.id}" post = "${post.id}"  class="btn btn-outline-secondary" onclick="sendData(this)" type="button">조회</button>
+              </div>
+            `
+        )
+    )
+  }
+
+  function sendData(button) {
+
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+
+    window.location.href = host + `/moayo/readpost/${postId}`;
+
+  }
+
+</script>
+
+</body>
+</html>
