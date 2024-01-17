@@ -130,6 +130,10 @@ public class PostServiceImpl implements PostService {
         if (!host.getId().equals(user.getId())) {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
+        //check the status of the post
+        if(post.getPostStatus()==PostStatusEnum.ORDERED||post.getPostStatus()==PostStatusEnum.RECEIVED){
+            throw new GlobalException(PostErrorCode.CANNOT_CLOSE_AFTER_ORDERED);
+        }
 
         //참가자들에게 알림
         userPosts.stream()

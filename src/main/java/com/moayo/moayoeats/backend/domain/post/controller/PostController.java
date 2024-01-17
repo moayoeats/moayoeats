@@ -78,14 +78,14 @@ public class PostController {
             postService.searchPost(postSearchReq, userDetails.getUser()));
     }
 
-    //글 삭제하기
+    //모집 취소하기
     @DeleteMapping("/posts")
     public ApiResponse<Void> deletePost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody PostIdRequest postIdReq
     ) {
         postService.deletePost(postIdReq, userDetails.getUser());
-        return new ApiResponse<>(HttpStatus.OK.value(), "글 삭제 성공했습니다.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "모집 취소에 성공했습니다.");
     }
 
     //모집 마감
