@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,6 +84,14 @@ public class UserController {
             "마이페이지를 가져왔습니다.",
             myPageRes
         );
+    }
+
+    @GetMapping("/profile/{otherUserId}")
+    public void openOtherUserPage(
+        @PathVariable Long otherUserId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
     }
 
 }
