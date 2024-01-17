@@ -1,10 +1,10 @@
 package com.moayo.moayoeats.backend.domain.notification.event;
 
-import com.moayo.moayoeats.backend.domain.notification.entity.*;
-import com.moayo.moayoeats.backend.domain.notification.repository.*;
-import lombok.*;
-import org.springframework.context.event.*;
-import org.springframework.stereotype.*;
+import com.moayo.moayoeats.backend.domain.notification.entity.Notification;
+import com.moayo.moayoeats.backend.domain.notification.repository.NotificationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
