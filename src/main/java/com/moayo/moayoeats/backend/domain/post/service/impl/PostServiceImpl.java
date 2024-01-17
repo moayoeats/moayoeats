@@ -1,23 +1,25 @@
 package com.moayo.moayoeats.backend.domain.post.service.impl;
 
 import com.moayo.moayoeats.backend.domain.chat.service.ChatRoomService;
-import com.moayo.moayoeats.backend.domain.order.entity.Order;
-import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
-import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
-import com.moayo.moayoeats.backend.domain.post.entity.Post;
-import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
-import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
-import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
 import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
+import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
+import com.moayo.moayoeats.backend.domain.notification.event.Event;
+import com.moayo.moayoeats.backend.domain.order.entity.Order;
+import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
+import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
+import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
+import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
+import com.moayo.moayoeats.backend.domain.post.entity.Post;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
+import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
+import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -29,12 +31,10 @@ import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
-import com.moayo.moayoeats.backend.domain.notification.event.Event;
 import java.util.function.Consumer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -149,33 +149,39 @@ public class PostServiceImpl implements PostService {
         //check if the user is the host of the post
         List<UserPost> userPosts = getUserPostsByPost(post);
         User host = getAuthor(userPosts);
-        checkIfHost(user,host);
+        checkIfHost(user, host);
 
         //check if the status is OPEN
         if (post.getPostStatus() != PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
-        //delete all menus which are not made by participants
+
         List<Menu> menus = menuRepository.findAllByPost(post);
-        for(Menu menu : menus){
+        //check if sumPrice>minPrice
+        if (getSumPrice(userPosts, menus) < post.getMinPrice()) {
+            throw new GlobalException(PostErrorCode.LOWER_THAN_MINIMUM_PRICE);
+        }
+
+        //delete all menus which are not made by participants
+        for (Menu menu : menus) {
             boolean hasRelation = false;
-            for(UserPost userPost:userPosts){
-                if(userPost.getUser().getId().equals(menu.getUser().getId())){
+            for (UserPost userPost : userPosts) {
+                if (userPost.getUser().getId().equals(menu.getUser().getId())) {
                     hasRelation = true;
                     break;
                 }
             }
-            if(!hasRelation){
+            if (!hasRelation) {
                 menuRepository.delete(menu);
             }
         }
-      
+
         //참가자들에게 알림
         userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT)
             .stream()
             .map(UserPost::getUser)
             .forEach(publishEventToEachParticipants());
-      
+
         post.closeApplication();
         postRepository.save(post);
     }
@@ -200,8 +206,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
-        UserPost userPost = getUserPostIfParticipant(user,post);
-        menuRepository.deleteAll(getUserMenus(user,post));
+        UserPost userPost = getUserPostIfParticipant(user, post);
+        menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
     }
 
@@ -223,10 +229,10 @@ public class PostServiceImpl implements PostService {
         orderRepository.save(hostOrder);
 
         //remove menus from the post
-        List<Menu> menus = getUserMenus(user,post);
-        menus.forEach(menu->menuRepository.save(menu.receive(order)));
+        List<Menu> menus = getUserMenus(user, post);
+        menus.forEach(menu -> menuRepository.save(menu.receive(order)));
 
-        if(userPosts.size()<=2){
+        if (userPosts.size() <= 2) {
             userPostRepository.deleteAll(userPosts);
             postRepository.delete(post);
             return;
@@ -235,7 +241,7 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    private Order makeOrder(Post post, User receiver, User user, UserPostRole role){
+    private Order makeOrder(Post post, User receiver, User user, UserPostRole role) {
         return Order.builder()
             .receiver(receiver)
             .user(user)
@@ -265,13 +271,20 @@ public class PostServiceImpl implements PostService {
     }
 
     private int getSumPrice(List<UserPost> userposts, Post post) {
+        List<Menu> menus = menuRepository.findAllByPost(post);
+        return getSumPrice(userposts, menus);
+    }
+
+    private int getSumPrice(List<UserPost> userposts, List<Menu> menus) {
         int sumPrice = 0;
 
         //add all prices from the menus from the users who are participating/hosting a post
-        for (UserPost userpost : userposts) {
-            List<Menu> menus = getUserMenus(userpost.getUser(), post);
-            for (Menu menu : menus) {
-                sumPrice += menu.getPrice();
+        for (Menu menu : menus) {
+            for (UserPost userpost : userposts) {
+                if (userpost.getUser().getId().equals(menu.getUser().getId())) {
+                    sumPrice += menu.getPrice();
+                    break;
+                }
             }
         }
 
@@ -317,26 +330,27 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    private void checkIfHost(User user, User host){
-        if(!user.getId().equals(host.getId())){
+    private void checkIfHost(User user, User host) {
+        if (!user.getId().equals(host.getId())) {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
     }
 
-    private UserPost getUserPostByUserIfParticipant(User user, List<UserPost> userPosts){
-        for(UserPost userPost : userPosts){
-            if(userPost.getRole().equals(UserPostRole.HOST)){
+    private UserPost getUserPostByUserIfParticipant(User user, List<UserPost> userPosts) {
+        for (UserPost userPost : userPosts) {
+            if (userPost.getRole().equals(UserPostRole.HOST)) {
                 continue;
             }
-            if(user.getId().equals(userPost.getUser().getId())){
+            if (user.getId().equals(userPost.getUser().getId())) {
                 return userPost;
             }
         }
         throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT);
     }
 
-    private UserPost getUserPostIfParticipant(User user, Post post){
-        return userPostRepository.findByPostAndUserAndRoleEquals(post, user, UserPostRole.PARTICIPANT).orElseThrow(()->
+    private UserPost getUserPostIfParticipant(User user, Post post) {
+        return userPostRepository.findByPostAndUserAndRoleEquals(post, user,
+            UserPostRole.PARTICIPANT).orElseThrow(() ->
             new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
         );
     }
@@ -404,8 +418,8 @@ public class PostServiceImpl implements PostService {
             .deadline(getDeadline(post))
             .build();
     }
-  
-      private Consumer<User> publishEventToEachParticipants() {
+
+    private Consumer<User> publishEventToEachParticipants() {
         return participant -> publisher.publishEvent(
             new Event(participant, NotificationType.MEETING_DELETED));
     }
