@@ -1,8 +1,8 @@
 package com.moayo.moayoeats.backend.domain.review.controller;
 
 import com.moayo.moayoeats.backend.domain.order.dto.response.OrderResponse;
-import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.review.dto.request.ReviewRequest;
+import com.moayo.moayoeats.backend.domain.review.dto.response.ReviewResponse;
 import com.moayo.moayoeats.backend.domain.review.service.ReviewService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -38,8 +38,32 @@ public class ReviewController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody ReviewRequest reviewReq
     ) {
-        reviewService.review(reviewReq,userDetails.getUser());
+        reviewService.review(reviewReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "리뷰를 성공적으로 전송했습니다.");
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<ReviewResponse> getReviews(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "리뷰를 가져왔습니다.",
+            reviewService.getReviews(userDetails.getUser())
+        );
+    }
+
+    @GetMapping("/score")
+    public ApiResponse<Double> getScore(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        return new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "평점을 가져왔습니다.",
+            reviewService.getAvgScore(userDetails.getUser())
+        );
     }
 
 }
