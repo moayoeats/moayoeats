@@ -27,16 +27,14 @@ public class NotificationServiceImpl implements NotificationService {
             .orElseThrow(() -> new GlobalException(
                 UserErrorCode.NOT_EXIST_USER));
 
-        List<Notification> notifications = notificationRepository.findAllByUserId(
+        List<NotificationsResponse> notificationsRes = new ArrayList<>();
+        List<Notification> notifications = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(
             targetUser.getId());
-        List<NotificationsResponse> NotificationsRes = new ArrayList<>();
-        notifications.sort(((o1, o2) -> o2.getCreatedAt()
-            .compareTo(o1.getCreatedAt())));
         for (Notification notification : notifications) {
-            NotificationsRes.add(NotificationsResponse.formWith(notification));
+            notificationsRes.add(NotificationsResponse.formWith(notification));
         }
 
-        return NotificationsRes;
+        return notificationsRes;
     }
 
 }
