@@ -1,7 +1,7 @@
 package com.moayo.moayoeats.backend.global.config;
 
 
-import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.security.jwt.JwtUtil;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
 import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +64,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers("/api/v1/test/**").permitAll()
+                .requestMatchers("/api/v1/readonly/**").permitAll()//글 조회시 인증정보 없이 읽을때
+                .requestMatchers("/moayo/**").permitAll()//프론트
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
