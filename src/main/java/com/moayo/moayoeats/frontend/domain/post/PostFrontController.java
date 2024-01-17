@@ -9,18 +9,24 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/moayo")
 public class PostFrontController {
 
-    @GetMapping("/test/createpost")
+    @GetMapping("/createpost")
     public String createPostPage() {
         return "domain/post/createpost";
     }
 
-    @GetMapping("/test/readpost/{postId}")
+    @GetMapping("/readpost/{postId}")
     public String readpostPage(@PathVariable(name = "postId") Long postId) {
         ModelAndView mav = new ModelAndView("postId");
         mav.addObject("postId", postId);
         return "domain/post/readpost";
+    }
+
+    //인증정보 없이 글 전체조회
+    @GetMapping("/allposts")
+    public String readAllPosts() {
+        return "domain/post/allposts";
     }
 }
