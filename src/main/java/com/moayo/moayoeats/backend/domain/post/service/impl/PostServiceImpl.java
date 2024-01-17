@@ -207,6 +207,9 @@ public class PostServiceImpl implements PostService {
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
         UserPost userPost = getUserPostIfParticipant(user, post);
+        if(post.getPostStatus()!= PostStatusEnum.OPEN){
+            throw new GlobalException(PostErrorCode.CANNOT_EXIT_AFTER_CLOSED);
+        }
         menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
     }
