@@ -55,7 +55,7 @@ public class ReviewController {
     }
 
     @GetMapping("/score")
-    public ApiResponse<Integer> getScore(
+    public ApiResponse<Double> getScore(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
