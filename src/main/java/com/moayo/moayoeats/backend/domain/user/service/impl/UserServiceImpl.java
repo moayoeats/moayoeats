@@ -83,6 +83,8 @@ public class UserServiceImpl implements UserService {
         return MyPageResponse.builder()
             .nickname(existUser.getNickname())
             .email(existUser.getEmail())
+            .score(reviewServiceImpl.getAvgScore(existUser))
+            .reviews(reviewServiceImpl.getReviews(existUser))
             .pastOrderList(reviewServiceImpl.getOrders(existUser))
             .build();
     }
