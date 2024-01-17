@@ -15,6 +15,7 @@ import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
+import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
@@ -43,13 +44,10 @@ public class MenuServiceImpl implements MenuService {
 
         menuRepository.save(menu);
 
-        //모인금액이 목표가격 이상일 시, 방장에 알림
         int sumPrice = getSumPrice(post);
+        //모인금액이 목표가격을 충족하고, 게시글이 목표금액을 달성하지 않은 상태일 때 방장에 알림
         if (sumPrice >= post.getMinPrice() && !post.getAmountIsSatisfied()) {
-            post.changeAmountGoalStatus(); //포스트의 amountIsSatisfied를 true로 변경
-            User targetHost = userPostRepository.findByPostIdAndRole(post.getId(),
-                UserPostRole.HOST);
-            publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
+            publishEventToHostAndChagePostStatus(post);
         }
     }
 
@@ -59,14 +57,11 @@ public class MenuServiceImpl implements MenuService {
         checkIfPostIsClosed(menu.getPost());
 
         menuRepository.delete(menu);
-
-        //모인금액이 목표가격 미만일 시, 방장에 알림
+        
         int sumPrice = getSumPrice(menu.getPost());
+        //모인금액이 목표가격의 미만이고, 게시글이 목표금액을 달성한 상태일 때 방장에 알림
         if (sumPrice < menu.getPost().getMinPrice() && menu.getPost().getAmountIsSatisfied()) {
-            menu.getPost().changeAmountGoalStatus(); //포스트의 amountIsSatisfied를 false로 변경
-            User targetHost = userPostRepository.findByPostIdAndRole(menu.getPost().getId(),
-                UserPostRole.HOST);
-            publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
+            publishEventToHostAndChagePostStatus(menu.getPost());
         }
     }
 
@@ -102,13 +97,25 @@ public class MenuServiceImpl implements MenuService {
 
     private int getSumPrice(Post post) {
         int sumPrice = 0;
-
-        //add all prices from the menus from the users who are participating/hosting a post
+        List<UserPost> userPosts = userPostRepository.findAllByPost(post);
         List<Menu> menus = menuRepository.findAllByPost(post);
-        for (Menu m : menus) {
-            sumPrice += m.getPrice();
+        //add all prices from the menus from the users who are participating/hosting a post
+        for (Menu menu : menus) {
+            for (UserPost userPost : userPosts) {
+                if (userPost.getUser().getId().equals(menu.getUser().getId())) {
+                    sumPrice += menu.getPrice();
+                    break;
+                }
+            }
         }
         return sumPrice;
+    }
+
+    private void publishEventToHostAndChagePostStatus(Post post) {
+        post.changeAmountGoalStatus(); //게시글의 목표금액 충족상태 변경
+        User targetHost = userPostRepository.findByPostIdAndRole(post.getId(),
+            UserPostRole.HOST);
+        publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
     }
 
 }
