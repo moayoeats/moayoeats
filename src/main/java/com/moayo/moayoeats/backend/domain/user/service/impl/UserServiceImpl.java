@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         String email = loginReq.email();
         String password = loginReq.password();
 
-        User user = checkNotExistUser(email);
+        User user = findByUserEmail(email);
         checkMatchPassword(password, user.getPassword());
         return jwtUtil.createToken(email);
     }
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     public MyPageResponse openMyPage(User user) {
 
-        User existUser = checkNotExistUser(user.getEmail());
+        User existUser = findByUserEmail(user.getEmail());
         return MyPageResponse.builder()
             .nickname(existUser.getNickname())
             .email(existUser.getEmail())
@@ -92,12 +92,8 @@ public class UserServiceImpl implements UserService {
 
     public OtherUserPageResponse openOtherUserPage(Long otherUserId, User user) {
 
-        if (!userRepository.existsByEmail(user.getEmail())) {
-            throw new GlobalException(UserErrorCode.NOT_EXIST_USER);
-        }
-
-        User otherUser = userRepository.findById(otherUserId)
-            .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
+        checkNotExistUser(user);
+        User otherUser = findByUserId(otherUserId);
 
         return OtherUserPageResponse.builder()
             .nickname(otherUser.getNickname())
@@ -113,7 +109,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User checkNotExistUser(String email) {
+    private void checkNotExistUser(User user) {
+
+        if (!userRepository.existsByEmail(user.getEmail())) {
+            throw new GlobalException(UserErrorCode.NOT_EXIST_USER);
+        }
+    }
+
+    private User findByUserId(Long otherUserId) {
+
+        return userRepository.findById(otherUserId)
+            .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
+    }
+
+    private User findByUserEmail(String email) {
 
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new GlobalException(UserErrorCode.NOT_EXIST_USER));
