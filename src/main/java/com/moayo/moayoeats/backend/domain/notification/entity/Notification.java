@@ -2,10 +2,19 @@ package com.moayo.moayoeats.backend.domain.notification.entity;
 
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.global.entity.BaseTime;
-import com.moayo.moayoeats.backend.domain.user.entity.*;
-import jakarta.persistence.*;
-import java.time.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,19 +29,16 @@ public class Notification extends BaseTime {
     private NotificationType fieldName;
     @Column(nullable = false)
     private String content;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public Notification(NotificationType notificationType, String content, LocalDateTime createdAt,
+    public Notification(NotificationType notificationType, String content,
         User user) {
         this.fieldName = notificationType;
         this.content = content;
-        this.createdAt = createdAt;
         this.user = user;
     }
 }
