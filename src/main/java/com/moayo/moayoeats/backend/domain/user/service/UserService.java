@@ -5,6 +5,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 
 public interface UserService {
@@ -37,4 +38,11 @@ public interface UserService {
      * @return : 마이페이지 열람 응답 dto
      */
     MyPageResponse openMyPage(User user);
+
+    /**
+     * @param otherUserId : 로그인한 사용자가 아닌 다른 유저
+     * @param user        : 해당 계정으로 로그인한 사용자
+     * @return : 다른 사람페이지 열람 응답 dto
+     */
+    OtherUserPageResponse openOtherUserPage(Long otherUserId, User user);
 }
