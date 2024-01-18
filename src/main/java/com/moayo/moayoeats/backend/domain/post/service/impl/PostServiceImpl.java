@@ -229,7 +229,6 @@ public class PostServiceImpl implements PostService {
         userPostRepository.delete(userPost);
     }
 
-    @Transactional
     @Override
     public void receiveOrder(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
@@ -240,32 +239,40 @@ public class PostServiceImpl implements PostService {
         User host = getAuthor(userPosts);
 
         //make order for me to review
-        Order order = makeOrder(post, host, user, UserPostRole.PARTICIPANT);
-        orderRepository.save(order);
+        Order order = makeAndSaveOrder(post, host, user, UserPostRole.PARTICIPANT);
         //make order for host to review
-        Order hostOrder = makeOrder(post, user, host, UserPostRole.HOST);
-        orderRepository.save(hostOrder);
+        Order hostOrder = makeAndSaveOrder(post, user, host, UserPostRole.HOST);
 
-        //remove menus from the post
-        List<Menu> menus = getUserMenus(user, post);
-        menus.forEach(menu -> menuRepository.save(menu.receive(order)));
+        //relate the order with the menus
+        relateOrderWithMenus(user,post,order);
 
         if (userPosts.size() <= 2) {
+            post.allReceived();
+            relateOrderWithMenus(host,post,hostOrder);
             userPostRepository.deleteAll(userPosts);
             postRepository.delete(post);
             return;
         }
         userPostRepository.delete(userpost);
-
     }
 
-    private Order makeOrder(Post post, User receiver, User user, UserPostRole role) {
-        return Order.builder()
+    private void relateOrderWithMenus(User user,Post post,Order order){
+        List<Menu> menus = getUserMenus(user, post);
+        for(Menu menu : menus){
+            menu = menu.receive(order);
+        }
+        menuRepository.saveAll(menus);
+    }
+
+    private Order makeAndSaveOrder(Post post, User receiver, User user, UserPostRole role) {
+        Order order = Order.builder()
             .receiver(receiver)
             .user(user)
             .store(post.getStore())
             .senderRole(role)
             .build();
+        orderRepository.save(order);
+        return order;
     }
 
     private List<Post> findAll() {
