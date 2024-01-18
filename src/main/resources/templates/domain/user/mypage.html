@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <div th:replace="/domain/header :: header"></div>
+  <div th:replace="/global/header :: header"></div>
 </head>
 <header>
-  <div th:replace="/domain/navbar :: navbar"></div>
+  <div th:replace="/global/navbar :: navbar"></div>
 </header>
 <body>
 <div>
@@ -29,20 +29,13 @@
     </div>
     <div id="my-review">
       받은 리뷰
-      <div id="reviews">
 
-      </div>
     </div>
   </div>
 
   <div id="my-order-info">
     과거 주문정보
-    <div id="pastOrderList">
 
-    </div>
-    <button type="button" class="btn btn-secondary" id="review-submit" onclick="createReview()">
-      리뷰 남기기
-    </button>
   </div>
 </div>
 
