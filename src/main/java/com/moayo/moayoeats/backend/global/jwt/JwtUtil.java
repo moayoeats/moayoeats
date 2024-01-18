@@ -9,7 +9,12 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -56,13 +61,26 @@ public class JwtUtil {
                 .compact();
     }
 
-    // header 에서 JWT 가져오기
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
+    public void addJwtToCookie(String token, HttpServletResponse response) {
+        try {
+            // token을 utf-8형식으로 URL 인코딩하여 +를 %20으로 대체해줌.
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+
+            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
+            cookie.setPath("/"); // 쿠키를 반환할 경로 설정
+
+            response.addCookie(cookie); // 응답 데이터에 쿠키 추가
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
         }
-        return null;
+    }
+
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
+        }
+        log.error("Not Found Token");
+        throw new NullPointerException("Not Found Token");
     }
 
     // 토큰 검증
@@ -85,5 +103,24 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies(); // 요청에서 쿠키값 가져오기
+
+        if (cookies != null) { // 쿠키 값이 있으면
+            for (Cookie cookie : cookies) {
+                if (cookie.getName()
+                    .equals(AUTHORIZATION_HEADER)) { // 쿠키 이름이 AUTHORIZATION_HEADER와 일치하는지 확인
+                    try {
+                        return URLDecoder.decode(cookie.getValue(),
+                            "UTF-8"); // 일치하면 쿠키 값을 UTF-8로 디코딩
+                    } catch (UnsupportedEncodingException e) {
+                        return e.getMessage();
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
