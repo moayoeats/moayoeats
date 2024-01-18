@@ -29,7 +29,7 @@
 </div>
 </body>
 
-<script>
+<script th:inline="javascript">
   $(document).ready(function () {
     // 토큰 삭제
     Cookies.remove('Authorization', {path: '/'});
@@ -61,12 +61,10 @@
         $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
           console.log(token+"2");
           jqXHR.setRequestHeader('Authorization', token);
-
-
         });
 
         alert(res.message);
-        window.location.href = host + '/mypage';
+        window.location.replace(host + '/moayo/createpost');
       } else if (res.status === 400 || res.status === 404) {
         alert(res.message);
         window.location.href = host + '/login?error'
