@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/moayo")
+@RequestMapping(value = "")
 public class PostFrontController {
 
     @GetMapping("/createpost")
