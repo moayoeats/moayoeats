@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,7 +59,6 @@ public class Menu {
 
     public Menu receive(Order order){
         this.order = order;
-        this.post.dismissMenu(this);
         this.post = null;
         return this;
     }
