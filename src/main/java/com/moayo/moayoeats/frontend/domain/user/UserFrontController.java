@@ -17,4 +17,9 @@ public class UserFrontController {
     public String signupPage() {
         return "/domain/user/signup";
     }
+
+    @GetMapping("/mypage")
+    public String myPage() {
+        return "/domain/user/mypage";
+    }
 }

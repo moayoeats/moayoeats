@@ -31,26 +31,31 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenValue = jwtUtil.getJwtFromHeader(req);
+        String tokenValue = jwtUtil.getTokenFromRequest(req);
+        String url = req.getRequestURI();
 
-        if (StringUtils.hasText(tokenValue)) {
+        if ((url.startsWith("/api/v1/users") || (req.getMethod().equals("GET"))
+            || url.startsWith("/css") || url.startsWith("/js"))) {
+            filterChain.doFilter(req, res);
+        } else {
+            if (StringUtils.hasText(tokenValue)) {
+                tokenValue = jwtUtil.substringToken(tokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                return;
+                if (!jwtUtil.validateToken(tokenValue)) {
+                    log.error("Token Error");
+                    return;
+                }
+
+                Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+                try {
+                    setAuthentication(info.getSubject());
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    return;
+                }
             }
-
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
-            try {
-                setAuthentication(info.getSubject());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return;
-            }
+            filterChain.doFilter(req, res);
         }
-
-        filterChain.doFilter(req, res);
     }
 
     // 인증 처리
