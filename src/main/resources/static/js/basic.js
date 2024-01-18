@@ -1,8 +1,5 @@
-$(document).ready(function() {
-  console.log("************************* ");
-   const auth = getToken();
-  console.log("************************* " + auth);
-
+$(document).ready(function () {
+  const auth = getToken();
 
   if (auth !== undefined && auth !== '') {
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -13,9 +10,25 @@ $(document).ready(function() {
     window.location.href = host + '/login';
     return;
   }
-
-
 });
+
+function getToken() {
+
+  let auth = Cookies.get('Authorization');
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ " + auth);
+
+  if (auth === undefined) {
+    return '';
+  }
+
+  if (auth.indexOf('Bearer') === -1 && auth !== '') {
+    auth = 'Bearer ' + auth;
+  }
+
+  return auth;
+}
+
+// mypage ------------------------------------------------------
 function updateNickname() {
 
 }
@@ -24,34 +37,17 @@ function updatePw() {
 
 }
 
-function getToken() {
-
-  let auth = Cookies.get('Authorization');
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ " + auth);
-
-  if(auth === undefined) {
-    return '';
-  }
-
-  if(auth.indexOf('Bearer') === -1 && auth !== ''){
-    auth = 'Bearer ' + auth;
-  }
-
-  return auth;
-}
-
 function getMyPage() {
-    $.ajax({
-      type: "GET",
-      url: `/api/v1/users/me`,
-    })
-  .done(function(res, status, xhr) {
+  $.ajax({
+    type: "GET",
+    url: `/api/v1/users/me`,
+  })
+  .done(function (res, status, xhr) {
     let nickname = res.data.nickname;
     let email = res.data.email;
     let score = res.data.score;
     let reviews = res.data.reviews.reviews;
     let pastOrderList = res.data.pastOrderList;
-
 
     $('#nickname').text(nickname);
     $('#email').text(email);
@@ -60,4 +56,6 @@ function getMyPage() {
     $('#pastOrderList').text(pastOrderList);
 
   })
+// ---------------------------------------------------------------
+
 }
