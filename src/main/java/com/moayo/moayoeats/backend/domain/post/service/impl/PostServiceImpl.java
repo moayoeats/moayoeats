@@ -7,7 +7,6 @@ import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.notification.event.Event;
-import com.moayo.moayoeats.backend.domain.offer.repository.OfferRepository;
 import com.moayo.moayoeats.backend.domain.order.entity.Order;
 import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
@@ -50,7 +49,6 @@ public class PostServiceImpl implements PostService {
     private final ApplicationEventPublisher publisher;
     private final UserRepository userRepository;//Test
     private final ChatRoomService chatRoomService;
-    private final OfferRepository offerRepository;
 
 
     @Override
@@ -59,23 +57,43 @@ public class PostServiceImpl implements PostService {
         LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
             .plusHours(postReq.deadlineHours());
 
+        //get latitude and longitude from the coordinate
+        String address = postReq.address();
+        address = address.replace("(lat:", "");
+        address = address.replace("lng:", "");
+        address = address.replace(")", "");
+        String[] location = address.split(",");
+        double latitude = Double.valueOf(location[0]);
+        double longitude = Double.valueOf(location[1]);
+
         //Build new post with the post request dto
-        Post post = Post.builder().address(postReq.address()).store(postReq.store())
-            .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
-            .category(postReq.category()).postStatus(PostStatusEnum.OPEN).build();
+        Post post = Post.builder()
+            .address(address)
+            .latitude(latitude)
+            .longitude(longitude)
+            .store(postReq.store())
+            .deliveryCost(postReq.deliveryCost())
+            .minPrice(postReq.minPrice())
+            .deadline(deadline)
+            .category(postReq.category())
+            .postStatus(PostStatusEnum.OPEN)
+            .build();
 
         //save the post
         postRepository.save(post);
 
-        //create chatRoom
-        chatRoomService.createRoom(post.getId());
-
         //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
+        UserPost userpost = UserPost.builder()
+            .user(user)
+            .post(post)
+            .role(UserPostRole.HOST)
             .build();
 
         //save the relation
         userPostRepository.save(userpost);
+
+        //create chatRoom
+        chatRoomService.createRoom(post.getId());
     }
 
     @Override
@@ -189,9 +207,6 @@ public class PostServiceImpl implements PostService {
                 menuRepository.delete(menu);
             }
         }
-
-        //delete all offers to prevent approving offers after the post is closed, and reduce database searching time
-        offerRepository.deleteAll(offerRepository.findAllByPostId(post.getId()));
 
         //참가자들에게 알림
         userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT)
@@ -380,52 +395,6 @@ public class PostServiceImpl implements PostService {
             UserPostRole.PARTICIPANT).orElseThrow(() ->
             new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
         );
-    }
-
-    //Test
-    public void createPostTest(PostRequest postReq) {
-        //set fake user
-        Long l = 1L;
-        User user = userRepository.findById(l).orElse(null);
-
-        //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
-            .plusHours(postReq.deadlineHours());
-
-        //get latitude and longitude from the coordinate
-        String address = postReq.address();
-        address = address.replace("(lat:", "");
-        address = address.replace("lng:", "");
-        address = address.replace(")", "");
-        String[] location = address.split(",");
-        double latitude = Double.valueOf(location[0]);
-        double longitude = Double.valueOf(location[1]);
-
-        //Build new post with the post request dto
-        Post post = Post.builder()
-            .address(address)
-            .latitude(latitude)
-            .longitude(longitude)
-            .store(postReq.store())
-            .deliveryCost(postReq.deliveryCost())
-            .minPrice(postReq.minPrice())
-            .deadline(deadline)
-            .category(postReq.category())
-            .postStatus(PostStatusEnum.OPEN)
-            .build();
-
-        //save the post
-        postRepository.save(post);
-
-        //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder()
-            .user(user)
-            .post(post)
-            .role(UserPostRole.HOST)
-            .build();
-
-        //save the relation
-        userPostRepository.save(userpost);
     }
 
     @Override
