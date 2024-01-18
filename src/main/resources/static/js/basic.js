@@ -1,6 +1,5 @@
-$(document).ready(function() {
+$(document).ready(function () {
   const auth = getToken();
-
 
   if (auth !== undefined && auth !== '') {
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -11,9 +10,8 @@ $(document).ready(function() {
     window.location.href = host + '/login';
     return;
   }
-
-
 });
+
 function updateNickname() {
 
 }
@@ -26,11 +24,11 @@ function getToken() {
 
   let auth = Cookies.get('Authorization');
 
-  if(auth === undefined) {
+  if (auth === undefined) {
     return '';
   }
 
-  if(auth.indexOf('Bearer') === -1 && auth !== ''){
+  if (auth.indexOf('Bearer') === -1 && auth !== '') {
     auth = 'Bearer ' + auth;
   }
 
@@ -42,7 +40,7 @@ function getMyPage() {
     type: "GET",
     url: `/api/v1/users/me`,
   })
-  .done(function(res, status, xhr) {
+  .done(function (res, status, xhr) {
     let nickname = res.data.nickname;
     let email = res.data.email;
     let score = res.data.score;
@@ -53,10 +51,10 @@ function getMyPage() {
     $('#email').text(email);
     $('#score').text(score);
 
-    for(let review in reviews) {
+    for (let review in reviews) {
       $('#my-review').append(`
-        <div id="reviews">
-           ${review} <a class="review-count">${reviews[review]}</a>
+        <div class="review">
+           <div class="review-contents">${review}</div> <div class="review-count">${reviews[review]}</div>
         </div>
       `);
       console.log(review + " " + reviews[review]);
@@ -65,13 +63,18 @@ function getMyPage() {
     pastOrderList.forEach(order => {
       let menuList = order.menus.map(menu => menu.menuname).join('<br>');
       $('#my-order-info').append(`
-        <div>
-          <p>가게 이름: ${order.store}</p>
-          <p>수령인 이름: ${order.receiverName}</p>
-          <p>메뉴
-            <div>${menuList}</div>
-          </p>
-        </div>
+         <div class="past-order-pack">
+          <div class="past-order">
+            <div>가게 이름: ${order.store}</div>
+            <div>수령인 이름: ${order.receiverName}</div>
+            <div>메뉴
+              <div>${menuList}</div>
+            </div>
+          </div>
+            <button type="button" class="btn btn-secondary" id="review-submit" onclick="createReview()">
+              리뷰 남기기
+            </button>
+          </div>
       `);
     });
 
