@@ -34,29 +34,25 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String tokenValue = jwtUtil.getTokenFromRequest(req);
         String url = req.getRequestURI();
 
-        if ((url.startsWith("/api/v1/users") || (req.getMethod().equals("GET"))
-            || url.startsWith("/css") || url.startsWith("/js"))) {
-            filterChain.doFilter(req, res);
-        } else {
-            if (StringUtils.hasText(tokenValue)) {
-                tokenValue = jwtUtil.substringToken(tokenValue);
+        if (StringUtils.hasText(tokenValue)) {
+            tokenValue = jwtUtil.substringToken(tokenValue);
 
-                if (!jwtUtil.validateToken(tokenValue)) {
-                    log.error("Token Error");
-                    return;
-                }
-
-                Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-                try {
-                    setAuthentication(info.getSubject());
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    return;
-                }
+            if (!jwtUtil.validateToken(tokenValue)) {
+                log.error("Token Error");
+                return;
             }
-            filterChain.doFilter(req, res);
+
+            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            try {
+                setAuthentication(info.getSubject());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return;
+            }
         }
+        filterChain.doFilter(req, res);
     }
+//    }
 
     // 인증 처리
     public void setAuthentication(String username) {
