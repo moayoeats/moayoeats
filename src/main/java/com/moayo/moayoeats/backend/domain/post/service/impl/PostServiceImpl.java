@@ -30,10 +30,12 @@ import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -430,6 +432,28 @@ public class PostServiceImpl implements PostService {
             .sumPrice(getSumPrice(userPosts, post))
             .deadline(getDeadline(post))
             .build();
+    }
+
+    @Scheduled(fixedRate = 60000)//executed every 1 min
+    public void scheduledDelete() {
+        List<Post> posts = postRepository.findAll();
+        List<Post> pastDeadline = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (Post post : posts) {
+            //delete if the post hasn't been closed and past deadline
+            if (post.getPostStatus() == PostStatusEnum.OPEN) {
+                if (post.getDeadline().isBefore(now)) {
+                    pastDeadline.add(post);
+                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
+                }
+            } else {//delete if the post has closed but one more day has passed
+                if (post.getDeadline().plusDays(1).isBefore(now)) {
+                    pastDeadline.add(post);
+                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
+                }
+            }
+        }
+        postRepository.deleteAll(pastDeadline);
     }
 
     private Consumer<User> publishEventToEachParticipants() {
