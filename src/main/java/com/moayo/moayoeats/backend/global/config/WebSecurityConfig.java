@@ -1,7 +1,7 @@
 package com.moayo.moayoeats.backend.global.config;
 
 
-import com.moayo.moayoeats.backend.global.security.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
 import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
