@@ -12,10 +12,17 @@ $(document).ready(function () {
   }
 });
 
+function updateNickname() {
+
+}
+
+function updatePw() {
+
+}
+
 function getToken() {
 
   let auth = Cookies.get('Authorization');
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ " + auth);
 
   if (auth === undefined) {
     return '';
@@ -26,15 +33,6 @@ function getToken() {
   }
 
   return auth;
-}
-
-// mypage ------------------------------------------------------
-function updateNickname() {
-
-}
-
-function updatePw() {
-
 }
 
 function getMyPage() {
@@ -52,10 +50,33 @@ function getMyPage() {
     $('#nickname').text(nickname);
     $('#email').text(email);
     $('#score').text(score);
-    $('#reviews').text(reviews);
-    $('#pastOrderList').text(pastOrderList);
+
+    for (let review in reviews) {
+      $('#my-review').append(`
+        <div class="review">
+           <div class="review-contents">${review}</div> <div class="review-count">${reviews[review]}</div>
+        </div>
+      `);
+      console.log(review + " " + reviews[review]);
+    }
+
+    pastOrderList.forEach(order => {
+      let menuList = order.menus.map(menu => menu.menuname).join('<br>');
+      $('#my-order-info').append(`
+         <div class="past-order-pack">
+          <div class="past-order">
+            <div>가게 이름: ${order.store}</div>
+            <div>수령인 이름: ${order.receiverName}</div>
+            <div>메뉴
+              <div>${menuList}</div>
+            </div>
+          </div>
+            <button type="button" class="btn btn-secondary" id="review-submit" onclick="createReview()">
+              리뷰 남기기
+            </button>
+          </div>
+      `);
+    });
 
   })
-// ---------------------------------------------------------------
-
 }
