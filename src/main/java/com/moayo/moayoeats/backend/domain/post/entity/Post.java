@@ -88,17 +88,16 @@ public class Post {
         this.longitude = longitude;
     }
 
-    @Transactional
-    public void dismissMenu(Menu menu) {
-        this.menus.remove(menu);
-    }
-
     public void closeApplication() {
         this.postStatus = PostStatusEnum.CLOSED;
     }
 
     public void completeOrder() {
         this.postStatus = PostStatusEnum.ORDERED;
+    }
+
+    public void allReceived(){
+        this.postStatus = PostStatusEnum.RECEIVED;
     }
 
     public void changeAmountGoalStatus() {
