@@ -1,5 +1,6 @@
-$(document).ready(function () {
+$(document).ready(function() {
   const auth = getToken();
+
 
   if (auth !== undefined && auth !== '') {
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -10,25 +11,9 @@ $(document).ready(function () {
     window.location.href = host + '/login';
     return;
   }
+
+
 });
-
-function getToken() {
-
-  let auth = Cookies.get('Authorization');
-  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@ " + auth);
-
-  if (auth === undefined) {
-    return '';
-  }
-
-  if (auth.indexOf('Bearer') === -1 && auth !== '') {
-    auth = 'Bearer ' + auth;
-  }
-
-  return auth;
-}
-
-// mypage ------------------------------------------------------
 function updateNickname() {
 
 }
@@ -37,12 +22,27 @@ function updatePw() {
 
 }
 
+function getToken() {
+
+  let auth = Cookies.get('Authorization');
+
+  if(auth === undefined) {
+    return '';
+  }
+
+  if(auth.indexOf('Bearer') === -1 && auth !== ''){
+    auth = 'Bearer ' + auth;
+  }
+
+  return auth;
+}
+
 function getMyPage() {
   $.ajax({
     type: "GET",
     url: `/api/v1/users/me`,
   })
-  .done(function (res, status, xhr) {
+  .done(function(res, status, xhr) {
     let nickname = res.data.nickname;
     let email = res.data.email;
     let score = res.data.score;
@@ -52,10 +52,28 @@ function getMyPage() {
     $('#nickname').text(nickname);
     $('#email').text(email);
     $('#score').text(score);
-    $('#reviews').text(reviews);
-    $('#pastOrderList').text(pastOrderList);
+
+    for(let review in reviews) {
+      $('#my-review').append(`
+        <div id="reviews">
+           ${review} <a class="review-count">${reviews[review]}</a>
+        </div>
+      `);
+      console.log(review + " " + reviews[review]);
+    }
+
+    pastOrderList.forEach(order => {
+      let menuList = order.menus.map(menu => menu.menuname).join('<br>');
+      $('#my-order-info').append(`
+        <div>
+          <p>가게 이름: ${order.store}</p>
+          <p>수령인 이름: ${order.receiverName}</p>
+          <p>메뉴
+            <div>${menuList}</div>
+          </p>
+        </div>
+      `);
+    });
 
   })
-// ---------------------------------------------------------------
-
 }
