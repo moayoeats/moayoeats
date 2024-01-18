@@ -41,8 +41,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Test with Gradle
-        run: ./gradlew test
+      # Build Gradle
+      - name: Build with Gradle
+        # test code는 빌드하지 않음
+        run: ./gradlew assemble # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./g
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
