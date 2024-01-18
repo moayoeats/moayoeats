@@ -34,8 +34,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String tokenValue = jwtUtil.getTokenFromRequest(req);
         String url = req.getRequestURI();
 
-        if ((url.startsWith("/api/v1/users") || (req.getMethod().equals("GET"))
-            || url.startsWith("/css") || url.startsWith("/js"))) {
+        if (url.startsWith("/css") || url.startsWith("/js")) {
             filterChain.doFilter(req, res);
         } else {
             if (StringUtils.hasText(tokenValue)) {
