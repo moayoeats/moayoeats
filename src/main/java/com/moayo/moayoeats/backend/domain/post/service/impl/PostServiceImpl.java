@@ -7,6 +7,7 @@ import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.notification.event.Event;
+import com.moayo.moayoeats.backend.domain.offer.repository.OfferRepository;
 import com.moayo.moayoeats.backend.domain.order.entity.Order;
 import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
@@ -47,6 +48,7 @@ public class PostServiceImpl implements PostService {
     private final ApplicationEventPublisher publisher;
     private final UserRepository userRepository;//Test
     private final ChatRoomService chatRoomService;
+    private final OfferRepository offerRepository;
 
 
     @Override
@@ -185,6 +187,9 @@ public class PostServiceImpl implements PostService {
                 menuRepository.delete(menu);
             }
         }
+
+        //delete all offers to prevent approving offers after the post is closed, and reduce database searching time
+        offerRepository.deleteAll(offerRepository.findAllByPostId(post.getId()));
 
         //참가자들에게 알림
         userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT)
