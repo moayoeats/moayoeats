@@ -43,11 +43,11 @@ public interface PostService {
         User user);
 
     /**
-     * @param postSearchReq : 검색어
-     * @param user          : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @param keyword : 검색어
+     * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
-    List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user);
+    List<BriefPostResponse> searchPost(String keyword, User user);
 
     /**
      * @param postIdReq : 글을 삭제하기 위한 postId

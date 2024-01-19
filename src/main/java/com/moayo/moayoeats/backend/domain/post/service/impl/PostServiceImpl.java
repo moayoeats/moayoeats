@@ -141,9 +141,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user) {
+    public List<BriefPostResponse> searchPost(String keyword, User user) {
         //get all posts filtered by search keyword
-        List<Post> posts = postRepository.findPostByStoreContaining(postSearchReq.keyword())
+        List<Post> posts = postRepository.findPostByStoreContaining(keyword)
             .orElse(null);
         //List<Post> -> List<BriefPostResponse>
         return postsToBriefResponses(posts);
