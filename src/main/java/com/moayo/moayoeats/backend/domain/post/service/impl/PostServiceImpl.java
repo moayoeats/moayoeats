@@ -129,13 +129,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategoryReq,
+    public List<BriefPostResponse> getPostsByCategory(String category,
         User user) {
         List<Post> posts;
-        if (postCategoryReq.category().equals(CategoryEnum.ALL.toString())) {
+        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+        if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findAll();
         } else {
-            posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
+            posts = postRepository.findAllByCategoryEquals(categoryEnum).orElse(null);
         }
         return postsToBriefResponses(posts);
     }
