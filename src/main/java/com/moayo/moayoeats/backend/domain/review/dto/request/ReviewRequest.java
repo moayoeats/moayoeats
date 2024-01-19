@@ -5,14 +5,14 @@ import com.moayo.moayoeats.backend.domain.score.entity.ScoreEnum;
 public record ReviewRequest(
     Long orderId,
     ScoreEnum score,
-    boolean goodmanner,
-    boolean goodtime,
-    boolean goodcomm,
-    boolean badtime,
-    boolean noshow,
-    boolean nomoney,
-    boolean badcomm,
-    boolean badmanner
+    Integer goodmanner,
+    Integer goodtime,
+    Integer goodcomm,
+    Integer badtime,
+    Integer noshow,
+    Integer nomoney,
+    Integer badcomm,
+    Integer badmanner
 ) {
 
 }
