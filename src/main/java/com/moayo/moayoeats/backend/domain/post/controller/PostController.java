@@ -6,6 +6,8 @@ import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
+import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
+import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -70,10 +72,10 @@ public class PostController {
     @GetMapping("/posts/category")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody PostCategoryRequest postCategorySearchReq
+        @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
-            postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
+            postService.getPostsByCategory(category, userDetails.getUser()));
     }
 
     //글 검색하기
