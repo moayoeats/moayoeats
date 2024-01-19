@@ -3,9 +3,19 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ubuntu/app # 인스턴스에서 파일이 저장될 위치
+    destination: /home/ubuntu/moayoeats # 인스턴스에서 파일이 저장될 위치
+    overwrite: yes
+
+file_exists_behavior: OVERWRITE
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
+
 hooks:
   AfterInstall:
     - location: deploy.sh
-      timeout: 60
-      runas: root
+      timeout: 200
