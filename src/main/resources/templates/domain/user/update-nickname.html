@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="/global/header :: header"></div>
+  <style>
+  </style>
+</head>
+<header>
+  <div th:replace="/global/navbar :: navbar"></div>
+</header>
+<body>
+<div id="update-info-pack">
+  <div>
+    <div>닉네임</div>
+    <input type="text" name="nickname" id="nickname" class="info-input">
+
+    <div>비밀번호</div>
+    <input type="password" name="password" id="password" class="info-input">
+
+    <button id="info-submit" onclick="updateNickname()">변경하기</button>
+  </div>
+</div>
+<script src="/js/basic.js"></script>
+</body>
+</html>
