@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.global.config;
 
 
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.security.JwtAuthenticationEntryPoint;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
 import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,11 @@ public class WebSecurityConfig {
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+    }
+
+    @Bean
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        return new JwtAuthenticationEntryPoint();
     }
 
     @Bean
