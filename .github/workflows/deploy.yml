@@ -1,7 +1,7 @@
 name: deploy
 
 on:
-  push:
+  pull_request: # 배포 확인용 임시 pull_request # 원래 push
     branches:
       - dev
 
@@ -48,7 +48,7 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://moayoeats/$GITHUB_SHA.zip
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name moayoeats
-          --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name dev
+        run: aws deploy create-deployment --application-name moayoeats \
+          --deployment-config-name CodeDeployDefault.OneAtATime \
+          --deployment-group-name dev \
           --s3-location bucket=moayoeats,bundleType=zip,key=$GITHUB_SHA.zip
