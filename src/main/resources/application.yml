@@ -5,6 +5,7 @@ spring:
     username: ${USER_NAME}
     password: ${PASSWORD}
 
+
   main:
     allow-bean-definition-overriding: true
 
