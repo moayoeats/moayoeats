@@ -20,7 +20,7 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-chmod u+x /home/ubuntu .env
-source /home/ubuntu .env
+chmod u+x /home/ubuntu/moayoeats .env
+source /home/ubuntu/moayoeats .env
 
 nohup java -jar $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
