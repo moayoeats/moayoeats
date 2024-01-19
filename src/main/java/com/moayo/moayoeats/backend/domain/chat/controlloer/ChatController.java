@@ -21,25 +21,25 @@ public class ChatController {
     @MessageMapping("/chats/join")
     @SendTo("/sub/chats/room/{postId}")
     public ChatMessageDTO join(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @DestinationVariable(value = "postId") Long postId
-    ) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @DestinationVariable(value = "postId") String postId
+        ) {
         String username = userDetails.getUsername();
 
-        return chatMessageService.saveChatMessage(postId, username + "님이 입장하셨습니다.", username);
+        return chatMessageService.saveChatMessage(postId, username + "님이 입장하셨습니다.", username, userDetails.getUser());
     }
 
     @MessageMapping("/chats/message")
     @SendTo("/sub/chats/room/{postId}")
     public ChatMessageDTO message(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @DestinationVariable(value = "postId") Long postId,
+        @DestinationVariable(value = "postId") String postId,
         ChatMessageDTO message
     ) {
         String username = userDetails.getUsername();
         String formattedContent = username + " : " + message.content();
 
-        return chatMessageService.saveChatMessage(postId, formattedContent, username);
+        return chatMessageService.saveChatMessage(postId, formattedContent, username, userDetails.getUser());
     }
 
 }
