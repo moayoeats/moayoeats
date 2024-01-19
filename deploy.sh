@@ -17,6 +17,7 @@ ls -ld $JAR_NAME
 ls -ld /home/ubuntu/moayoeats
 
 echo "> JAR NAME: $JAR_NAME"
+chown ubuntu:ubuntu $JAR_NAME
 
 echo "> $JAR_NAME 에 실행권한 추가"
 
