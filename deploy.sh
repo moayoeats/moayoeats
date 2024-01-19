@@ -6,14 +6,22 @@ REPOSITORY=/home/ubuntu/moayoeats
 
 # shellcheck disable=SC2164
 cd $REPOSITORY
+
+# shellcheck disable=SC2046
+kill -9 `ps -ef|grep java|awk '{print $2}'`
+
+JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
+
 ls -ld $REPOSITORY
-ls -ld $JAR_PATH
+ls -ld $JAR_NAME
 ls -ld /home/ubuntu/moayoeats
-kill -9 ps -ef|grep java|awk '{print $2}'
-JAR_NAME=$(ls -tr $JAR_PATH/*.jar | tail -n 1)
+
 echo "> JAR NAME: $JAR_NAME"
+
 echo "> $JAR_NAME 에 실행권한 추가"
+
 chmod +rx $JAR_NAME
+
 echo "> $JAR_NAME 실행"
 
 # 환경변수 권한 부여 및 저장
