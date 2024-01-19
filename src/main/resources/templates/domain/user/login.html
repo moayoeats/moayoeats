@@ -22,9 +22,6 @@
   $(document).ready(function () {
     // 토큰 삭제
     Cookies.remove('Authorization', {path: '/'});
-
-    $('header').load("domain/navbar.html");
-    console.log("aaaaaa");
   });
 
   const host = 'http://' + window.location.host;
@@ -43,19 +40,19 @@
       }),
     })
     .done(function (res, status, xhr) {
-      // const token = xhr.getResponseHeader('Authorization');
-      // console.log(token);
       let token = Cookies.get('Authorization');
 
       if (res.status === 200) {
-        Cookies.set('Authorization', token, {path: '/'})
-        console.log(token + "1");
-        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-          console.log(token + "2");
-          jqXHR.setRequestHeader('Authorization', token);
-        });
+        const expires = xhr.getResponseHeader('expires-in');
 
-        //alert(res.message);
+        console.log(expires);
+        if (expires) {
+          console.log("expires");
+          Cookies.set('Authorization', token, {
+            path: '/',
+            expires: new Date(new Date().getTime() + expires * 1000),
+          });
+        }
         window.location.replace(host + '/mypage');
 
       } else if (res.status === 400 || res.status === 404) {
