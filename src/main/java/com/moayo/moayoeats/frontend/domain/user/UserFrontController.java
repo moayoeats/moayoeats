@@ -37,4 +37,9 @@ public class UserFrontController {
     public String updateNickname() {
         return "/domain/user/update-nickname";
     }
+
+    @GetMapping("/mypage/password")
+    public String updatePassword() {
+        return "/domain/user/update-password";
+    }
 }
