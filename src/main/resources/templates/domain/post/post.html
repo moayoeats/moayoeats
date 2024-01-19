@@ -179,7 +179,9 @@
 
   }
   function editmenus(button){
-
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.replace(host + `/menu/${postId}`);
   }
   function closeApplication(button){
     var postId = $(button).attr("post");
