@@ -71,12 +71,18 @@ function getMyPage() {
               <div>${menuList}</div>
             </div>
           </div>
-            <button type="button" class="btn btn-secondary" id="review-submit" onclick="createReview()">
-              리뷰 남기기
-            </button>
+            <button type="button" class="btn btn-secondary" id="review-submit" order="${order.id}" onclick="createReview(this)">
+  리뷰 남기기
+</button>
           </div>
       `);
     });
 
   })
+}
+
+function createReview(button){
+  var orderId = $(button).attr("order");
+  const host = 'http://' + window.location.host;
+  window.location.href = host +`/createreview/${orderId}`;
 }
