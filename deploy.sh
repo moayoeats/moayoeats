@@ -1,9 +1,11 @@
 # 애플리케이션 배포 스크립트
+# 환경변수 권한 부여 및 저장
+chmod u+x /home/ubuntu .env
+source /home/ubuntu .env
 
 # 애플리케이션 소스코드 디렉토리로 이동
 REPOSITORY=/home/ubuntu/moayoeats
 cd $REPOSITORY
-source env
 
 # 애플리케이션 이름 정의 #1
 APP_NAME=moayoeats
