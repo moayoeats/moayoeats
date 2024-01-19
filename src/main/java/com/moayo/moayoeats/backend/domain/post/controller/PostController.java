@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -79,10 +80,10 @@ public class PostController {
     @GetMapping("/posts/search")
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody PostSearchRequest postSearchReq
+        @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
-            postService.searchPost(postSearchReq, userDetails.getUser()));
+            postService.searchPost(keyword, userDetails.getUser()));
     }
 
     //모집 취소하기
