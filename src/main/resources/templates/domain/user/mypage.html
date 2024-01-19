@@ -136,7 +136,8 @@
               onclick="moveUpdateNickPage()">
         닉네임 수정
       </button>
-      <button type="button" class="btn btn-secondary" id="pw-update-btn" onclick="updatePw()">
+      <button type="button" class="btn btn-secondary" id="pw-update-btn"
+              onclick="moveUpdatePwPage()">
         비밀번호 수정
       </button>
     </div>
@@ -211,6 +212,10 @@
 
   function moveUpdateNickPage() {
     window.location.replace(host + '/mypage/nickname');
+  }
+
+  function moveUpdatePwPage() {
+    window.location.replace(host + '/mypage/password');
   }
 </script>
 <script src="/js/basic.js"></script>
