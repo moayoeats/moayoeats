@@ -69,6 +69,7 @@ public class JwtUtil {
             Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
             cookie.setPath("/"); // 쿠키를 반환할 경로 설정
 
+            response.addHeader("expires-in", String.valueOf(TOKEN_TIME / 1000));
             response.addCookie(cookie); // 응답 데이터에 쿠키 추가
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage());

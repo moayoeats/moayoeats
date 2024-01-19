@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.global.config;
 
 
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.security.JwtAuthenticationEntryPoint;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
 import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        return new JwtAuthenticationEntryPoint();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
@@ -50,6 +56,13 @@ public class WebSecurityConfig {
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        );
+
+        // 인증 실패시 login 페이지로 이동
+        http.exceptionHandling((exceptionHandling ->
+            exceptionHandling
+                .accessDeniedPage("/login")
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint()))
         );
 
         //login,signup 접근 허용 그 외 인증 필요
