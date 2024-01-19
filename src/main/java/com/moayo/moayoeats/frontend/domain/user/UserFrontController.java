@@ -32,4 +32,9 @@ public class UserFrontController {
 
         return "/domain/user/other-user-page";
     }
+
+    @GetMapping("/mypage/nickname")
+    public String updateNickname() {
+        return "/domain/user/update-nickname";
+    }
 }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="/global/header :: header"></div>
+  <style>
+    #update-info-form {
+      width: 400px;
+      margin: 150px auto 0 auto;
+    }
+
+    .btn-pack {
+      margin-top: 20px;
+    }
+
+    .btn-pack button {
+      width: 400px;
+      margin-bottom: 7px;
+    }
+
+    #info-submit {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<header>
+  <div th:replace="/global/navbar :: navbar"></div>
+</header>
+<body>
+<div id="update-info-form">
+  <div>
+    <div class="form-floating mb-3">
+      <input type="text" name="nickname" id="nickname"
+             class="info-input form-control" placeholder="닉네임">
+      <label for="nickname">닉네임</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="password" name="password" class="form-control info-input"
+             id="password" placeholder="비밀번호">
+      <label for="password">비밀번호</label>
+    </div>
+
+    <div class="btn-pack">
+      <button type="button" class="btn btn-secondary"
+              id="info-submit" onclick="updateNickname()">변경하기
+      </button>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  function updateNickname() {
+    let nickname = $('#nickname').val();
+    let password = $('#password').val();
+
+    $.ajax({
+      type: "PATCH",
+      url: `/api/v1/users`,
+      contentType: "application/json",
+      data: JSON.stringify({
+        nickname: nickname,
+        password: password
+      }),
+    })
+    .done(function (res, status, xhr) {
+      if (res.status === 200) {
+        alert(res.message);
+        window.location.href = "/mypage";
+      } else if (res.status === 400) {
+        alert(res.message);
+      } else if (res.status === 401 || res.status === 404) {
+        alert(res.message);
+        window.location.href = host + '/login?error'
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+        window.location.href = host + '/login?error'
+      }
+    })
+    .fail(function (xhr, status, error) {
+      console.log(error);
+    });
+  }
+</script>
+<script src="/js/basic.js"></script>
+</body>
+</html>

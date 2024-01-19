@@ -132,7 +132,8 @@
     <div id="nickname"></div>
     <div id="email"></div>
     <div class="btn-pack">
-      <button type="button" class="btn btn-secondary" id="nickname-update-btn">
+      <button type="button" class="btn btn-secondary" id="nickname-update-btn"
+              onclick="moveUpdateNickPage()">
         닉네임 수정
       </button>
       <button type="button" class="btn btn-secondary" id="pw-update-btn" onclick="updatePw()">
@@ -206,6 +207,10 @@
       });
 
     })
+  }
+
+  function moveUpdateNickPage() {
+    window.location.replace(host + '/mypage/nickname');
   }
 </script>
 <script src="/js/basic.js"></script>
