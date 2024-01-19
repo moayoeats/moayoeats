@@ -15,6 +15,6 @@ permissions:
     mode: 755
 
 hooks:
-  AfterInstall:
+  ApplicationStart:
     - location: deploy.sh
       timeout: 200
