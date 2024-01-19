@@ -20,6 +20,39 @@
     <button id="info-submit" onclick="updateNickname()">변경하기</button>
   </div>
 </div>
+<script th:inline="javascript">
+  function updateNickname() {
+    let nickname = $('#nickname').val();
+    let password = $('#password').val();
+
+    $.ajax({
+      type: "PATCH",
+      url: `/api/v1/users`,
+      contentType: "application/json",
+      data: JSON.stringify({
+        nickname: nickname,
+        password: password
+      }),
+    })
+    .done(function (res, status, xhr) {
+      if (res.status === 200) {
+        alert(res.message);
+        window.location.href = "/mypage";
+      } else if (res.status === 400) {
+        alert(res.message);
+      } else if (res.status === 401 || res.status === 404) {
+        alert(res.message);
+        window.location.href = host + '/login?error'
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+        window.location.href = host + '/login?error'
+      }
+    })
+    .fail(function (xhr, status, error) {
+      console.log(error);
+    });
+  }
+</script>
 <script src="/js/basic.js"></script>
 </body>
 </html>
