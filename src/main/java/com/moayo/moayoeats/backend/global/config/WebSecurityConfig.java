@@ -58,6 +58,13 @@ public class WebSecurityConfig {
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
+        // 인증 실패시 login 페이지로 이동
+        http.exceptionHandling((exceptionHandling ->
+            exceptionHandling
+                .accessDeniedPage("/login")
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint()))
+        );
+
         //login,signup 접근 허용 그 외 인증 필요
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
