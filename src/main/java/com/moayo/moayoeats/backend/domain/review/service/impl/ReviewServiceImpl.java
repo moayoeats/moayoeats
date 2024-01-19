@@ -97,42 +97,42 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviews = reviewRepository.findAllByUser(receiver);
         List<Review> updated = new ArrayList<>();
 
-        if (reviewReq.goodmanner()) {
+        if (reviewReq.goodmanner()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.GOODMANNER, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.goodcomm()) {
+        if (reviewReq.goodcomm()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.GOODCOMM, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.goodtime()) {
+        if (reviewReq.goodtime()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.GOODTIME, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.badtime()) {
+        if (reviewReq.badtime()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.BADTIME, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.noshow()) {
+        if (reviewReq.noshow()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.NOSHOW, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.nomoney()) {
+        if (reviewReq.nomoney()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.NOMONEY, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.badcomm()) {
+        if (reviewReq.badcomm()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.BADCOMM, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.badmanner()) {
+        if (reviewReq.badmanner()==1) {
             Review review = findReviewByContent(reviews, ReviewEnum.BADMANNER, receiver);
             review.increaseCount();
             updated.add(review);
