@@ -17,7 +17,16 @@ public class PostFrontController {
         return "domain/post/createpost";
     }
 
-    @GetMapping("/readpost/{postId}")
+    // 로그인 후 글 단독조회
+    @GetMapping("post/{postId}")
+    public String postPage(@PathVariable(name = "postId") Long postId) {
+        ModelAndView mav = new ModelAndView("postId");
+        mav.addObject("postId", postId);
+        return "domain/post/post.html";
+    }
+
+    //인증정보 없이 글 단독조회
+    @GetMapping("moayo/readpost/{postId}")
     public String readpostPage(@PathVariable(name = "postId") Long postId) {
         ModelAndView mav = new ModelAndView("postId");
         mav.addObject("postId", postId);

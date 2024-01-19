@@ -114,6 +114,7 @@ public class PostServiceImpl implements PostService {
         List<UserPost> userPosts = getUserPostsByPost(post);
 
         return DetailedPostResponse.builder()
+            .id(post.getId())
             .longitude(post.getLongitude())
             .latitude(post.getLatitude())
             .address(post.getAddress())
@@ -123,6 +124,7 @@ public class PostServiceImpl implements PostService {
             .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(userPosts, post))
             .deadline(getDeadline(post))
+            .role(getRoleByUserAndUserPosts(user,userPosts))
             .build();
     }
 
@@ -378,6 +380,15 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    private UserPostRole getRoleByUserAndUserPosts(User user, List<UserPost> userPosts) {
+        for (UserPost userPost : userPosts) {
+            if (userPost.getUser().getId().equals(user.getId())) {
+                return userPost.getRole();
+            }
+        }
+        return null;
+    }
+
     private UserPost getUserPostByUserIfParticipant(User user, List<UserPost> userPosts) {
         for (UserPost userPost : userPosts) {
             if (userPost.getRole().equals(UserPostRole.HOST)) {
@@ -421,7 +432,7 @@ public class PostServiceImpl implements PostService {
         List<Post> pastDeadline = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         for (Post post : posts) {
-            //delete if the post hasn't been closed and past deadline
+            //delete if the post hasn't been closed and past deadlinetb_user_post
             if (post.getPostStatus() == PostStatusEnum.OPEN) {
                 if (post.getDeadline().isBefore(now)) {
                     pastDeadline.add(post);
