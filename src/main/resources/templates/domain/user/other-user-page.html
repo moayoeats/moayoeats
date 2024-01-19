@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="/global/header :: header"></div>
+  <style>
+    #my-page-pack {
+      margin: 60px 120px 60px 120px;
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+      justify-content: start;
+
+      border: solid 1px black;
+      padding: 30px 0;
+      border-radius: 10px;
+    }
+
+    #nickname {
+      font-size: 25px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: inline-block;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    #my-info-pack {
+      width: 30%;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .about-order {
+      margin: 0 30px 0 30px;
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+    }
+
+    #my-score, #my-review, #my-order-info {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    #score {
+      display: inline-block;
+      font-size: 30px;
+    }
+
+    .review {
+      margin: 10px 0 5px 0;
+      padding: 10px 20px;
+      background: #F3D7CA;
+      border-radius: 5px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .review div {
+      display: inline-block;
+    }
+
+    .review-contents {
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 30px;
+    }
+
+    .review-count {
+      flex-shrink: 0;
+      text-align: right;
+    }
+  </style>
+</head>
+<header>
+  <div th:replace="/global/navbar :: navbar"></div>
+</header>
+<body>
+<div id="my-page-pack">
+  <div id="my-info-pack">
+    <div id="nickname"></div>
+  </div>
+
+  <div class="about-order">
+    <div id="my-review-pack">
+      <div id="my-score">
+        <div>평점</div>
+        <div id="score"></div>
+      </div>
+      <div id="my-review">
+        <div>받은 리뷰</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  $(document).ready(function () {
+    getOtherUserPage();
+  });
+
+  function getOtherUserPage() {
+    $.ajax({
+      type: "GET",
+      url: `/api/v1/users/profile/[[${otherUserId}]]`,
+      dataType: "json",
+      contentType: 'application/json',
+    })
+    .done(function (res, status, xhr) {
+      let nickname = res.data.nickname;
+      let score = res.data.score;
+      let reviews = res.data.reviews.reviews;
+
+      $('#nickname').text(nickname);
+      $('#score').text(score);
+
+      for (let review in reviews) {
+        $('#my-review').append(`
+        <div class="review">
+           <div class="review-contents">${review}</div> <div class="review-count">${reviews[review]}</div>
+        </div>
+      `);
+        console.log(review + " " + reviews[review]);
+      }
+    })
+    .fail(function (xhr, status, error) {
+      console.log(error);
+    });
+  }
+</script>
+<script src="/js/basic.js"></script>
+</body>
+</html>
