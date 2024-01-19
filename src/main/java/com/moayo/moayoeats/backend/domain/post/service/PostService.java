@@ -83,8 +83,6 @@ public interface PostService {
      */
     public void receiveOrder(PostIdRequest postIdReq, User user );
 
-    //Test
-    public void createPostTest(PostRequest postReq);
     public DetailedPostResponse getPostTest(Long postId);
 
 }

@@ -1,0 +1,316 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+        name="viewport">
+  <link crossorigin="anonymous"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        rel="stylesheet">
+  <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+  <title>글 상세페이지</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv"
+          type="text/javascript"></script>
+</head>
+<body>
+<div style="padding:10px;width:1000px; height:max-content">
+  <div id="field" style="width:1000px; height:min-content;"></div>
+  <div>모인 메뉴</div>
+  <div id="menus" style="width:1000px; height:min-content;"></div>
+</div>
+<div id = "buttons" style="padding:10px;width:1000px;height:min-content;">
+</div>
+<div style="padding:10px;width:1000px;height:min-content;">
+  <div>주소</div>
+  <div id="map" style="width:100%; height:400px;"></div>
+</div>
+
+<script th:inline="javascript">
+
+  $(document).ready(function () {
+    getData();
+  });
+
+  function getData() {
+
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/posts/[[${postId}]]`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+        latitude = response.data.latitude;
+        longitude = response.data.longitude
+
+        deadline = response.data.deadline;
+        deliveryCost = response.data.deliveryCost;
+        minPrice = response.data.minPrice;
+        store = response.data.store;
+        sumPrice = response.data.sumPrice;
+        nickmenus = response.data.menus;
+
+        drawMap(latitude, longitude);
+
+        drawField(store,sumPrice,minPrice,deliveryCost,deadline);
+
+        drawMenus(nickmenus);
+
+        if(response.data.role === "HOST"){
+          drawHostButtons(response.data.id);
+        }else if(response.data.role === "PARTICIPANT"){
+          drawParticipantButtons(response.data.id);
+        }else{
+          drawAnyoneButtons(response.data.id);
+        }
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function drawMap(lat, lng) {
+    var map = new naver.maps.Map('map', {
+      center: new naver.maps.LatLng(lat, lng),
+      zoom: 15
+    });
+
+    var marker = new naver.maps.Marker({
+      position: new naver.maps.LatLng(lat, lng),
+      map: map
+    });
+  }
+
+  function drawField(store,sumPrice,minPrice,deliveryCost,deadline) {
+    var temp = `
+<div>
+  <div>가게</div>
+  <div>${store}</div>
+  <div>합계 금액</div>
+  <div>${sumPrice}</div>
+  <div>최소주문금액</div>
+  <div>${minPrice}</div>
+  <div>배달비</div>
+  <div>${deliveryCost}</div>
+  <div>마감 기한</div>
+  <div>${deadline}</div>
+ </div>
+`
+    $('#field').append(temp)
+  }
+  function drawMenus(nickmenus) {
+    nickmenus.forEach((nickmenu,index)=>
+        $('#menus').append(
+            `
+            <div>닉네임</div>
+  <div id = ${index}>${nickmenu.nickname}</div>
+            `
+        )
+    )
+    nickmenus.forEach((nickmenu,index)=>
+        nickmenu.menus.forEach(
+            (menu)=>
+                $(`#${index}`).append(
+                    `<div>${menu.menuname}</div>
+                     <div>${menu.price}</div>`
+                )
+        )
+    )
+  }
+
+  function drawHostButtons(postId){
+    $('#buttons').append(
+        `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="getOffers(this)" name="btnradio" id="getOffers" autocomplete="off" checked>
+      <label class="btn btn-outline-secondary" for="getOffers">요청 조회</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="closeApplication(this)" name="btnradio"  id="closeApplication" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="closeApplication">모집 마감</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="cancelRecruitment(this)" name="btnradio" id="cancelRecruitment" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="cancelRecruitment">모집 취소</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="completeOrder(this)" name="btnradio" id="completeOrder" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="completeOrder">주문 완료</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방 참여</label>
+    </div>
+            `
+    )
+  }
+
+  function drawParticipantButtons(postId){
+    $('#buttons').append(
+        `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="exit(this)" name="btnradio"  id="exit" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="exit">나가기</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="receiveOrder(this)" name="btnradio" id="receiveOrder" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="receiveOrder">수령 완료</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방 참여</label>
+    </div>
+            `
+    )
+  }
+
+  function drawAnyoneButtons(postId){
+    $('#buttons').append(
+        `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="getOffers(this)" name="btnradio" id="getOffers" autocomplete="off" checked>
+      <label class="btn btn-outline-secondary" for="getOffers">요청 조회</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="applyApplication(this)" name="btnradio"  id="applyApplication" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="applyApplication">참가 신청</label>
+    </div>
+            `
+    )
+  }
+
+  function getOffers(button){
+
+  }
+  function editmenus(button){
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.replace(host + `/menu/${postId}`);
+  }
+  function closeApplication(button){
+    var postId = $(button).attr("post");
+    $.ajax({
+      type: 'PATCH',
+      url: "/api/v1/posts/close",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        postId: postId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+  function cancelRecruitment(button){
+    var postId = $(button).attr("post");
+    $.ajax({
+      type: 'DELETE',
+      url: "/api/v1/posts",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        postId: postId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+  function completeOrder(button){
+    var postId = $(button).attr("post");
+    $.ajax({
+      type: 'PATCH',
+      url: "/api/v1/posts/complete-order",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        postId: postId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function chatRoom(button){
+
+  }
+
+  function exit(button){
+    var postId = $(button).attr("post");
+    $.ajax({
+      type: 'DELETE',
+      url: "/api/v1/posts/exit",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        postId: postId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function receiveOrder(button){
+    var postId = $(button).attr("post");
+    $.ajax({
+      type: 'DELETE',
+      url: "/api/v1/posts/received",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        postId: postId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function applyApplication(button){
+    var postId = $(button).attr("post");
+    $.ajax({
+      type: 'POST',
+      url: "/api/v1/offers",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        postId: postId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+
+</script>
+</body>
+</html>

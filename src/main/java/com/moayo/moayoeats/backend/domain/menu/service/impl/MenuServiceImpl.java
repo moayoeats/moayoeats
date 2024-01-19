@@ -66,10 +66,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuResponse> getMenus(MenuReadRequest menuReadReq, User user) {
-        Post post = findPostById(menuReadReq.postId());
+    public List<MenuResponse> getMenus(Long postId, User user) {
+        Post post = findPostById(postId);
         List<Menu> menus = menuRepository.findAllByUserAndPost(user, post);
-        return menus.stream().map(menu -> new MenuResponse(menu.getMenuname(), menu.getPrice()))
+        return menus.stream().map(menu -> new MenuResponse(menu.getId() ,menu.getMenuname(), menu.getPrice()))
             .toList();
     }
 

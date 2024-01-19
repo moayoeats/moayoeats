@@ -47,7 +47,6 @@ public class PostController {
             postService.getPostsForAnyone());
     }
 
-
     // 모든 글 조회하기
     @GetMapping("/posts")
     public ApiResponse<List<BriefPostResponse>> getPosts(
@@ -134,15 +133,6 @@ public class PostController {
     ) {
         postService.receiveOrder(postIdReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "수령완료 처리가 되었습니다.");
-    }
-
-    //Test
-    @PostMapping("/test/posts")
-    public ApiResponse<Void> createPostTest(
-        @RequestBody PostRequest postReq
-    ) {
-        postService.createPostTest(postReq);
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
     //Test

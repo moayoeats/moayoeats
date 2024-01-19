@@ -7,7 +7,6 @@ import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.notification.event.Event;
-import com.moayo.moayoeats.backend.domain.offer.repository.OfferRepository;
 import com.moayo.moayoeats.backend.domain.order.entity.Order;
 import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
@@ -50,7 +49,6 @@ public class PostServiceImpl implements PostService {
     private final ApplicationEventPublisher publisher;
     private final UserRepository userRepository;//Test
     private final ChatRoomService chatRoomService;
-    private final OfferRepository offerRepository;
 
 
     @Override
@@ -59,23 +57,43 @@ public class PostServiceImpl implements PostService {
         LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
             .plusHours(postReq.deadlineHours());
 
+        //get latitude and longitude from the coordinate
+        String address = postReq.address();
+        address = address.replace("(lat:", "");
+        address = address.replace("lng:", "");
+        address = address.replace(")", "");
+        String[] location = address.split(",");
+        double latitude = Double.valueOf(location[0]);
+        double longitude = Double.valueOf(location[1]);
+
         //Build new post with the post request dto
-        Post post = Post.builder().address(postReq.address()).store(postReq.store())
-            .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
-            .category(postReq.category()).postStatus(PostStatusEnum.OPEN).build();
+        Post post = Post.builder()
+            .address(address)
+            .latitude(latitude)
+            .longitude(longitude)
+            .store(postReq.store())
+            .deliveryCost(postReq.deliveryCost())
+            .minPrice(postReq.minPrice())
+            .deadline(deadline)
+            .category(postReq.category())
+            .postStatus(PostStatusEnum.OPEN)
+            .build();
 
         //save the post
         postRepository.save(post);
 
-        //create chatRoom
-        chatRoomService.createRoom(post.getId());
-
         //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
+        UserPost userpost = UserPost.builder()
+            .user(user)
+            .post(post)
+            .role(UserPostRole.HOST)
             .build();
 
         //save the relation
         userPostRepository.save(userpost);
+
+        //create chatRoom
+        chatRoomService.createRoom(post.getId());
     }
 
     @Override
@@ -96,6 +114,7 @@ public class PostServiceImpl implements PostService {
         List<UserPost> userPosts = getUserPostsByPost(post);
 
         return DetailedPostResponse.builder()
+            .id(post.getId())
             .longitude(post.getLongitude())
             .latitude(post.getLatitude())
             .address(post.getAddress())
@@ -105,6 +124,7 @@ public class PostServiceImpl implements PostService {
             .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(userPosts, post))
             .deadline(getDeadline(post))
+            .role(getRoleByUserAndUserPosts(user,userPosts))
             .build();
     }
 
@@ -190,9 +210,6 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        //delete all offers to prevent approving offers after the post is closed, and reduce database searching time
-        offerRepository.deleteAll(offerRepository.findAllByPostId(post.getId()));
-
         //참가자들에게 알림
         userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT)
             .stream()
@@ -231,7 +248,6 @@ public class PostServiceImpl implements PostService {
         userPostRepository.delete(userPost);
     }
 
-    @Transactional
     @Override
     public void receiveOrder(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
@@ -242,32 +258,40 @@ public class PostServiceImpl implements PostService {
         User host = getAuthor(userPosts);
 
         //make order for me to review
-        Order order = makeOrder(post, host, user, UserPostRole.PARTICIPANT);
-        orderRepository.save(order);
+        Order order = makeAndSaveOrder(post, host, user, UserPostRole.PARTICIPANT);
         //make order for host to review
-        Order hostOrder = makeOrder(post, user, host, UserPostRole.HOST);
-        orderRepository.save(hostOrder);
+        Order hostOrder = makeAndSaveOrder(post, user, host, UserPostRole.HOST);
 
-        //remove menus from the post
-        List<Menu> menus = getUserMenus(user, post);
-        menus.forEach(menu -> menuRepository.save(menu.receive(order)));
+        //relate the order with the menus
+        relateOrderWithMenus(user,post,order);
 
         if (userPosts.size() <= 2) {
+            post.allReceived();
+            relateOrderWithMenus(host,post,hostOrder);
             userPostRepository.deleteAll(userPosts);
             postRepository.delete(post);
             return;
         }
         userPostRepository.delete(userpost);
-
     }
 
-    private Order makeOrder(Post post, User receiver, User user, UserPostRole role) {
-        return Order.builder()
+    private void relateOrderWithMenus(User user,Post post,Order order){
+        List<Menu> menus = getUserMenus(user, post);
+        for(Menu menu : menus){
+            menu = menu.receive(order);
+        }
+        menuRepository.saveAll(menus);
+    }
+
+    private Order makeAndSaveOrder(Post post, User receiver, User user, UserPostRole role) {
+        Order order = Order.builder()
             .receiver(receiver)
             .user(user)
             .store(post.getStore())
             .senderRole(role)
             .build();
+        orderRepository.save(order);
+        return order;
     }
 
     private List<Post> findAll() {
@@ -334,7 +358,7 @@ public class PostServiceImpl implements PostService {
                 .map((UserPost userpost) -> new NickMenusResponse(userpost.getUser().getNickname(),
                     //List<Menu> menus -> List<MenuResponse>
                     getUserMenus(userpost.getUser(), userpost.getPost()).stream()
-                        .map((Menu menu) -> new MenuResponse(menu.getMenuname(), menu.getPrice()))
+                        .map((Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(), menu.getPrice()))
                         .toList())).toList();
         return menus;
     }
@@ -356,6 +380,15 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    private UserPostRole getRoleByUserAndUserPosts(User user, List<UserPost> userPosts) {
+        for (UserPost userPost : userPosts) {
+            if (userPost.getUser().getId().equals(user.getId())) {
+                return userPost.getRole();
+            }
+        }
+        return null;
+    }
+
     private UserPost getUserPostByUserIfParticipant(User user, List<UserPost> userPosts) {
         for (UserPost userPost : userPosts) {
             if (userPost.getRole().equals(UserPostRole.HOST)) {
@@ -373,52 +406,6 @@ public class PostServiceImpl implements PostService {
             UserPostRole.PARTICIPANT).orElseThrow(() ->
             new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
         );
-    }
-
-    //Test
-    public void createPostTest(PostRequest postReq) {
-        //set fake user
-        Long l = 1L;
-        User user = userRepository.findById(l).orElse(null);
-
-        //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
-            .plusHours(postReq.deadlineHours());
-
-        //get latitude and longitude from the coordinate
-        String address = postReq.address();
-        address = address.replace("(lat:", "");
-        address = address.replace("lng:", "");
-        address = address.replace(")", "");
-        String[] location = address.split(",");
-        double latitude = Double.valueOf(location[0]);
-        double longitude = Double.valueOf(location[1]);
-
-        //Build new post with the post request dto
-        Post post = Post.builder()
-            .address(address)
-            .latitude(latitude)
-            .longitude(longitude)
-            .store(postReq.store())
-            .deliveryCost(postReq.deliveryCost())
-            .minPrice(postReq.minPrice())
-            .deadline(deadline)
-            .category(postReq.category())
-            .postStatus(PostStatusEnum.OPEN)
-            .build();
-
-        //save the post
-        postRepository.save(post);
-
-        //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder()
-            .user(user)
-            .post(post)
-            .role(UserPostRole.HOST)
-            .build();
-
-        //save the relation
-        userPostRepository.save(userpost);
     }
 
     @Override
@@ -445,7 +432,7 @@ public class PostServiceImpl implements PostService {
         List<Post> pastDeadline = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         for (Post post : posts) {
-            //delete if the post hasn't been closed and past deadline
+            //delete if the post hasn't been closed and past deadlinetb_user_post
             if (post.getPostStatus() == PostStatusEnum.OPEN) {
                 if (post.getDeadline().isBefore(now)) {
                     pastDeadline.add(post);
