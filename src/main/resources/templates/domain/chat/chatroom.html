@@ -1,0 +1,39 @@
+<!-- chatroom.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>실시간 채팅</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+  <script th:src="@{/webjars/sockjs-client/sockjs.min.js}"></script>
+  <script th:src="@{/webjars/stomp-websocket/stomp.min.js}"></script>
+</head>
+<body>
+<div id="chat-container">
+  <div id="chat-messages" style="height: 300px; overflow-y: scroll;">
+    <!-- 채팅 메시지가 여기에 표시됩니다 -->
+  </div>
+  <input type="text" id="chat-input" placeholder="메시지 입력...">
+  <button id="send-button" data-postid="[[${postId}]]" data-username="[[${username}]]">보내기</button>
+</div>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  var postId = [[${postId}]];
+  var username = [[${username}]];
+
+  // 페이지가 로드될 때 WebSocket 연결을 시작합니다.
+  window.addEventListener('load', function () {
+    connect(postId, username);
+  });
+
+  // 페이지가 언로드될 때 WebSocket 연결을 끊습니다.
+  window.addEventListener('unload', function () {
+    disconnect();
+  });
+  /*]]>*/
+</script>
+<script th:src="@{/js/chat.js}"></script>
+</body>
+</html>
