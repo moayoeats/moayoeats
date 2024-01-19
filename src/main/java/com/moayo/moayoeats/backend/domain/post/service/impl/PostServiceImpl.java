@@ -358,7 +358,7 @@ public class PostServiceImpl implements PostService {
                 .map((UserPost userpost) -> new NickMenusResponse(userpost.getUser().getNickname(),
                     //List<Menu> menus -> List<MenuResponse>
                     getUserMenus(userpost.getUser(), userpost.getPost()).stream()
-                        .map((Menu menu) -> new MenuResponse(menu.getMenuname(), menu.getPrice()))
+                        .map((Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(), menu.getPrice()))
                         .toList())).toList();
         return menus;
     }

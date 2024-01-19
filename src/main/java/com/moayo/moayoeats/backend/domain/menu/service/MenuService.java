@@ -27,6 +27,6 @@ public interface MenuService {
      * @param menuReadReq : postId
      * @param user        : 메뉴 조회자, 본인이 해당 글에 담은 메뉴 조회함
      */
-    List<MenuResponse> getMenus(MenuReadRequest menuReadReq, User user);
+    List<MenuResponse> getMenus(Long postId, User user);
 
 }

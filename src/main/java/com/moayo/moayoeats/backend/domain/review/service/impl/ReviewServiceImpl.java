@@ -41,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
         return orders.stream().map(
             order -> OrderResponse.builder().id(order.getId()).store(order.getStore()).menus(
                     order.getMenus().stream()
-                        .map(menu -> new MenuResponse(menu.getMenuname(), menu.getPrice())).toList())
+                        .map(menu -> new MenuResponse(menu.getId(),menu.getMenuname(), menu.getPrice())).toList())
                 .receiverName(order.getReceiver().getNickname()).build()).toList();
 
     }
