@@ -3,21 +3,47 @@
 <head>
   <div th:replace="/global/header :: header"></div>
   <style>
+    #update-info-form {
+      width: 400px;
+      margin: 150px auto 0 auto;
+    }
+
+    .btn-pack {
+      margin-top: 20px;
+    }
+
+    .btn-pack button {
+      width: 400px;
+      margin-bottom: 7px;
+    }
+
+    #info-submit {
+      margin-right: 10px;
+    }
   </style>
 </head>
 <header>
   <div th:replace="/global/navbar :: navbar"></div>
 </header>
 <body>
-<div id="update-info-pack">
+<div id="update-info-form">
   <div>
-    <div>닉네임</div>
-    <input type="text" name="nickname" id="nickname" class="info-input">
+    <div class="form-floating mb-3">
+      <input type="text" name="nickname" id="nickname"
+             class="info-input form-control" placeholder="닉네임">
+      <label for="nickname">닉네임</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="password" name="password" class="form-control info-input"
+             id="password" placeholder="비밀번호">
+      <label for="password">비밀번호</label>
+    </div>
 
-    <div>비밀번호</div>
-    <input type="password" name="password" id="password" class="info-input">
-
-    <button id="info-submit" onclick="updateNickname()">변경하기</button>
+    <div class="btn-pack">
+      <button type="button" class="btn btn-secondary"
+              id="info-submit" onclick="updateNickname()">변경하기
+      </button>
+    </div>
   </div>
 </div>
 <script th:inline="javascript">
