@@ -1,7 +1,22 @@
 spring:
-  profiles:
-    include:
-      - rds
+  datasource:
+    url: jdbc:mysql://${DB_URL}/moayoeats
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: ${USER_NAME}
+    password: ${PASSWORD}
 
   main:
     allow-bean-definition-overriding: true
+
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: none
+        show_sql: true
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
