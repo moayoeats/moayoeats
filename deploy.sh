@@ -3,7 +3,6 @@
 
 # 애플리케이션 소스코드 디렉토리로 이동
 REPOSITORY=/home/ubuntu/moayoeats
-JAR_PATH=/home/ubuntu
 
 # shellcheck disable=SC2164
 cd $REPOSITORY
@@ -11,7 +10,7 @@ cd $REPOSITORY
 # shellcheck disable=SC2046
 kill -9 `ps -ef|grep java|awk '{print $2}'`
 
-JAR_NAME=$(ls -tr $JAR_PATH/*.jar | tail -n 1)
+JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
 
 echo "> JAR NAME: $JAR_NAME"
 
