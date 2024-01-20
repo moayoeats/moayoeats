@@ -1,9 +1,9 @@
 package com.moayo.moayoeats.backend.domain.user.entity;
 
-import com.moayo.moayoeats.backend.domain.review.entity.Review;
-import jakarta.persistence.CascadeType;
 import com.moayo.moayoeats.backend.domain.offer.entity.Offer;
+import com.moayo.moayoeats.backend.domain.review.entity.Review;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,6 +37,12 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<Review> reviews;
@@ -63,4 +69,10 @@ public class User {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void updateAddress(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
 }
