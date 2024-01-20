@@ -17,15 +17,18 @@ public interface PostService {
     void createPost(PostRequest postReq, User user);
 
     /** 인증정보 없이 전체 글 조회
+     * @param page : 몇페이지 조회할건지 int pageNumber
      * @return Lists of brief information about the post
      */
-    List<BriefPostResponse> getPostsForAnyone();
+    List<BriefPostResponse> getPostsForAnyone(int page);
 
     /**
-     * @param user : login info to sort posts by current location
-     * @return Lists of brief information about the post
+     *
+     * @param page : 몇페이지 조회할건지 int pageNumber
+     * @param user : 글 조회자
+     * @return
      */
-    List<BriefPostResponse> getPosts(User user);
+    List<BriefPostResponse> getPosts(int page, User user);
 
     /**
      * @param postId : 글 조회에 필요한 postId
