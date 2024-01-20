@@ -15,7 +15,7 @@ permissions:
     mode: 755
 
 hooks:
-  ApplicationStart:
+  AfterInstall:
     - location: deploy.sh
       timeout: 200
-      runas: ubuntu
+      runas: root
