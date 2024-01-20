@@ -6,6 +6,8 @@ import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
+import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
+import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -41,18 +44,22 @@ public class PostController {
     }
 
     // 인증정보 없이 모든 글 조회하기
-    @GetMapping("/readonly/posts")
-    public ApiResponse<List<BriefPostResponse>> getPostsForAnyone() {
+    @GetMapping("/readonly/posts/{page}")
+    public ApiResponse<List<BriefPostResponse>> getPostsForAnyone(
+        @PathVariable(name = "page") int page
+    ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPostsForAnyone());
+            postService.getPostsForAnyone(page));
     }
 
     // 모든 글 조회하기
-    @GetMapping("/posts")
+    @GetMapping("/posts/{page}")
     public ApiResponse<List<BriefPostResponse>> getPosts(
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page
+    ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPosts(userDetails.getUser()));
+            postService.getPosts(page,userDetails.getUser()));
     }
 
     //글 단독 조회, 글 상세페이지
@@ -69,20 +76,20 @@ public class PostController {
     @GetMapping("/posts/category")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody PostCategoryRequest postCategorySearchReq
+        @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
-            postService.getPostsByCategory(postCategorySearchReq, userDetails.getUser()));
+            postService.getPostsByCategory(category, userDetails.getUser()));
     }
 
     //글 검색하기
     @GetMapping("/posts/search")
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @Valid @RequestBody PostSearchRequest postSearchReq
+        @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
-            postService.searchPost(postSearchReq, userDetails.getUser()));
+            postService.searchPost(keyword, userDetails.getUser()));
     }
 
     //모집 취소하기

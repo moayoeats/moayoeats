@@ -18,11 +18,17 @@ public class PostFrontController {
     }
 
     // 로그인 후 글 단독조회
-    @GetMapping("post/{postId}")
+    @GetMapping("/post/{postId}")
     public String postPage(@PathVariable(name = "postId") Long postId) {
         ModelAndView mav = new ModelAndView("postId");
         mav.addObject("postId", postId);
         return "domain/post/post.html";
+    }
+
+    // 로그인 후 글 전체조회
+    @GetMapping("/posts")
+    public String postsPage() {
+        return "domain/post/posts.html";
     }
 
     //인증정보 없이 글 단독조회

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Documented
 @Constraint(validatedBy = CategoryValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target( {ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {
     String message() default "has to be one of the CategoryEnum";

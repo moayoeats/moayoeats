@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -97,14 +100,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPostsForAnyone() {
-        List<Post> posts = findAll();
+    public List<BriefPostResponse> getPostsForAnyone(int page) {
+        List<Post> posts = findPage(page);
         return postsToBriefResponses(posts);
     }
 
     @Override
-    public List<BriefPostResponse> getPosts(User user) {
-        List<Post> posts = findAll();
+    public List<BriefPostResponse> getPosts(int page,User user) {
+        List<Post> posts = findPage(page);
         return postsToBriefResponses(posts);
     }
 
@@ -129,21 +132,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategoryReq,
+    public List<BriefPostResponse> getPostsByCategory(String category,
         User user) {
         List<Post> posts;
-        if (postCategoryReq.category().equals(CategoryEnum.ALL.toString())) {
+        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+        if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findAll();
         } else {
-            posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
+            posts = postRepository.findAllByCategoryEquals(categoryEnum).orElse(null);
         }
         return postsToBriefResponses(posts);
     }
 
     @Override
-    public List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user) {
+    public List<BriefPostResponse> searchPost(String keyword, User user) {
         //get all posts filtered by search keyword
-        List<Post> posts = postRepository.findPostByStoreContaining(postSearchReq.keyword())
+        List<Post> posts = postRepository.findPostByStoreContaining(keyword)
             .orElse(null);
         //List<Post> -> List<BriefPostResponse>
         return postsToBriefResponses(posts);
@@ -298,6 +302,13 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAll();
     }
 
+    private List<Post> findPage(int page){
+        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Page<Post> postPage = postRepository.findAll(pageWithTenPosts);
+        List<Post> posts = postPage.getContent();
+        return posts;
+    }
+
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
         return posts.stream().map((Post post) -> new BriefPostResponse(post.getId(),
                 getAuthor(getUserPostsByPost(post)).getNickname(), post.getAddress(), post.getStore(),
@@ -428,7 +439,7 @@ public class PostServiceImpl implements PostService {
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
     public void scheduledDelete() {
-        List<Post> posts = postRepository.findAll();
+        List<Post> posts = findAll();
         List<Post> pastDeadline = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
         for (Post post : posts) {
