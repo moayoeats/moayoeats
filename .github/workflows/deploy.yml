@@ -30,14 +30,9 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        # test code는 빌드하지 않음
-        run: |  # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
-          ./gradlew assemble
+        # test code는 빌드하지 않음 # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
+        run: ./gradlew assemble
         shell: bash
-
-      #      - name: Build with Gradle
-      #        run: ./gradlew build
-      #        shell: bash
 
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
