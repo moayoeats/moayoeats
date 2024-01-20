@@ -1,4 +1,3 @@
-<!-- chatroom.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -11,11 +10,9 @@
 </head>
 <body>
 <div id="chat-container">
-  <div id="chat-messages" style="height: 300px; overflow-y: scroll;">
-    <!-- 채팅 메시지가 여기에 표시됩니다 -->
-  </div>
+  <div id="chat-messages" style="height: 300px; overflow-y: scroll;"></div>
   <input type="text" id="chat-input" placeholder="메시지 입력...">
-  <button id="send-button" data-postid="[[${postId}]]" data-username="[[${username}]]">보내기</button>
+  <button id="send-button">보내기</button>
 </div>
 
 <script th:inline="javascript">
@@ -23,12 +20,10 @@
   var postId = [[${postId}]];
   var username = [[${username}]];
 
-  // 페이지가 로드될 때 WebSocket 연결을 시작합니다.
   window.addEventListener('load', function () {
     connect(postId, username);
   });
 
-  // 페이지가 언로드될 때 WebSocket 연결을 끊습니다.
   window.addEventListener('unload', function () {
     disconnect();
   });
