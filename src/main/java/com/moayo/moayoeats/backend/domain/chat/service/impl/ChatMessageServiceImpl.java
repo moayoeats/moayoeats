@@ -1,6 +1,5 @@
 package com.moayo.moayoeats.backend.domain.chat.service.impl;
 
-import com.moayo.moayoeats.backend.domain.chat.dto.ChatMessageDTO;
 import com.moayo.moayoeats.backend.domain.chat.entity.ChatMessage;
 import com.moayo.moayoeats.backend.domain.chat.repository.ChatMessageRepository;
 import com.moayo.moayoeats.backend.domain.chat.service.ChatMessageService;
@@ -19,26 +18,24 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final UserRepository userRepository;
 
     @Override
-    public ChatMessageDTO saveChatMessage(String postId, String sender, String content, User user) {
+    public void saveChatMessage(String postId, String sender, String content) {
 
-        String userId = String.valueOf(user.getId());
+        User user = findByNickname(sender);
 
         ChatMessage chatMessage = ChatMessage.builder()
             .postId(postId)
             .sender(sender)
             .content(content)
-            .userId(userId)
+            .userId(String.valueOf(user.getId()))
             .build();
 
         chatMessageRepository.save(chatMessage);
 
-        return new ChatMessageDTO(postId, sender, content);
     }
 
-     private User checkUserId(Long userId) {
-        return userRepository.findById(userId)
+    private User findByNickname(String nickname) {
+        return userRepository.findByNickname(nickname)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
-     }
-
+    }
 
 }

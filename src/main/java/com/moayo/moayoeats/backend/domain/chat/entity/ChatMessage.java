@@ -1,11 +1,7 @@
 package com.moayo.moayoeats.backend.domain.chat.entity;
 
-import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.global.entity.BaseTime;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
