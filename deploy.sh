@@ -6,6 +6,9 @@ REPOSITORY=/home/ubuntu/moayoeats
 # shellcheck disable=SC2164
 cd "$REPOSITORY" || exit
 
+# 압축 해제
+unzip -qq -o "$GITHUB_SHA.zip" -d "$REPOSITORY"
+
 # 현재 실행 중인 Java 프로세스 종료
 pkill -f "java -jar"
 
