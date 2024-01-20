@@ -18,6 +18,10 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
 
+  thymeleaf:
+    cache: false
+    prefix: src/main/resources/templates/
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
