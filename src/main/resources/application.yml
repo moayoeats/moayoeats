@@ -20,6 +20,7 @@ spring:
 
   thymeleaf:
     cache: false
+    suffix: .html
 #    prefix: src/main/resources/templates/
 
 jwt:
