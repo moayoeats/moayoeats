@@ -44,7 +44,10 @@ jobs:
       # Build Gradle
       - name: Build with Gradle
         # test code는 빌드하지 않음
-        run: ./gradlew assemble # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
+        run: | # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
+          ./gradlew assemble 
+          ./gradlew bootJar
+
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
