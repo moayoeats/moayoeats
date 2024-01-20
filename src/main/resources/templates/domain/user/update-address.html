@@ -6,6 +6,47 @@
       src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv&submodules=geocoder"
       type="text/javascript"></script>
   <style>
+    #update-address-form {
+      margin: 30px auto 30px auto;
+    }
+
+    .btn-pack {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .btn-pack button {
+      width: 400px;
+      margin-bottom: 7px;
+    }
+
+    #address-submit {
+      margin-right: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #map-pack {
+      padding: 10px;
+      width: 800px;
+      height: max-content;
+      margin: auto
+    }
+
+    #map {
+      width: 800px;
+      height: 450px;
+    }
+
+    .description {
+      text-align: center;
+      font-weight: bold;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <header>
@@ -21,7 +62,7 @@
     </div>
     <div class="btn-pack">
       <button type="button" class="btn btn-secondary"
-              id="info-submit" onclick="updateAddress()">변경하기
+              id="address-submit" onclick="updateAddress()">변경하기
       </button>
     </div>
   </div>
