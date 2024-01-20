@@ -6,6 +6,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
+import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import java.util.List;
 
@@ -35,19 +36,19 @@ public interface PostService {
     DetailedPostResponse getPost(Long postId, User user);
 
     /**
-     * @param postCategorySearchReq : 카테고리
+     * @param category : 카테고리
      * @param user                  : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
-    List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategorySearchReq,
+    List<BriefPostResponse> getPostsByCategory(String category,
         User user);
 
     /**
-     * @param postSearchReq : 검색어
-     * @param user          : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @param keyword : 검색어
+     * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
-    List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user);
+    List<BriefPostResponse> searchPost(String keyword, User user);
 
     /**
      * @param postIdReq : 글을 삭제하기 위한 postId

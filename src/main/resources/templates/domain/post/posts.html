@@ -1,0 +1,226 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+      name="viewport">
+  <link crossorigin="anonymous"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        rel="stylesheet">
+  <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+  <title>글 전체페이지</title>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<header>
+  <div th:replace="/global/navbar :: navbar"></div>
+</header>
+<body>
+<div style="padding:10px;width:1000px; height:max-content">
+  <div style="margin:auto">카테고리 선택
+    <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+      <input autocomplete="off" checked class="btn-check" id="all" name="btnradio"
+             onclick="all()" type="radio">
+      <label class="btn btn-outline-secondary" for="all">전체</label>
+      <input autocomplete="off" class="btn-check" id="burger" name="btnradio" onclick="burger()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="burger">버거</label>
+      <input autocomplete="off" class="btn-check" id="chicken" name="btnradio" onclick="chicken()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+      <input autocomplete="off" class="btn-check" id="korean" name="btnradio" onclick="korean()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="korean">한식</label>
+      <input autocomplete="off" class="btn-check" id="western" name="btnradio" onclick="western()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="western">양식</label>
+      <input autocomplete="off" class="btn-check" id="asian" name="btnradio" onclick="asian()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="asian">아시안</label>
+      <input autocomplete="off" class="btn-check" id="snack" name="btnradio" onclick="snack()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="snack">분식</label>
+      <input autocomplete="off" class="btn-check" id="japanese" name="btnradio" onclick="japanese()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="japanese">일식</label>
+      <input autocomplete="off" class="btn-check" id="chinese" name="btnradio" onclick="chinese()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="chinese">중식</label>
+      <input autocomplete="off" class="btn-check" id="lunchbox" name="btnradio" onclick="lunchbox()"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+    </div>
+    <div class="input-group mb-3">
+      <input aria-describedby="button-addon2" aria-label="keyword" class="form-control" id="keyword" placeholder="검색어"
+             type="text">
+      <button class="btn btn-outline-secondary" onclick="search()" id="search" type="button">검색</button>
+    </div>
+  </div>
+  <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
+</div>
+<script th:inline="javascript">
+
+  $(document).ready(function () {
+    getData();
+  });
+
+  function getData() {
+
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/posts`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+
+        drawAllPosts(response.data);
+
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function drawAllPosts(data) {
+    data.forEach((post) =>
+        $('#posts').append(
+            `
+              <div style="padding:10px;width:1000px; height:max-content; margin:auto">
+                <div>작성자</div>
+                <div>${post.author}</div>
+                <div>가게</div>
+                <div>${post.store}</div>
+                <div>합계 금액</div>
+                <div>${post.sumPrice}</div>
+                <div>최소주문금액</div>
+                <div>${post.minPrice}</div>
+                <div>마감 기한</div>
+                <div>${post.deadline}</div>
+                <button id = "${post.id}" post = "${post.id}"  class="btn btn-outline-secondary" onclick="sendData(this)" type="button">조회</button>
+              </div>
+            `
+        )
+    )
+  }
+
+  function search(){
+    var keyword = $('#keyword').val();
+
+    removeAllPosts();
+    getDataByKeyword(keyword);
+  }
+
+  function getDataByKeyword(keyword){
+    var keyword = keyword;
+
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/posts/search?keyword=${keyword}`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+
+        drawAllPosts(response.data);
+
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function sendData(button) {
+
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.href = host + `/post/${postId}`;
+
+  }
+
+  function getDataByCategory(categoryEnum) {
+    let category = categoryEnum;
+
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/posts/category?category=${category}`,
+      dataType: "json",
+      contentType: 'application/json',
+      data:{},
+      success: function (response) {
+        console.log('Success:', response);
+
+        drawAllPosts(response.data);
+
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function removeAllPosts() {
+    const element = document.getElementById("posts");
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  function all() {
+    removeAllPosts();
+    getData();
+  }
+
+  function burger() {
+    removeAllPosts();
+    getDataByCategory("BURGER");
+  }
+
+  function chicken() {
+    removeAllPosts();
+    getDataByCategory("CHICKEN");
+  }
+
+  function korean() {
+    removeAllPosts();
+    getDataByCategory("KOREAN");
+  }
+
+  function western() {
+    removeAllPosts();
+    getDataByCategory("WESTERN");
+  }
+
+  function asian() {
+    removeAllPosts();
+    getDataByCategory("ASIAN");
+  }
+
+  function snack() {
+    removeAllPosts();
+    getDataByCategory("SNACK");
+  }
+
+  function japanese() {
+    removeAllPosts();
+    getDataByCategory("JAPANESE");
+  }
+
+  function chinese() {
+    removeAllPosts();
+    getDataByCategory("CHINESE");
+  }
+
+  function lunchbox() {
+    removeAllPosts();
+    getDataByCategory("LUNCHBOX");
+  }
+
+</script>
+</body>
+</html>

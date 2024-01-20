@@ -129,21 +129,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(PostCategoryRequest postCategoryReq,
+    public List<BriefPostResponse> getPostsByCategory(String category,
         User user) {
         List<Post> posts;
-        if (postCategoryReq.category().equals(CategoryEnum.ALL.toString())) {
+        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+        if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findAll();
         } else {
-            posts = postRepository.findAllByCategoryEquals(postCategoryReq.category()).orElse(null);
+            posts = postRepository.findAllByCategoryEquals(categoryEnum).orElse(null);
         }
         return postsToBriefResponses(posts);
     }
 
     @Override
-    public List<BriefPostResponse> searchPost(PostSearchRequest postSearchReq, User user) {
+    public List<BriefPostResponse> searchPost(String keyword, User user) {
         //get all posts filtered by search keyword
-        List<Post> posts = postRepository.findPostByStoreContaining(postSearchReq.keyword())
+        List<Post> posts = postRepository.findPostByStoreContaining(keyword)
             .orElse(null);
         //List<Post> -> List<BriefPostResponse>
         return postsToBriefResponses(posts);
