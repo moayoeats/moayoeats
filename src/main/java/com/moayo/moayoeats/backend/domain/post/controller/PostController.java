@@ -53,7 +53,7 @@ public class PostController {
     }
 
     // 모든 글 조회하기
-    @GetMapping("/posts/{page}")
+    @GetMapping("/posts/page/{page}")
     public ApiResponse<List<BriefPostResponse>> getPosts(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page
@@ -70,6 +70,16 @@ public class PostController {
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
             postService.getPost(postId, userDetails.getUser()));
+    }
+
+    //인증정보 없이 글 카테고리별 조회
+    @GetMapping("/readonly/posts/page/{page}")
+    public ApiResponse<List<BriefPostResponse>> getPostsByCategoryForAnyone(
+        @PathVariable(name = "page") int page,
+        @RequestParam @Category String category
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
+            postService.getPostsByCategoryForAnyone(page,category));
     }
 
     //글 카테고리별 조회
