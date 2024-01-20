@@ -42,4 +42,9 @@ public class UserFrontController {
     public String updatePassword() {
         return "/domain/user/update-password";
     }
+
+    @GetMapping("/mypage/address")
+    public String updateAddress() {
+        return "/domain/user/update-address";
+    }
 }

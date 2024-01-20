@@ -140,6 +140,10 @@
               onclick="moveUpdatePwPage()">
         비밀번호 수정
       </button>
+      <button type="button" class="btn btn-secondary" id="address-update-btn"
+              onclick="moveUpdateAddressPage()">
+        주소 수정
+      </button>
     </div>
   </div>
 
@@ -216,6 +220,10 @@
 
   function moveUpdatePwPage() {
     window.location.replace(host + '/mypage/password');
+  }
+
+  function moveUpdateAddressPage() {
+    window.location.replace(host + '/mypage/address');
   }
 </script>
 <script src="/js/basic.js"></script>
