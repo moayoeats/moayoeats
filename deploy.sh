@@ -10,8 +10,7 @@ cd "$REPOSITORY" || exit
 pkill -f "java -jar"
 
 # 가장 최신 JAR 파일 선택
-# shellcheck disable=SC2012
-JAR_NAME=$(ls -t "$REPOSITORY"/build/libs/*.jar | head -n 1)
+JAR_NAME=$(ls -t "$REPOSITORY"/*.jar | head -n 1)
 
 # 파일 권한 설정
 chmod +x "$JAR_NAME"
