@@ -157,6 +157,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<BriefPostResponse> searchPostForAnyone(int page, String keyword) {
+        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts,keyword).getContent();
+        return postsToBriefResponses(posts);
+    }
+
+    @Override
     public List<BriefPostResponse> searchPost(String keyword, User user) {
         //get all posts filtered by search keyword
         List<Post> posts = postRepository.findPostByStoreContaining(keyword)

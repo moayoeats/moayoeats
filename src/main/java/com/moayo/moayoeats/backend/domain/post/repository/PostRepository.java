@@ -20,4 +20,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<List<Post>> findPostByStoreContaining(String store);
 
+    Page<Post> findPostByStoreContaining(Pageable pageable, String store);
+
 }

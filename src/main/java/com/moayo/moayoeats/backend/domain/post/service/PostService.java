@@ -55,6 +55,13 @@ public interface PostService {
         User user);
 
     /**
+     * @param page : 페이지 조회에 필요한 int pageNumber
+     * @param keyword : 검색어
+     * @return
+     */
+    List<BriefPostResponse> searchPostForAnyone(int page, String keyword);
+
+    /**
      * @param keyword : 검색어
      * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return

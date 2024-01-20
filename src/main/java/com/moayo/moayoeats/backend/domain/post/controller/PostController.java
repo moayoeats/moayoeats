@@ -92,6 +92,16 @@ public class PostController {
             postService.getPostsByCategory(category, userDetails.getUser()));
     }
 
+    //인증정보 없이 글 검색하기
+    @GetMapping("/readonly/posts/search/{page}")
+    public ApiResponse<List<BriefPostResponse>> searchPostForAnyone(
+        @PathVariable(name = "page") int page,
+        @RequestParam String keyword
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
+            postService.searchPostForAnyone(page,keyword));
+    }
+
     //글 검색하기
     @GetMapping("/posts/search")
     public ApiResponse<List<BriefPostResponse>> searchPost(
@@ -152,7 +162,7 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.OK.value(), "수령완료 처리가 되었습니다.");
     }
 
-    //Test
+    //인증정보 없이 글 단독 조회
     @GetMapping("/test/posts/{postId}")
     public ApiResponse<DetailedPostResponse> getPostTest(
         @PathVariable(name = "postId") Long postId
