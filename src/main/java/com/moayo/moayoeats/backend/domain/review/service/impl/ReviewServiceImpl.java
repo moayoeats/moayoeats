@@ -41,7 +41,9 @@ public class ReviewServiceImpl implements ReviewService {
         return orders.stream().map(
             order -> OrderResponse.builder().id(order.getId()).store(order.getStore()).menus(
                     order.getMenus().stream()
-                        .map(menu -> new MenuResponse(menu.getId(),menu.getMenuname(), menu.getPrice())).toList())
+                        .map(
+                            menu -> new MenuResponse(menu.getId(), menu.getMenuname(), menu.getPrice()))
+                        .toList())
                 .receiverName(order.getReceiver().getNickname()).build()).toList();
 
     }
@@ -97,42 +99,42 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviews = reviewRepository.findAllByUser(receiver);
         List<Review> updated = new ArrayList<>();
 
-        if (reviewReq.goodmanner()==1) {
+        if (reviewReq.goodmanner() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.GOODMANNER, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.goodcomm()==1) {
+        if (reviewReq.goodcomm() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.GOODCOMM, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.goodtime()==1) {
+        if (reviewReq.goodtime() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.GOODTIME, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.badtime()==1) {
+        if (reviewReq.badtime() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.BADTIME, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.noshow()==1) {
+        if (reviewReq.noshow() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.NOSHOW, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.nomoney()==1) {
+        if (reviewReq.nomoney() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.NOMONEY, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.badcomm()==1) {
+        if (reviewReq.badcomm() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.BADCOMM, receiver);
             review.increaseCount();
             updated.add(review);
         }
-        if (reviewReq.badmanner()==1) {
+        if (reviewReq.badmanner() == 1) {
             Review review = findReviewByContent(reviews, ReviewEnum.BADMANNER, receiver);
             review.increaseCount();
             updated.add(review);
@@ -162,7 +164,8 @@ public class ReviewServiceImpl implements ReviewService {
         if (count == 0) {
             return 0.0;
         }
-        return total / count;
+        return Math.round((total / count) * 10) / 10.0;
+
     }
 
 }
