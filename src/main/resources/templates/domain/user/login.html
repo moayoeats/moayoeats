@@ -2,19 +2,70 @@
 <html lang="en">
 <head>
   <div th:replace="/global/header :: header"></div>
+  <style>
+    #login-form {
+      width: 400px;
+      margin: 210px auto 0 auto;
+    }
+
+    #login-form div {
+      text-align: center;
+    }
+
+    .btn-pack {
+      margin-top: 20px;
+    }
+
+    .btn-pack button {
+      width: 400px;
+      height: 52px;
+      margin-bottom: 7px;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .go-sign-up {
+      margin-top: 5px;
+    }
+
+    .go-sign-up a {
+      text-decoration: none;
+    }
+
+    #logo {
+      margin-bottom: 50px;
+    }
+  </style>
+
 </head>
 <body>
 <div id="login-form">
   <div>
-    <div>이메일</div>
-    <input type="email" name="email" id="email" class="login-input">
+    <img src="/images/logo.png" alt="logo" id="logo" width="150" height="150">
+    <div class="form-floating">
+      <input type="email" name="email" id="email"
+             class="login-input form-control" placeholder="email">
+      <label for="email">이메일</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input type="password" name="password" id="password"
+             class="login-input form-control" placeholder="Password">
+      <label for="password">비밀번호</label>
+    </div>
 
-    <div>비밀번호</div>
-    <input type="password" name="password" id="password" class="login-input">
-
-    <button id="login-submit" onclick="login()">로그인</button>
+    <div class="btn-pack">
+      <button type="button" class="btn btn-secondary"
+              id="login-submit" onclick="login()">로그인
+      </button>
+    </div>
+    <div class="go-sign-up">
+      <p style="font-weight: bold; display: inline-block;">계정이 없으신가요? </p>
+      <a href="/signup">회원가입</a>
+    </div>
   </div>
-
 </div>
 </body>
 
