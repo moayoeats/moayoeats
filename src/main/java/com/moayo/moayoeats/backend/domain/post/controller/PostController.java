@@ -44,18 +44,22 @@ public class PostController {
     }
 
     // 인증정보 없이 모든 글 조회하기
-    @GetMapping("/readonly/posts")
-    public ApiResponse<List<BriefPostResponse>> getPostsForAnyone() {
+    @GetMapping("/readonly/posts/{page}")
+    public ApiResponse<List<BriefPostResponse>> getPostsForAnyone(
+        @PathVariable(name = "page") int page
+    ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPostsForAnyone());
+            postService.getPostsForAnyone(page));
     }
 
     // 모든 글 조회하기
-    @GetMapping("/posts")
+    @GetMapping("/posts/{page}")
     public ApiResponse<List<BriefPostResponse>> getPosts(
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page
+    ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPosts(userDetails.getUser()));
+            postService.getPosts(page,userDetails.getUser()));
     }
 
     //글 단독 조회, 글 상세페이지
