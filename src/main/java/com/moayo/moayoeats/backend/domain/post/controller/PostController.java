@@ -53,7 +53,7 @@ public class PostController {
     }
 
     // 모든 글 조회하기
-    @GetMapping("/posts/{page}")
+    @GetMapping("/posts/page/{page}")
     public ApiResponse<List<BriefPostResponse>> getPosts(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page
