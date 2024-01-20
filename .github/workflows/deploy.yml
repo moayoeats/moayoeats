@@ -32,7 +32,6 @@ jobs:
       - name: Build with Gradle
         # test code는 빌드하지 않음
         run: |  # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
-          ./gradlew bootJar
           ./gradlew assemble
         shell: bash
 
