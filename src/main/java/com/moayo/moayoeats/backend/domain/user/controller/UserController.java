@@ -109,11 +109,13 @@ public class UserController {
     }
 
     @PatchMapping("/address")
-    public void updateAddress(
+    public ApiResponse<Void> updateAddress(
         @Valid @RequestBody AddressUpdateRequest addressUpdateReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
+        userService.updateAddress(addressUpdateReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "주소를 수정하였습니다.");
     }
 
 }

@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.user.service.impl;
 
 import com.moayo.moayoeats.backend.domain.review.service.impl.ReviewServiceImpl;
+import com.moayo.moayoeats.backend.domain.user.dto.request.AddressUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
@@ -100,6 +101,17 @@ public class UserServiceImpl implements UserService {
             .score(reviewServiceImpl.getAvgScore(otherUser))
             .reviews(reviewServiceImpl.getReviews(otherUser))
             .build();
+    }
+
+    @Transactional
+    public void updateAddress(AddressUpdateRequest addressUpdateReq, User user) {
+
+        String[] location = addressUpdateReq.address().split(":|,|\\)");
+        Double latitude = Double.valueOf(location[1]);
+        Double longitude = Double.valueOf(location[3]);
+
+        user.updateAddress(latitude, longitude);
+        userRepository.save(user);
     }
 
     private void checkAlreadyExistUser(String email) {
