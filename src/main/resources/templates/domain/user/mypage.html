@@ -204,7 +204,7 @@
               <div>${menuList}</div>
             </div>
           </div>
-            <button type="button" class="btn btn-secondary" id="review-submit" onclick="createReview()">
+            <button type="button" class="btn btn-secondary" id="review-submit" order="${order.id}" onclick="createReview(this)">
               리뷰 남기기
             </button>
           </div>
@@ -224,6 +224,12 @@
 
   function moveUpdateAddressPage() {
     window.location.replace(host + '/mypage/address');
+  }
+
+  function createReview(button){
+    var orderId = $(button).attr("order");
+    const host = 'http://' + window.location.host;
+    window.location.href = host +`/createreview/${orderId}`;
   }
 </script>
 <script src="/js/basic.js"></script>
