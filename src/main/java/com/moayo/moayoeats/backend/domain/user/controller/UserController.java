@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.backend.domain.user.controller;
 
+import com.moayo.moayoeats.backend.domain.user.dto.request.AddressUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
@@ -105,6 +106,16 @@ public class UserController {
             "다른사람 페이지를 가져왔습니다.",
             otherUserPageRes
         );
+    }
+
+    @PatchMapping("/address")
+    public ApiResponse<Void> updateAddress(
+        @Valid @RequestBody AddressUpdateRequest addressUpdateReq,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+        userService.updateAddress(addressUpdateReq, userDetails.getUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "주소를 수정하였습니다.");
     }
 
 }
