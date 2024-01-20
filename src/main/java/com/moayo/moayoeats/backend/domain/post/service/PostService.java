@@ -39,8 +39,16 @@ public interface PostService {
     DetailedPostResponse getPost(Long postId, User user);
 
     /**
+     *
+     * @param page : 몇페이지 조회할건지 int pageNumber
      * @param category : 카테고리
-     * @param user                  : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @return
+     */
+    List<BriefPostResponse> getPostsByCategoryForAnyone(int page,String category);
+
+    /**
+     * @param category : 카테고리
+     * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
     List<BriefPostResponse> getPostsByCategory(String category,

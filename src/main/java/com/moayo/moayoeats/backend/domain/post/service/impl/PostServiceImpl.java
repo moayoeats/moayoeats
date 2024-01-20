@@ -50,7 +50,6 @@ public class PostServiceImpl implements PostService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
-    private final UserRepository userRepository;//Test
     private final ChatRoomService chatRoomService;
 
 
@@ -129,6 +128,19 @@ public class PostServiceImpl implements PostService {
             .deadline(getDeadline(post))
             .role(getRoleByUserAndUserPosts(user,userPosts))
             .build();
+    }
+
+    @Override
+    public List<BriefPostResponse> getPostsByCategoryForAnyone(int page,String category) {
+        List<Post> posts;
+        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+        if (category.equals(CategoryEnum.ALL.toString())) {
+            posts = findPage(page);
+        } else {
+            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts,categoryEnum).getContent();
+        }
+        return postsToBriefResponses(posts);
     }
 
     @Override
