@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.backend.domain.chat.entity;
 
+import com.moayo.moayoeats.backend.global.entity.BaseTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_chatroom")
-public class ChatRoom {
+public class ChatRoom extends BaseTime {
 
     @Id
     private Long postId;
