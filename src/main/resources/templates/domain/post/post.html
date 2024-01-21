@@ -198,6 +198,9 @@
   }
 
   function getOffers(button){
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.href = host + `/post/${postId}/offer`;
 
   }
   function editmenus(button){
