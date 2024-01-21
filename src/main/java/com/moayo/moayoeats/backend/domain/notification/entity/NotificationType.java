@@ -9,6 +9,7 @@ public enum NotificationType {
     //방장에게 Host
     PARTICIPANT_JOIN_REQUEST("참가 요청 신청이 도착했습니다!"),
     AMOUNT_COLLECTED("설정한 금액이 모두 모였습니다!"),
+    AMOUNT_IS_NOT_COLLECTED("설정한 금액에 미달하였습니다!"),
 
     //참가자에게 Participant
     PARTICIPANT_REJECTED("참가 요청이 거절 되었습니다!"),
