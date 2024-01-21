@@ -1,27 +1,26 @@
 var stompClient = null;
 
 document.getElementById('send-button').addEventListener('click', function() {
-  var button = this;
-  var postId = button.getAttribute('data-postid');
-  var username = button.getAttribute('data-username');
-
-  sendMessage(postId, username);
+  var messageContent = document.getElementById('chat-input').value;
+  if (messageContent.trim() !== '') {
+    sendMessage(messageContent, username);
+    document.getElementById('chat-input').value = '';
+  }
 });
 
 function connect(postId, username) {
-  var socket = new SockJS('/ws'); // WebSocket 연결 주소
+  var socket = new SockJS('/ws');
   stompClient = Stomp.over(socket);
   stompClient.connect({}, function (frame) {
     console.log('Connected: ' + frame);
-
-    // 채팅방 구독 설정
     stompClient.subscribe('/sub/chats/room/' + postId, function (message) {
       showMessage(JSON.parse(message.body).content);
     });
-
-    // 채팅방 입장 메시지 보내기
-    stompClient.send("/pub/chats/join", {},
-        JSON.stringify({postId: postId, sender: username}));
+    var chatMessage = {
+      sender: username,
+      content: username + "님이 입장하셨습니다."
+    };
+    stompClient.send("/pub/chats/join/" + postId, {}, JSON.stringify(chatMessage));
   });
 }
 
@@ -32,24 +31,20 @@ function disconnect() {
   console.log("Disconnected");
 }
 
-function sendMessage(postId, username) {
-  var messageContent = document.getElementById('chat-input').value;
-  if (messageContent.trim() !== '') {
-    var chatMessage = {
-      postId: postId,
-      content: messageContent,
-      sender: username
-    };
-    stompClient.send("/pub/chats/message", {}, JSON.stringify(chatMessage));
-    document.getElementById('chat-input').value = '';
-  }
+function sendMessage(message) {
+  var chatMessage = {
+    sender: username,
+    content:  username + " : " + message
+  };
+  stompClient.send("/pub/chats/message/" + postId, {}, JSON.stringify(chatMessage));
 }
 
 function showMessage(message) {
+  console.log('Received message:', message);  // 디버깅 코드 추가
   var messageArea = document.getElementById('chat-messages');
   var messageElement = document.createElement('div');
   messageElement.classList.add('chat-message');
   messageElement.innerText = message;
   messageArea.appendChild(messageElement);
-  messageArea.scrollTop = messageArea.scrollHeight; // Scroll to the bottom
+  messageArea.scrollTop = messageArea.scrollHeight;
 }

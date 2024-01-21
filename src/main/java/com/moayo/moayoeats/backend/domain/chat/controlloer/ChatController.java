@@ -1,14 +1,13 @@
 package com.moayo.moayoeats.backend.domain.chat.controlloer;
 
-import com.moayo.moayoeats.backend.domain.chat.dto.ChatMessageDTO;
+import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
+import com.moayo.moayoeats.backend.domain.chat.dto.request.ChatMessageRequest;
 import com.moayo.moayoeats.backend.domain.chat.service.ChatMessageService;
-import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
@@ -18,28 +17,29 @@ public class ChatController {
 
     private final ChatMessageService chatMessageService;
 
-    @MessageMapping("/chats/join")
+    @MessageMapping("/chats/join/{postId}")
     @SendTo("/sub/chats/room/{postId}")
-    public ChatMessageDTO join(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @DestinationVariable(value = "postId") String postId
-        ) {
-        String username = userDetails.getUsername();
+    public ChatMessageResponse join(
+        @DestinationVariable(value = "postId") String postId,
+        ChatMessageRequest req
+    ) {
+        String content = req.sender() + "님이 입장하셨습니다.";
 
-        return chatMessageService.saveChatMessage(postId, username + "님이 입장하셨습니다.", username, userDetails.getUser());
+        return new ChatMessageResponse(content);
     }
 
-    @MessageMapping("/chats/message")
+    @MessageMapping("/chats/message/{postId}")
     @SendTo("/sub/chats/room/{postId}")
-    public ChatMessageDTO message(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ChatMessageResponse message(
         @DestinationVariable(value = "postId") String postId,
-        ChatMessageDTO message
+        ChatMessageRequest req
     ) {
-        String username = userDetails.getUsername();
-        String formattedContent = username + " : " + message.content();
+        String content = req.content();
+        String username = req.sender();
 
-        return chatMessageService.saveChatMessage(postId, formattedContent, username, userDetails.getUser());
+        chatMessageService.saveChatMessage(postId, username, content);
+
+        return new ChatMessageResponse(content);
     }
 
 }
