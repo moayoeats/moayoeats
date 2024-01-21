@@ -40,7 +40,7 @@ public class PostFrontController {
     }
 
     //인증정보 없이 글 전체조회
-    @GetMapping("/allposts")
+    @GetMapping("moayo/posts")
     public String readAllPosts() {
         return "domain/post/allposts";
     }
