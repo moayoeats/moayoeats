@@ -1,12 +1,9 @@
 package com.moayo.moayoeats.backend.domain.post.controller;
 
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
-import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
@@ -44,7 +41,7 @@ public class PostController {
     }
 
     // 인증정보 없이 모든 글 조회하기
-    @GetMapping("/readonly/posts/{page}")
+    @GetMapping("/readonly/posts/page/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsForAnyone(
         @PathVariable(name = "page") int page
     ) {
@@ -59,7 +56,16 @@ public class PostController {
         @PathVariable(name = "page") int page
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPosts(page,userDetails.getUser()));
+            postService.getPosts(page, userDetails.getUser()));
+    }
+
+    //인증정보 없이 글 단독 조회
+    @GetMapping("/readonly/posts/{postId}")
+    public ApiResponse<DetailedPostResponse> getPostTest(
+        @PathVariable(name = "postId") Long postId
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
+            postService.getPostTest(postId));
     }
 
     //글 단독 조회, 글 상세페이지
@@ -73,23 +79,24 @@ public class PostController {
     }
 
     //인증정보 없이 글 카테고리별 조회
-    @GetMapping("/readonly/posts/page/{page}")
+    @GetMapping("/readonly/posts/category/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategoryForAnyone(
         @PathVariable(name = "page") int page,
         @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
-            postService.getPostsByCategoryForAnyone(page,category));
+            postService.getPostsByCategoryForAnyone(page, category));
     }
 
     //글 카테고리별 조회
-    @GetMapping("/posts/category")
+    @GetMapping("/posts/category/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page,
         @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
-            postService.getPostsByCategory(category, userDetails.getUser()));
+            postService.getPostsByCategory(page, category, userDetails.getUser()));
     }
 
     //인증정보 없이 글 검색하기
@@ -99,17 +106,18 @@ public class PostController {
         @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
-            postService.searchPostForAnyone(page,keyword));
+            postService.searchPostForAnyone(page, keyword));
     }
 
     //글 검색하기
-    @GetMapping("/posts/search")
+    @GetMapping("/posts/search/{page}")
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page,
         @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
-            postService.searchPost(keyword, userDetails.getUser()));
+            postService.searchPost(page, keyword, userDetails.getUser()));
     }
 
     //모집 취소하기
@@ -160,15 +168,6 @@ public class PostController {
     ) {
         postService.receiveOrder(postIdReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "수령완료 처리가 되었습니다.");
-    }
-
-    //인증정보 없이 글 단독 조회
-    @GetMapping("/test/posts/{postId}")
-    public ApiResponse<DetailedPostResponse> getPostTest(
-        @PathVariable(name = "postId") Long postId
-    ) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
-            postService.getPostTest(postId));
     }
 
 }
