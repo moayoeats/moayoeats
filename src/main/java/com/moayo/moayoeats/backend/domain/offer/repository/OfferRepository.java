@@ -17,4 +17,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     @Query("SELECT u FROM User u JOIN u.offers o WHERE o.id = :offerId")
     User findByOfferId(Long offerId);
+
+    Offer findByUserIdAndPostId(Long userId, Long postId);
 }
