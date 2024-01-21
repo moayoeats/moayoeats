@@ -494,6 +494,7 @@ public class PostServiceImpl implements PostService {
         post.changeAmountGoalStatus(); //게시글의 목표금액 충족상태 변경
         User targetHost = userPostRepository.findByPostIdAndRole(post.getId(),
             UserPostRole.HOST);
-        publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
+
+        publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_IS_NOT_COLLECTED));
     }
 }
