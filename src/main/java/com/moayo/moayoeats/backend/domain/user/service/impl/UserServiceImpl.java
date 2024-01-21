@@ -6,6 +6,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.AddressResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -112,6 +113,15 @@ public class UserServiceImpl implements UserService {
 
         user.updateAddress(latitude, longitude);
         userRepository.save(user);
+    }
+
+    @Override
+    public AddressResponse getAddress(User user) {
+        checkNotExistUser(user);
+        if(user.getLatitude()==null||user.getLongitude()==null){
+            return new AddressResponse(37.5773588,126.9771222);//default address to set a map center
+        }
+        return new AddressResponse(user.getLatitude(),user.getLongitude());
     }
 
     private void checkAlreadyExistUser(String email) {
