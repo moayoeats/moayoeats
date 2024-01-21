@@ -19,8 +19,8 @@ public class ChatFrontController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
         ) {
         model.addAttribute("postId", postId);
-        model.addAttribute("username", userDetails.getUsername()); // 현재 로그인된 사용자 이름
-        return "domain/chat/chatroom"; // Thymeleaf 템플릿 이름
+        model.addAttribute("username", userDetails.getUsername());
+        return "domain/chat/chatroom";
     }
 
 }
