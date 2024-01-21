@@ -12,17 +12,17 @@ public class UserFrontController {
 
     @GetMapping("/login")
     public String loginPage() {
-        return "/domain/user/login";
+        return "domain/user/login";
     }
 
     @GetMapping("/signup")
     public String signupPage() {
-        return "/domain/user/signup";
+        return "domain/user/signup";
     }
 
     @GetMapping("/mypage")
     public String myPage() {
-        return "/domain/user/mypage";
+        return "domain/user/mypage";
     }
 
     @GetMapping("/user/{otherUserId}")
@@ -30,21 +30,21 @@ public class UserFrontController {
 
         model.addAttribute("otherUserId", otherUserId);
 
-        return "/domain/user/other-user-page";
+        return "domain/user/other-user-page";
     }
 
     @GetMapping("/mypage/nickname")
     public String updateNickname() {
-        return "/domain/user/update-nickname";
+        return "domain/user/update-nickname";
     }
 
     @GetMapping("/mypage/password")
     public String updatePassword() {
-        return "/domain/user/update-password";
+        return "domain/user/update-password";
     }
 
     @GetMapping("/mypage/address")
     public String updateAddress() {
-        return "/domain/user/update-address";
+        return "domain/user/update-address";
     }
 }
