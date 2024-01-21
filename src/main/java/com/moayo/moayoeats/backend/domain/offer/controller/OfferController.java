@@ -1,8 +1,8 @@
 package com.moayo.moayoeats.backend.domain.offer.controller;
 
-import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
+import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.backend.domain.offer.service.OfferService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,14 +47,14 @@ public class OfferController {
         return new ApiResponse<>(HttpStatus.OK.value(), "참가취소가 완료되었습니다.");
     }
 
-    @GetMapping()
-    public ApiResponse<List<NickMenusResponse>> viewApplication(
-        @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
+    @GetMapping("/{postId}")
+    public ApiResponse<List<OfferResponse>> viewApplication(
+        @PathVariable Long postId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        List<NickMenusResponse> offerResList = offerService.viewApplication(
-            offerRelatedPostReq,
+        List<OfferResponse> offerResList = offerService.viewApplication(
+            postId,
             userDetails.getUser()
         );
 
