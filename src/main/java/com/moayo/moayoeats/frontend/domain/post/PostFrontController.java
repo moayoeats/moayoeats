@@ -32,7 +32,7 @@ public class PostFrontController {
     }
 
     //인증정보 없이 글 단독조회
-    @GetMapping("moayo/readpost/{postId}")
+    @GetMapping("/moayo/readpost/{postId}")
     public String readpostPage(@PathVariable(name = "postId") Long postId) {
         ModelAndView mav = new ModelAndView("postId");
         mav.addObject("postId", postId);
@@ -40,7 +40,7 @@ public class PostFrontController {
     }
 
     //인증정보 없이 글 전체조회
-    @GetMapping("moayo/posts")
+    @GetMapping("/moayo/posts")
     public String readAllPosts() {
         return "domain/post/allposts";
     }
