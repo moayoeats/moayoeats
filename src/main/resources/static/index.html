@@ -1,94 +1,87 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-      name="viewport">
-  <link crossorigin="anonymous"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        rel="stylesheet">
-  <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
-  <link href="./css/style.css" rel="stylesheet">
-  <title>글 전체페이지</title>
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-</head>
-<header>
-  <div th:replace="/global/navbar :: navbar"></div>
-</header>
 <body>
 <div style="padding:10px;width:1000px; height:min-content; margin:auto">
-  <div style="margin:auto">카테고리 선택
-    <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
-      <input autocomplete="off" category="ALL" checked class="btn-check" id="all" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="all">전체</label>
-      <input autocomplete="off" category="BURGER" class="btn-check" id="burger" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="burger">버거</label>
-      <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
-      <input autocomplete="off" category="KOREAN" class="btn-check" id="korean" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="korean">한식</label>
-      <input autocomplete="off" category="WESTERN" class="btn-check" id="western" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="western">양식</label>
-      <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="asian">아시안</label>
-      <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="snack">분식</label>
-      <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="japanese">일식</label>
-      <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="chinese">중식</label>
-      <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+    <div style="margin:auto">카테고리 선택
+        <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+            <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="all">전체</label>
+            <input autocomplete="off" category="BURGER" class="btn-check" id="burger"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="burger">버거</label>
+            <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+            <input autocomplete="off" category="KOREAN" class="btn-check" id="korean"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="korean">한식</label>
+            <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="western">양식</label>
+            <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="asian">아시안</label>
+            <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="snack">분식</label>
+            <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="japanese">일식</label>
+            <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="chinese">중식</label>
+            <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+        </div>
+        <div class="input-group mb-3">
+            <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
+                   id="keyword"
+                   placeholder="검색어"
+                   type="text">
+            <button class="btn btn-outline-secondary" id="search" onclick="search()" type="button">
+                검색
+            </button>
+        </div>
     </div>
-    <div class="input-group mb-3">
-      <input aria-describedby="button-addon2" aria-label="keyword" class="form-control" id="keyword"
-             placeholder="검색어"
-             type="text">
-      <button class="btn btn-outline-secondary" id="search" onclick="search()" type="button">검색
-      </button>
-    </div>
-  </div>
-  <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
-  <div id="pages" style="width:1000px; height:min-content; margin:auto">
+    <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
+    <div id="pages" style="width:1000px; height:min-content; margin:auto">
 
-  </div>
+    </div>
 </div>
 <script th:inline="javascript">
 
 
   $(document).ready(function () {
     var index = 0;
-    getData(index,0);
+    getData(index, 0);
   });
 
   function getPage(button) {
     var index = $(button).attr("index");
     var ten = $(button).attr("ten");
-    getData(index,ten);
+    getData(index, ten);
   }
 
-  function getData(page,ten) {
+  function getData(page, ten) {
     var page = page;
     $.ajax({
       type: 'GET',
@@ -179,7 +172,7 @@
         console.log('Success:', response);
         removeAllPosts();
         drawAllPosts(response.data);
-        drawCategoryPages(category,ten);
+        drawCategoryPages(category, ten);
 
       },
       error: function (error) {
@@ -224,112 +217,143 @@
     }
   }
 
-  function drawPages(ten){
+  function drawPages(ten) {
     removeAllPages();
-    var index = ten*10;
+    var index = ten * 10;
     $('#pages').append(
         `
     <div className="btn-group" role="group" aria-label="Basic outlined example">
       <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getPreviousPages(this)">이전</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+0} onclick="getPage(this)">${index+1}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+1} onclick="getPage(this)">${index+2}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+2} onclick="getPage(this)">${index+3}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+3} onclick="getPage(this)">${index+4}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+4} onclick="getPage(this)">${index+5}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+5} onclick="getPage(this)">${index+6}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+6} onclick="getPage(this)">${index+7}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+7} onclick="getPage(this)">${index+8}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+8} onclick="getPage(this)">${index+9}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+9} onclick="getPage(this)">${index+10}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 0} onclick="getPage(this)">${index + 1}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 1} onclick="getPage(this)">${index + 2}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 2} onclick="getPage(this)">${index + 3}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 3} onclick="getPage(this)">${index + 4}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 4} onclick="getPage(this)">${index + 5}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 5} onclick="getPage(this)">${index + 6}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 6} onclick="getPage(this)">${index + 7}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 7} onclick="getPage(this)">${index + 8}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 8} onclick="getPage(this)">${index + 9}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 9} onclick="getPage(this)">${index + 10}</button>
       <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getNextPages(this)">다음</button>
     </div>
     `);
   }
 
-  function getPreviousPages(button){
+  function getPreviousPages(button) {
     var ten = +$(button).attr("ten");
-    if(ten>0){
-      ten = ten-1;
+    if (ten > 0) {
+      ten = ten - 1;
     }
     drawPages(ten);
   }
 
-  function getNextPages(button){
+  function getNextPages(button) {
     var ten = +$(button).attr("ten");
-    ten = ten+1;
+    ten = ten + 1;
     drawPages(ten);
   }
 
-  function drawCategoryPages(category,ten){
+  function drawCategoryPages(category, ten) {
     removeAllPages();
-    var index = ten*10;
+    var index = ten * 10;
     $('#pages').append(
         `
     <div className="btn-group" role="group" aria-label="Basic outlined example">
       <button type="button" className="btn btn-outline-secondary" category = ${category} ten = ${ten} index = ${index} onclick="getPreviousCategoryPages(this)">이전</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+0} onclick="getCategoryPage(this)">${index+1}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+1} onclick="getCategoryPage(this)">${index+2}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+2} onclick="getCategoryPage(this)">${index+3}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+3} onclick="getCategoryPage(this)">${index+4}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+4} onclick="getCategoryPage(this)">${index+5}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+5} onclick="getCategoryPage(this)">${index+6}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+6} onclick="getCategoryPage(this)">${index+7}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+7} onclick="getCategoryPage(this)">${index+8}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+8} onclick="getCategoryPage(this)">${index+9}</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index+9} onclick="getCategoryPage(this)">${index+10}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 0} onclick="getCategoryPage(this)">${index + 1}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 1} onclick="getCategoryPage(this)">${index + 2}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 2} onclick="getCategoryPage(this)">${index + 3}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 3} onclick="getCategoryPage(this)">${index + 4}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 4} onclick="getCategoryPage(this)">${index + 5}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 5} onclick="getCategoryPage(this)">${index + 6}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 6} onclick="getCategoryPage(this)">${index + 7}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 7} onclick="getCategoryPage(this)">${index + 8}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 8} onclick="getCategoryPage(this)">${index + 9}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 9} onclick="getCategoryPage(this)">${index + 10}</button>
       <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index} onclick="getNextCategoryPages(this)">다음</button>
     </div>
     `);
   }
 
-  function getPreviousCategoryPages(button){
+  function getPreviousCategoryPages(button) {
     var ten = +$(button).attr("ten");
     var category = $(button).attr("category");
-    if(ten>0){
-      ten = ten-1;
+    if (ten > 0) {
+      ten = ten - 1;
     }
-    drawCategoryPages(category,ten);
-  }
-  function getNextCategoryPages(button){
-    var ten = +$(button).attr("ten");
-    var category = $(button).attr("category");
-    ten = ten+1;
-    drawCategoryPages(category,ten);
+    drawCategoryPages(category, ten);
   }
 
-  function drawSearchPages(ten){
+  function getNextCategoryPages(button) {
+    var ten = +$(button).attr("ten");
+    var category = $(button).attr("category");
+    ten = ten + 1;
+    drawCategoryPages(category, ten);
+  }
+
+  function drawSearchPages(ten) {
     removeAllPages();
-    var index = ten*10;
+    var index = ten * 10;
     $('#pages').append(
         `
     <div className="btn-group" role="group" aria-label="Basic outlined example">
       <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getPreviousSearchPages(this)">이전</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+0} onclick="getSearchPage(this)">${index+1}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+1} onclick="getSearchPage(this)">${index+2}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+2} onclick="getSearchPage(this)">${index+3}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+3} onclick="getSearchPage(this)">${index+4}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+4} onclick="getSearchPage(this)">${index+5}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+5} onclick="getSearchPage(this)">${index+6}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+6} onclick="getSearchPage(this)">${index+7}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+7} onclick="getSearchPage(this)">${index+8}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+8} onclick="getSearchPage(this)">${index+9}</button>
-      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index+9} onclick="getSearchPage(this)">${index+10}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 0} onclick="getSearchPage(this)">${index + 1}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 1} onclick="getSearchPage(this)">${index + 2}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 2} onclick="getSearchPage(this)">${index + 3}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 3} onclick="getSearchPage(this)">${index + 4}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 4} onclick="getSearchPage(this)">${index + 5}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 5} onclick="getSearchPage(this)">${index + 6}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 6} onclick="getSearchPage(this)">${index + 7}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 7} onclick="getSearchPage(this)">${index + 8}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 8} onclick="getSearchPage(this)">${index + 9}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 9} onclick="getSearchPage(this)">${index + 10}</button>
       <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getNextSearchPages(this)">다음</button>
     </div>
     `);
   }
 
-  function getPreviousSearchPages(button){
+  function getPreviousSearchPages(button) {
     var ten = +$(button).attr("ten");
-    if(ten>0){
-      ten = ten-1;
+    if (ten > 0) {
+      ten = ten - 1;
     }
     drawSearchPages(ten);
   }
 
-  function getNextSearchPages(button){
+  function getNextSearchPages(button) {
     var ten = +$(button).attr("ten");
-    ten = ten+1;
+    ten = ten + 1;
     drawSearchPages(ten);
   }
 
