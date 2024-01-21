@@ -15,6 +15,6 @@ public class OfferFrontController {
 
         model.addAttribute("postId", postId);
 
-        return "/domain/offer/get-offer";
+        return "domain/offer/get-offer";
     }
 }
