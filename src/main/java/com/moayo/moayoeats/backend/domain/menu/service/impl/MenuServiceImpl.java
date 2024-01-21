@@ -1,7 +1,6 @@
 package com.moayo.moayoeats.backend.domain.menu.service.impl;
 
 import com.moayo.moayoeats.backend.domain.menu.dto.request.MenuDeleteRequest;
-import com.moayo.moayoeats.backend.domain.menu.dto.request.MenuReadRequest;
 import com.moayo.moayoeats.backend.domain.menu.dto.request.MenuRequest;
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
 import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
@@ -57,7 +56,7 @@ public class MenuServiceImpl implements MenuService {
         checkIfPostIsClosed(menu.getPost());
 
         menuRepository.delete(menu);
-        
+
         int sumPrice = getSumPrice(menu.getPost());
         //모인금액이 목표가격의 미만이고, 게시글이 목표금액을 달성한 상태일 때 방장에 알림
         if (sumPrice < menu.getPost().getMinPrice() && menu.getPost().getAmountIsSatisfied()) {
@@ -69,7 +68,8 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuResponse> getMenus(Long postId, User user) {
         Post post = findPostById(postId);
         List<Menu> menus = menuRepository.findAllByUserAndPost(user, post);
-        return menus.stream().map(menu -> new MenuResponse(menu.getId() ,menu.getMenuname(), menu.getPrice()))
+        return menus.stream()
+            .map(menu -> new MenuResponse(menu.getId(), menu.getMenuname(), menu.getPrice()))
             .toList();
     }
 
@@ -115,7 +115,11 @@ public class MenuServiceImpl implements MenuService {
         post.changeAmountGoalStatus(); //게시글의 목표금액 충족상태 변경
         User targetHost = userPostRepository.findByPostIdAndRole(post.getId(),
             UserPostRole.HOST);
-        publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
+        if (post.getAmountIsSatisfied()) {
+            publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_COLLECTED));
+        } else {
+            publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_IS_NOT_COLLECTED));
+        }
     }
 
 }
