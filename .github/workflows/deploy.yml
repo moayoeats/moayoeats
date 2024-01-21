@@ -1,9 +1,10 @@
 name: deploy
 
 on:
-  pull_request: # 배포 확인용 임시 pull_request # 원래 push
+  push:
     branches:
       - dev
+      - main
 
 jobs:
   build:
@@ -23,7 +24,6 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        # test code는 빌드하지 않음 # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
         run: ./gradlew clean build --stacktrace
         shell: bash
 
@@ -38,7 +38,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
           aws-region: ap-northeast-2
 
-      #먼저실행
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://moayoeats/$GITHUB_SHA.zip
 
