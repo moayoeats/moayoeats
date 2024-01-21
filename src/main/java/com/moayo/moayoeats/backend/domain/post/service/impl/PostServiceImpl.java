@@ -114,9 +114,12 @@ public class PostServiceImpl implements PostService {
     public DetailedPostResponse getPost(Long postId, User user) {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
+        User host = getAuthor(userPosts);
 
         return DetailedPostResponse.builder()
             .id(post.getId())
+            .hostId(host.getId())
+            .hostNick(host.getNickname())
             .longitude(post.getLongitude())
             .latitude(post.getLatitude())
             .address(post.getAddress())
