@@ -1,7 +1,3 @@
-# 애플리케이션 배포 스크립트
-# 환경변수 권한 부여 및 저장
-
-# 애플리케이션 소스코드 디렉토리로 이동
 REPOSITORY=/home/ubuntu/moayoeats
 
 # shellcheck disable=SC2164
@@ -20,7 +16,8 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-chmod u+x /home/ubuntu/moayoeats env.env
-source /home/ubuntu/moayoeats env.env
+chmod u+x /home/ubuntu/moayoeats/env.env
+
+source /home/ubuntu/moayoeats/env.env
 
 nohup java -jar $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
