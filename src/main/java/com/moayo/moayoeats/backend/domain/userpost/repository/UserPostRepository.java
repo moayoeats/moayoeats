@@ -14,6 +14,8 @@ public interface UserPostRepository extends JpaRepository<UserPost, UserPostId> 
 
     boolean existsByUserIdAndPostId(Long userId, Long postId);
 
+    Optional<UserPost> findByUserIdAndPostId(Long userId, Long postId);
+
     boolean existsByUserIdAndPostIdAndRole(Long userId, Long postId, UserPostRole role);
 
     Optional<UserPost> findByPostAndUserAndRoleEquals(Post post, User user, UserPostRole role);
