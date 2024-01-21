@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>실시간 채팅</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script th:src="@{/webjars/sockjs-client/sockjs.min.js}"></script>
-    <script th:src="@{/webjars/stomp-websocket/stomp.min.js}"></script>
+  <meta charset="UTF-8">
+  <title>실시간 채팅</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+  <script th:src="@{/webjars/sockjs-client/sockjs.min.js}"></script>
+  <script th:src="@{/webjars/stomp-websocket/stomp.min.js}"></script>
 </head>
 <body>
 <div id="chat-container">
-    <div id="chat-messages" style="height: 300px; overflow-y: scroll;"></div>
-    <input type="text" id="chat-input" placeholder="메시지 입력...">
-    <button id="send-button">보내기</button>
+  <div id="chat-messages" style="height: 300px; overflow-y: scroll;"></div>
+  <input type="text" id="chat-input" placeholder="메시지 입력...">
+  <button id="send-button">보내기</button>
 </div>
 
 <script th:inline="javascript">
-  /*<![CDATA[*/
   var postId = [[${postId}]];
   var username = [[${username}]];
 
@@ -27,7 +26,6 @@
   window.addEventListener('unload', function () {
     disconnect();
   });
-  /*]]>*/
 </script>
 <script th:src="@{/js/chat.js}"></script>
 </body>
