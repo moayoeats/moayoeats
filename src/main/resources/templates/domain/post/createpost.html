@@ -197,12 +197,18 @@
       success: function (response) {
         console.log('Success:', response);
         alert(response.message);
+        redirect();
       },
       error: function (error,response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
+  }
+
+  function redirect(){
+    const host = 'http://' + window.location.host;
+    window.location.href = host + `/`;
   }
 </script>
 
