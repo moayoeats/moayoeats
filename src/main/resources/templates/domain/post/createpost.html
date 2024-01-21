@@ -47,30 +47,49 @@
              type="text">
       <input aria-label="분" placeholder="분" class="form-control" id="deadlineMins" type="text">
     </div>
-    <div>카테고리 선택</div>
-    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-      <input type="radio" class="btn-check" name="btnradio" onclick="etc()" id="else" autocomplete="off" checked>
-      <label class="btn btn-outline-secondary" for="else">기타</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="burger()" id="burger" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="burger">버거</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="chicken()" id="chicken" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="korean()" id="korean" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="korean">한식</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="western()" id="western" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="western">양식</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="asian()" id="asian" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="asian">아시안</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="snack()" id="snack" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="snack">분식</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="japanese()" id="japanese" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="japanese">일식</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="chinese()" id="chinese" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="chinese">중식</label>
-      <input type="radio" class="btn-check" name="btnradio" onclick="lunchbox()" id="lunchbox" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
-    </div>
-
+    <div style="margin:auto">카테고리 선택
+      <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+        <input autocomplete="off" category="ALL" checked class="btn-check" id="all" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="all">전체</label>
+        <input autocomplete="off" category="BURGER" class="btn-check" id="burger" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="burger">버거</label>
+        <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+        <input autocomplete="off" category="KOREAN" class="btn-check" id="korean" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="korean">한식</label>
+        <input autocomplete="off" category="WESTERN" class="btn-check" id="western" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="western">양식</label>
+        <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="asian">아시안</label>
+        <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="snack">분식</label>
+        <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="japanese">일식</label>
+        <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="chinese">중식</label>
+        <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox" name="btnradio"
+               onclick="category(this)"
+               type="radio">
+        <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+      </div>
   </div>
 
   <div style="padding:10px;width:1000px; height:max-content; margin:auto">
@@ -113,6 +132,10 @@
 
   naver.maps.onJSContentLoaded = initGeocoder;
 
+  function category(button){
+    categoryEnum = $(button).attr("category");
+  }
+
   function sendData() {
 
     let address = latlng.toString();
@@ -145,37 +168,6 @@
         console.error('Error:', error);
       }
     });
-  }
-
-  function etc(){
-    categoryEnum = null;
-  }
-  function burger(){
-    categoryEnum = "BURGER";
-  }
-  function chicken(){
-    categoryEnum = "CHICKEN";
-  }
-  function korean(){
-    categoryEnum = "KOREAN";
-  }
-  function western(){
-    categoryEnum = "WESTERN";
-  }
-  function asian(){
-    categoryEnum = "ASIAN";
-  }
-  function snack(){
-    categoryEnum = "SNACK";
-  }
-  function japanese(){
-    categoryEnum = "JAPANESE";
-  }
-  function chinese(){
-    categoryEnum = "CHINESE";
-  }
-  function lunchbox(){
-    categoryEnum = "LUNCHBOX";
   }
 </script>
 
