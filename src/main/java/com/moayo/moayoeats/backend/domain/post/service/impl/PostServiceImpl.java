@@ -144,14 +144,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(String category,
+    public List<BriefPostResponse> getPostsByCategory(int page, String category,
         User user) {
         List<Post> posts;
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         if (category.equals(CategoryEnum.ALL.toString())) {
-            posts = findAll();
+            posts = findPage(page);
         } else {
-            posts = postRepository.findAllByCategoryEquals(categoryEnum).orElse(null);
+            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
+                .getContent();
         }
         return postsToBriefResponses(posts);
     }
@@ -165,11 +167,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> searchPost(String keyword, User user) {
-        //get all posts filtered by search keyword
-        List<Post> posts = postRepository.findPostByStoreContaining(keyword)
-            .orElse(null);
-        //List<Post> -> List<BriefPostResponse>
+    public List<BriefPostResponse> searchPost(int page, String keyword, User user) {
+        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
+            .getContent();
         return postsToBriefResponses(posts);
     }
 

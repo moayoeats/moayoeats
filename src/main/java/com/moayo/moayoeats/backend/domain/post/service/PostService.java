@@ -40,7 +40,7 @@ public interface PostService {
 
     /**
      *
-     * @param page : 몇페이지 조회할건지 int pageNumber
+     * @param page : 페이지 조회에 필요한 int pageNumber
      * @param category : 카테고리
      * @return
      */
@@ -51,7 +51,7 @@ public interface PostService {
      * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
-    List<BriefPostResponse> getPostsByCategory(String category,
+    List<BriefPostResponse> getPostsByCategory(int page, String category,
         User user);
 
     /**
@@ -66,7 +66,7 @@ public interface PostService {
      * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
-    List<BriefPostResponse> searchPost(String keyword, User user);
+    List<BriefPostResponse> searchPost(int page, String keyword, User user);
 
     /**
      * @param postIdReq : 글을 삭제하기 위한 postId
