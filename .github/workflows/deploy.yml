@@ -1,9 +1,10 @@
 name: deploy
 
 on:
-  push: # 배포 확인용 임시 pull_request # 원래 push
+  push:
     branches:
       - dev
+      - main
 
 jobs:
   build:
@@ -18,25 +19,13 @@ jobs:
         with:
           java-version: 17
 
-      #      - name: .env setting
-      #        run: |
-      #          echo "export DB_URL=${{ secrets.DB_URL }}" >> .env
-      #          echo "export USER_NAME=${{ secrets.USER_NAME }}" >> .env
-      #          echo "export PASSWORD=${{ secrets.PASSWORD }}" >> .env
-      #          echo "export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
-
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
 
       - name: Build with Gradle
-        # test code는 빌드하지 않음
-        run: ./gradlew assemble # test code까지 빌드 # fix : 해당 사항 test 완성 후 변경 # run: ./gradlew build
+        run: ./gradlew clean build --stacktrace
         shell: bash
-
-      #      - name: Build with Gradle
-      #        run: ./gradlew build
-      #        shell: bash
 
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip .
@@ -49,7 +38,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
           aws-region: ap-northeast-2
 
-      #먼저실행
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://moayoeats/$GITHUB_SHA.zip
 
