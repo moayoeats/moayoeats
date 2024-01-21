@@ -8,6 +8,7 @@ import com.moayo.moayoeats.backend.domain.notification.event.Event;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
+import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferRoleResponse;
 import com.moayo.moayoeats.backend.domain.offer.entity.Offer;
 import com.moayo.moayoeats.backend.domain.offer.exception.OfferErrorCode;
 import com.moayo.moayoeats.backend.domain.offer.repository.OfferRepository;
@@ -74,50 +75,40 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
-    public List<OfferResponse> viewApplication(
+    public OfferRoleResponse viewApplication(
         Long postId,
         User user
     ) {
 
-        checkIfPostExists(postId);
-
-        List<Menu> menus = menuRepository.findAllByPostId(postId);
-        Set<User> users = new LinkedHashSet<>();
-        menus.forEach(menu ->
-            users.add(menu.getUser()));
-
-        List<OfferResponse> offerResList = new ArrayList<>();
-        for (User userInfo : users) {
-            List<MenuResponse> menuResList = new ArrayList<>();
-            Set<Long> offerIdList = new LinkedHashSet<>();
-            menus.forEach(menu -> {
-                    if (userInfo.getId().equals(menu.getUser().getId())) {
-                        Offer offer = offerRepository.findByUserIdAndPostId(
-                            menu.getUser().getId(),
-                            menu.getPost().getId()
-                        );
-                        if (offer != null) {
-                            offerIdList.add(offer.getId());
-                            menuResList.add(
-                                new MenuResponse(
-                                    menu.getId(), menu.getMenuname(), menu.getPrice())
-                            );
-                        }
-                    }
-                }
-            );
-
-            for (Long offerId : offerIdList) {
-                offerResList.add(
-                    OfferResponse.builder()
-                        .offerId(offerId)
-                        .nickname(userInfo.getNickname())
-                        .menus(new ArrayList<>(menuResList))
-                        .build()
-                );
-            }
+        Post post = postRepository.findById(postId).orElseThrow(()-> new GlobalException(PostErrorCode.NOT_FOUND_POST));
+        UserPost userpost = userPostRepository.findByUserIdAndPostId(user.getId(), postId).orElse(null);
+        UserPostRole role;
+        if(userpost!=null){
+            role = userpost.getRole();
+        }else{
+            role = null;
         }
-        return offerResList;
+        List<OfferResponse> offerResponses = new ArrayList<>();
+
+        if(role==null){
+            List<Offer> offers = offerRepository.findAllByPostId(postId);
+            for(Offer offer: offers){
+                if(offer.getUser().getId().equals(user.getId())){
+                    offerResponses.add(new OfferResponse(offer.getId(),offer.getUser().getNickname()
+                        ,menuRepository.findAllByUserAndPost(offer.getUser(),post).stream().map(menu->new MenuResponse(menu.getId(),menu.getMenuname(),menu.getPrice())).toList()));
+                }
+            }
+            return new OfferRoleResponse(offerResponses,role);
+        }
+
+
+        List<Offer> offers = offerRepository.findAllByPostId(postId);
+        for(Offer offer: offers){
+            offerResponses.add(new OfferResponse(offer.getId(),offer.getUser().getNickname()
+                ,menuRepository.findAllByUserAndPost(offer.getUser(),post).stream().map(menu->new MenuResponse(menu.getId(),menu.getMenuname(),menu.getPrice())).toList()));
+        }
+
+        return new OfferRoleResponse(offerResponses,role);
     }
 
     public void approveApplication(OfferRequest offerReq, User user) {

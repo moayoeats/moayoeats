@@ -3,6 +3,7 @@ package com.moayo.moayoeats.backend.domain.offer.controller;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
+import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferRoleResponse;
 import com.moayo.moayoeats.backend.domain.offer.service.OfferService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -48,20 +49,18 @@ public class OfferController {
     }
 
     @GetMapping("/{postId}")
-    public ApiResponse<List<OfferResponse>> viewApplication(
+    public ApiResponse<OfferRoleResponse> viewApplication(
         @PathVariable Long postId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        List<OfferResponse> offerResList = offerService.viewApplication(
-            postId,
-            userDetails.getUser()
-        );
-
         return new ApiResponse<>(
             HttpStatus.OK.value(),
             "해당 게시글 참가신청 목록을 가져왔습니다.",
-            offerResList
+            offerService.viewApplication(
+                postId,
+                userDetails.getUser()
+            )
         );
     }
 

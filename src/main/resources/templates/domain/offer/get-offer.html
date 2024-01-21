@@ -53,56 +53,126 @@
       url: `/api/v1/offers/[[${postId}]]`,
       dataType: "json",
       contentType: 'application/json',
-    })
-    .done(function (res, status, xhr) {
-      let datas = res.data;
+        data: {},
+        success: function (response) {
+          console.log('Success:', response);
 
-      datas.forEach(data => {
-        let nickname = data.nickname;
-        let menus = data.menus;
-        let offerId = data.offerId;
-        let menuPackId = `menu-pack-${offerId}`;
-        let btnPackId = `btn-pack-${offerId}`
-
-        let menuPack = $(`
-          <div class="offer">
-            <div class="nickname">신청자: ${nickname} 님</div>
-
-            <div id="${menuPackId}" class="menu-pack">
-            <p>메뉴</p>
-            </div>
-          </div>
-        `);
-        $("#offers").append(menuPack);
-
-        menus.forEach(menu => {
-          console.log(menu);
-          let menuDiv = $(`
-                <div class="menu">
-                  <div class="menu-name-price">- ${menu.menuname} (${menu.price})</div>
-                </div>
-          `);
-          menuPack.find(`#${menuPackId}`).append(menuDiv);
-        });
-
-        let buttonDiv = $(`
-              <div id="${btnPackId}">
-                <button type="button" class="btn btn-secondary" id="cancel-offer-btn" onclick="cancelParticipation()">신청 취소</button>
-              </div>
-          `);
-        menuPack.append(buttonDiv);
+          if(response.data.role === "HOST"){
+            drawHostOffers(response.data.offerResponses);
+          }else if(response.data.role !== "PARTICIPANT"){
+            drawAnyoneOffers(response.data.offerResponses);
+          }
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
       });
+    }
+
+    function drawHostOffers(data){
+      data.forEach((offer,index)=>
+          $('#offers').append(
+              `
+                <div id="${index}">
+    <span>${offer.nickname}</span>
+    <button class="btn btn-outline-secondary" offerId=${offer.offerId} onclick="approve(this)"
+            type="button">수락
+    </button>
+    <button class="btn btn-outline-secondary" offerId=${offer.offerId} onclick="reject(this)"
+            type="button">거절
+    </button>
+  </div>
+              `
+          )
+      )
+      data.forEach((offer,index)=>
+          offer.menus.forEach(
+              (menu)=>
+                  $(`#${index}`).append(
+                      `<div>${menu.menuname}</div>
+                     <div>${menu.price}</div>`
+                  )
+          )
+      )
+    }
+
+    function drawAnyoneOffers(data){
+      data.forEach((offer,index)=>
+          $('#offers').append(
+              `
+                <div id="${index}">
+    <span>${offer.nickname}</span>
+    <button class="btn btn-outline-secondary" offerId=${offer.offerId} onclick="cancelParticipation(this)"
+            type="button">참가 취소
+    </button>
+  </div>
+              `
+          )
+      )
+
+    }
+
+    function approve(button){
+      var offerId = $(button).attr("offerId");
+      $.ajax({
+        type: "POST",
+        url: `/api/v1/offers/approve`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: JSON.stringify({
+          offerId: offerId
+        }),
+        success: function (response) {
+          console.log('Success:', response);
+          alert(response.message);
+        },
+        error: function (error,response) {
+          alert(response.message);
+          console.error('Error:', error);
+        }
+      });
+    }
+
+  function reject(button){
+    var offerId = $(button).attr("offerId");
+    $.ajax({
+      type: "POST",
+      url: `/api/v1/offers/reject`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        offerId: offerId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
     });
   }
 
-  function cancelParticipation() {
+  function cancelParticipation(button) {
+    var offerId = $(button).attr("offerId");
     $.ajax({
       type: "DELETE",
       url: `/api/v1/offers`,
-    })
-    .done(function (res, status, xhr) {
-
-    })
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify({
+        offerId: offerId
+      }),
+      success: function (response) {
+        console.log('Success:', response);
+        alert(response.message);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
   }
 </script>
 <script src="/js/basic.js"></script>
