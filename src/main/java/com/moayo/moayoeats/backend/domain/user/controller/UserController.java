@@ -5,6 +5,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.AddressResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -116,6 +117,14 @@ public class UserController {
 
         userService.updateAddress(addressUpdateReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.OK.value(), "주소를 수정하였습니다.");
+    }
+
+    @GetMapping("/address")
+    public ApiResponse<AddressResponse> getAddress(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "주소를 가져왔습니다."
+            , userService.getAddress(userDetails.getUser()));
     }
 
 }
