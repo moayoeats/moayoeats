@@ -5,6 +5,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.AddressResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -52,4 +53,11 @@ public interface UserService {
      * @param user:            해당 계정으로 로그인한 사용자
      */
     void updateAddress(AddressUpdateRequest addressUpdateReq, User user);
+
+    /**
+     *
+     * @param user : 주소를 요청하는 사용자
+     * @return : 사용자 주소
+     */
+    public AddressResponse getAddress(User user);
 }
