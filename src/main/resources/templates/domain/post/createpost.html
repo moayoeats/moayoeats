@@ -19,7 +19,16 @@
       type="text/javascript"></script>
 </head>
 <header>
-  <div th:replace="/global/navbar :: navbar"></div>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" alt="logo" width="60" height="60">
+      </a>
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" alt="logo" width="60" height="60">
+      </a>
+    </div>
+  </nav>
 </header>
 <body>
 <div style="padding:10px;width:1000px; height:max-content; margin:auto">
@@ -103,7 +112,7 @@
   </div>
 </div>
 
-<script th:inline="javascript">
+<script>
 
   var lat;
   var lng;

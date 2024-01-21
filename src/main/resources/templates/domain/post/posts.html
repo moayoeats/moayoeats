@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta
@@ -14,7 +14,16 @@
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <header>
-  <div th:replace="/global/navbar :: navbar"></div>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" alt="logo" width="60" height="60">
+      </a>
+      <a class="navbar-brand" href="/">
+        <img src="/images/logo.png" alt="logo" width="60" height="60">
+      </a>
+    </div>
+  </nav>
 </header>
 <body>
 <div style="padding:10px;width:1000px; height:min-content; margin:auto">
@@ -78,7 +87,7 @@
 
   </div>
 </div>
-<script th:inline="javascript">
+<script>
 
 
   $(document).ready(function () {
