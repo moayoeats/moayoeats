@@ -7,14 +7,14 @@ import lombok.Builder;
 
 @Builder
 public record NotificationsResponse(
-    NotificationType type,
+    NotificationType notificationType,
     String fieldContent,
     LocalDateTime createdAt
 ) {
 
     public static NotificationsResponse formWith(Notification notification) {
         return NotificationsResponse.builder()
-            .type(notification.getFieldName())
+            .notificationType(notification.getFieldName())
             .fieldContent(notification.getContent())
             .createdAt(notification.getCreatedAt())
             .build();
