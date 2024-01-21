@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return Stream.of("/login", "/signup")
+            .anyMatch(path -> path.matches(request.getRequestURI()));
     }
 
     @Override
@@ -51,7 +58,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
             //토큰이 있을때 현재 요청이 /인지 확인하고 인증이 된 상태이면 인증 후 전체글 페이지로 감
             boolean isIndexRequest = url.equals("/");
-            if(isIndexRequest){
+            if (isIndexRequest) {
                 res.sendRedirect("/posts");
             }
         }

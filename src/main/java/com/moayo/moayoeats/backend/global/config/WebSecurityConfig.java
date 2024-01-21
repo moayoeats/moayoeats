@@ -59,27 +59,28 @@ public class WebSecurityConfig {
         );
 
         // 인증 실패시 login 페이지로 이동
-        http.exceptionHandling((exceptionHandling ->
-            exceptionHandling
-                .accessDeniedPage("/login")
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint()))
-        );
+//        http.exceptionHandling((exceptionHandling ->
+//            exceptionHandling
+//                .accessDeniedPage("/login")
+//                .authenticationEntryPoint(jwtAuthenticationEntryPoint()))
+//        );
 
         //login,signup 접근 허용 그 외 인증 필요
         http.authorizeHttpRequests((authorizeHttpRequests) ->
-            authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .permitAll() // resources 접근 허용 설정
-                .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/signup").permitAll()
-                .requestMatchers("/api/v1/users/sign-up/**").permitAll() // singup이후로 접근 허가
-                .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .requestMatchers("/api/v1/test/**").permitAll()
-                .requestMatchers("/api/v1/readonly/**").permitAll()//글 조회시 인증정보 없이 읽을때
-                .requestMatchers("/moayo/**").permitAll()//프론트
-                .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                authorizeHttpRequests
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    .permitAll() // resources 접근 허용 설정
+                    .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
+                    .requestMatchers("/login").permitAll()
+                    .requestMatchers("/signup").permitAll()
+                    .requestMatchers("/api/v1/users/sign-up/**").permitAll() // singup이후로 접근 허가
+                    .requestMatchers("/api/v1/users/login/**").permitAll() // singup이후로 접근 허가
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                    .requestMatchers("/api/v1/test/**").permitAll()
+                    .requestMatchers("/api/v1/readonly/**").permitAll()//글 조회시 인증정보 없이 읽을때
+                    .requestMatchers("/moayo/**").permitAll()//프론트
+//                .requestMatchers("/templates/**").permitAll()//test - html 접근 허가
+                    .anyRequest().permitAll() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리
