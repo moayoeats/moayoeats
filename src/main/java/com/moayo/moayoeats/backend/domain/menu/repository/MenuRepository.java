@@ -12,4 +12,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     List<Menu> findAllByPost(Post post);
 
+    List<Menu> findAllByPostId(Long postId);
 }

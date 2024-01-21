@@ -1,8 +1,8 @@
 package com.moayo.moayoeats.backend.domain.offer.controller;
 
+import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
-import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.backend.domain.offer.service.OfferService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -47,12 +47,12 @@ public class OfferController {
     }
 
     @GetMapping()
-    public ApiResponse<List<OfferResponse>> viewApplication(
+    public ApiResponse<List<NickMenusResponse>> viewApplication(
         @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
 
-        List<OfferResponse> offerResList = offerService.viewApplication(
+        List<NickMenusResponse> offerResList = offerService.viewApplication(
             offerRelatedPostReq,
             userDetails.getUser()
         );
@@ -69,7 +69,7 @@ public class OfferController {
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-      
+
         offerService.approveApplication(offerReq, userDetails.getUser());
 
         return new ApiResponse<>(
@@ -83,7 +83,7 @@ public class OfferController {
         @RequestBody OfferRequest offerReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-      
+
         offerService.rejectApplication(offerReq, userDetails.getUser());
 
         return new ApiResponse<>(
@@ -97,7 +97,7 @@ public class OfferController {
         @RequestBody OfferRelatedPostRequest offerRelatedPostReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-      
+
         offerService.cancelAfterApproval(offerRelatedPostReq, userDetails.getUser());
 
         return new ApiResponse<>(
