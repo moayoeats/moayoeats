@@ -14,6 +14,8 @@ public class MoayoeatsApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MoayoeatsApplication.class, args);
+
     }
+
 
 }
