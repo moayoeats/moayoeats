@@ -1,75 +1,70 @@
-<!Doctype html>
-<html lang="ko">
-
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
-
-    <!-- JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-
-    <!-- 구글폰트 -->
-    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
-
-
-    <title>아아니 이게 안될지 몰랐지</title>
-
-    <!-- style -->
-    <style type="text/css">
-      * {
-        font-family: 'Stylish', sans-serif;
-      }
-
-      .wrap {
-        width: 900px;
-        margin: auto;
-      }
-
-      .comment {
-        color: blue;
-        font-weight: bold;
-      }
-
-      #post-box {
-        width: 500px;
-        margin: 20px auto;
-        padding: 50px;
-        border: black solid;
-        border-radius: 5px;
-      }
-    </style>
-    <script>
-      function save() {
-        alert("파일이 업로드 되었습니다!!");
-      }
-    </script>
-
-</head>
-
+<html>
 <body>
-<div class="wrap">
-    <div class="jumbotron">
-        <h1 class="display-4">그놈은 배달비를 던져븐 거시고,</h1>
-        <p class="lead">니놈들은 그걸 확 나눠븐 거시여.</p>
-        <p class="lead">근디 왜 안되는 것이여?</p>
-        <p class="lead">근디 왜 안되는 것이여?2</p>
-        <p class="lead">될 때도 됬지?</p>
-        <p class="lead">그렇지 되야지.</p>
-        <h1 class="display-4">보셨죠 여러분?</h1>
-        <h1 class="display-4">그쵸?</h1>
-        <hr class="my-4">
+<div style="padding:10px;width:1000px; height:min-content; margin:auto">
+    <div style="margin:auto">카테고리 선택
+        <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+            <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="all">전체</label>
+            <input autocomplete="off" category="BURGER" class="btn-check" id="burger"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="burger">버거</label>
+            <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+            <input autocomplete="off" category="KOREAN" class="btn-check" id="korean"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="korean">한식</label>
+            <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="western">양식</label>
+            <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="asian">아시안</label>
+            <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="snack">분식</label>
+            <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="japanese">일식</label>
+            <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="chinese">중식</label>
+            <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+        </div>
+        <div class="input-group mb-3">
+            <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
+                   id="keyword"
+                   placeholder="검색어"
+                   type="text">
+            <button class="btn btn-outline-secondary" id="search" onclick="search()" type="button">
+                검색
+            </button>
+        </div>
+    </div>
+    <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
+    <div id="pages" style="width:1000px; height:min-content; margin:auto">
     </div>
 </div>
 </body>
-
 </html>
