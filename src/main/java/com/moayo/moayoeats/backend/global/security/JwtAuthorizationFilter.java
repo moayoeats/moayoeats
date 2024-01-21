@@ -49,6 +49,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
+            //토큰이 있을때 현재 요청이 /인지 확인하고 인증이 된 상태이면 인증 후 전체글 페이지로 감
+            boolean isIndexRequest = url.equals("/");
+            if(isIndexRequest){
+                res.sendRedirect("/posts");
+            }
         }
         filterChain.doFilter(req, res);
     }
