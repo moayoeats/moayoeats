@@ -21,9 +21,15 @@
             <a class="navbar-brand" href="/notification">
                 <img src="/images/bell.png" alt="notification" width="30" height="30">
             </a>
-          <button class="btn my-page-btn btn-outline-success" id="login-btn"  onclick="login()">로그인</button>
-          <button class="btn my-page-btn btn-outline-success" id="signup-btn" onclick="signup()">회원가입</button>
-            <button class="btn my-page-btn btn-outline-success" id="my-page-btn" onclick="mypage()">마이페이지</button>
+          <a class="navbar-brand" href="/login">
+            <img src="/images/login.png" alt="login" width="30" height="30">
+          </a>
+          <a class="navbar-brand" href="/signup">
+            <img src="/images/bell.png" alt="signup" width="30" height="30">
+          </a>
+          <a class="navbar-brand" href="/mypage">
+            <img src="/images/bell.png" alt="mypage" width="30" height="30">
+          </a>
         </div>
     </nav>
 </header>
@@ -374,24 +380,6 @@
     var ten = +$(button).attr("ten");
     ten = ten + 1;
     drawSearchPages(ten);
-  }
-
-  function login(){
-    var postId = $(button).attr("post");
-    const host = 'http://' + window.location.host;
-    window.location.replace(host + `/login`);
-  }
-
-  function signup(){
-    var postId = $(button).attr("post");
-    const host = 'http://' + window.location.host;
-    window.location.replace(host + `/signup`);
-  }
-
-  function mypage(){
-    var postId = $(button).attr("post");
-    const host = 'http://' + window.location.host;
-    window.location.replace(host + `/mypage`);
   }
 </script>
 </body>
