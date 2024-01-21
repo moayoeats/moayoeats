@@ -4,7 +4,17 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <header>
-    <div th:replace="/global/navbar :: navbar"></div>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo.png" alt="logo" width="60" height="60">
+            </a>
+            <a class="navbar-brand" href="/notification">
+                <img src="/images/bell.png" alt="notification" width="30" height="30">
+            </a>
+            <button class="btn my-page-btn btn-outline-success" id="my-page-btn">마이페이지</button>
+        </div>
+    </nav>
 </header>
 <body>
 <div style="padding:10px;width:1000px; height:min-content; margin:auto">
