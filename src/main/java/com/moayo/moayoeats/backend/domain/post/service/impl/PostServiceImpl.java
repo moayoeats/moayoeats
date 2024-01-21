@@ -290,6 +290,11 @@ public class PostServiceImpl implements PostService {
         UserPost userpost = getUserPostByUserIfParticipant(user, userPosts);
         User host = getAuthor(userPosts);
 
+        //check if the status of the post is ordered
+        if(post.getPostStatus()!=PostStatusEnum.ORDERED){
+            throw new GlobalException(PostErrorCode.ORDER_FIRST);
+        }
+
         //make order for me to review
         Order order = makeAndSaveOrder(post, host, user, UserPostRole.PARTICIPANT);
         //make order for host to review
