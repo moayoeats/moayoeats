@@ -66,5 +66,287 @@
     <div id="pages" style="width:1000px; height:min-content; margin:auto">
     </div>
 </div>
+<script>
+  $(document).ready(function () {
+    var index = 0;
+    getData(index, 0);
+  });
+
+  function getPage(button) {
+    var index = $(button).attr("index");
+    var ten = $(button).attr("ten");
+    getData(index, ten);
+  }
+
+  function getData(page, ten) {
+    var page = page;
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/readonly/posts/page/${page}`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+        removeAllPosts();
+        drawAllPosts(response.data);
+        drawPages(ten);
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function sendData(button) {
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.href = host + `/readonly/post/${postId}`;
+  }
+
+  function search() {
+    var keyword = $('#keyword').val();
+    getDataByKeyword(keyword, 0, 0);
+  }
+
+  function getSearchPage(button) {
+    var keyword = $('#keyword').val();
+    var index = $(button).attr("index");
+    var ten = $(button).attr("ten");
+    getDataByKeyword(keyword, index, ten);
+  }
+
+  function getDataByKeyword(keyword, page, ten) {
+    var keyword = keyword;
+    var page = page;
+    var ten = ten;
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/readonly/posts/search/${page}?keyword=${keyword}`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+        removeAllPosts();
+        drawAllPosts(response.data);
+        drawSearchPages(ten);
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function getByCategory(button) {
+    var category = $(button).attr("category");
+    getDataByCategory(category, 0, 0);
+  }
+
+  function getCategoryPage(button) {
+    var category = $(button).attr("category");
+    var index = $(button).attr("index");
+    var ten = $(button).attr("ten");
+    getDataByCategory(category, index, ten);
+  }
+
+  function getDataByCategory(categoryEnum, page, ten) {
+    var category = categoryEnum;
+    var page = page;
+    var ten = ten;
+    $.ajax({
+      type: 'GET',
+      url: `/api/v1/readonly/posts/category/${page}?category=${category}`,
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        console.log('Success:', response);
+        removeAllPosts();
+        drawAllPosts(response.data);
+        drawCategoryPages(category, ten);
+      },
+      error: function (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  function removeAllPosts() {
+    const element = document.getElementById("posts");
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  function drawAllPosts(data) {
+    data.forEach((post) =>
+        $('#posts').append(
+            `
+              <div style="padding:10px;width:1000px; height:max-content; margin:auto">
+                <div>작성자</div>
+                <div>${post.author}</div>
+                <div>가게</div>
+                <div>${post.store}</div>
+                <div>합계 금액</div>
+                <div>${post.sumPrice}</div>
+                <div>최소주문금액</div>
+                <div>${post.minPrice}</div>
+                <div>마감 기한</div>
+                <div>${post.deadline}</div>
+                <button id = "${post.id}" post = "${post.id}"  class="btn btn-outline-secondary" onclick="sendData(this)" type="button">조회</button>
+              </div>
+            `
+        )
+    )
+  }
+
+  function removeAllPages() {
+    const element = document.getElementById("pages");
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  function drawPages(ten) {
+    removeAllPages();
+    var index = ten * 10;
+    $('#pages').append(
+        `
+    <div className="btn-group" role="group" aria-label="Basic outlined example">
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getPreviousPages(this)">이전</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 0} onclick="getPage(this)">${index + 1}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 1} onclick="getPage(this)">${index + 2}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 2} onclick="getPage(this)">${index + 3}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 3} onclick="getPage(this)">${index + 4}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 4} onclick="getPage(this)">${index + 5}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 5} onclick="getPage(this)">${index + 6}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 6} onclick="getPage(this)">${index + 7}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 7} onclick="getPage(this)">${index + 8}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 8} onclick="getPage(this)">${index + 9}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 9} onclick="getPage(this)">${index + 10}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getNextPages(this)">다음</button>
+    </div>
+    `);
+  }
+
+  function getPreviousPages(button) {
+    var ten = +$(button).attr("ten");
+    if (ten > 0) {
+      ten = ten - 1;
+    }
+    drawPages(ten);
+  }
+
+  function getNextPages(button) {
+    var ten = +$(button).attr("ten");
+    ten = ten + 1;
+    drawPages(ten);
+  }
+
+  function drawCategoryPages(category, ten) {
+    removeAllPages();
+    var index = ten * 10;
+    $('#pages').append(
+        `
+    <div className="btn-group" role="group" aria-label="Basic outlined example">
+      <button type="button" className="btn btn-outline-secondary" category = ${category} ten = ${ten} index = ${index} onclick="getPreviousCategoryPages(this)">이전</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 0} onclick="getCategoryPage(this)">${index + 1}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 1} onclick="getCategoryPage(this)">${index + 2}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 2} onclick="getCategoryPage(this)">${index + 3}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 3} onclick="getCategoryPage(this)">${index + 4}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 4} onclick="getCategoryPage(this)">${index + 5}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 5} onclick="getCategoryPage(this)">${index + 6}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 6} onclick="getCategoryPage(this)">${index + 7}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 7} onclick="getCategoryPage(this)">${index + 8}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 8} onclick="getCategoryPage(this)">${index + 9}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
+        + 9} onclick="getCategoryPage(this)">${index + 10}</button>
+      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index} onclick="getNextCategoryPages(this)">다음</button>
+    </div>
+    `);
+  }
+
+  function getPreviousCategoryPages(button) {
+    var ten = +$(button).attr("ten");
+    var category = $(button).attr("category");
+    if (ten > 0) {
+      ten = ten - 1;
+    }
+    drawCategoryPages(category, ten);
+  }
+
+  function getNextCategoryPages(button) {
+    var ten = +$(button).attr("ten");
+    var category = $(button).attr("category");
+    ten = ten + 1;
+    drawCategoryPages(category, ten);
+  }
+
+  function drawSearchPages(ten) {
+    removeAllPages();
+    var index = ten * 10;
+    $('#pages').append(
+        `
+    <div className="btn-group" role="group" aria-label="Basic outlined example">
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getPreviousSearchPages(this)">이전</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 0} onclick="getSearchPage(this)">${index + 1}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 1} onclick="getSearchPage(this)">${index + 2}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 2} onclick="getSearchPage(this)">${index + 3}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 3} onclick="getSearchPage(this)">${index + 4}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 4} onclick="getSearchPage(this)">${index + 5}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 5} onclick="getSearchPage(this)">${index + 6}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 6} onclick="getSearchPage(this)">${index + 7}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 7} onclick="getSearchPage(this)">${index + 8}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 8} onclick="getSearchPage(this)">${index + 9}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index
+        + 9} onclick="getSearchPage(this)">${index + 10}</button>
+      <button type="button" className="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getNextSearchPages(this)">다음</button>
+    </div>
+    `);
+  }
+
+  function getPreviousSearchPages(button) {
+    var ten = +$(button).attr("ten");
+    if (ten > 0) {
+      ten = ten - 1;
+    }
+    drawSearchPages(ten);
+  }
+
+  function getNextSearchPages(button) {
+    var ten = +$(button).attr("ten");
+    ten = ten + 1;
+    drawSearchPages(ten);
+  }
+</script>
 </body>
 </html>
