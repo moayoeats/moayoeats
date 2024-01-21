@@ -1,8 +1,8 @@
 package com.moayo.moayoeats.backend.domain.offer.service;
 
-import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
+import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import java.util.List;
 
@@ -21,10 +21,10 @@ public interface OfferService {
     void cancelParticipation(OfferRequest offerReq, User user);
 
     /**
-     * @param offerRelatedPostReq : 참가신청 조회시 필요한 요청 dto
-     * @param user                : 해당 계정으로 로그인한 사용자
+     * @param postId : 요청 조회를 하고자하는 글 id
+     * @param user   : 해당 계정으로 로그인한 사용자
      */
-    List<NickMenusResponse> viewApplication(OfferRelatedPostRequest offerRelatedPostReq, User user);
+    List<OfferResponse> viewApplication(Long postId, User user);
 
     /**
      * @param offerReq : 참가신청 승인시 필요한 요청 dto

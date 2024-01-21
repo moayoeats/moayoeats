@@ -1,13 +1,13 @@
 package com.moayo.moayoeats.backend.domain.offer.service.impl;
 
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
-import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
 import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.notification.event.Event;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRelatedPostRequest;
 import com.moayo.moayoeats.backend.domain.offer.dto.request.OfferRequest;
+import com.moayo.moayoeats.backend.domain.offer.dto.response.OfferResponse;
 import com.moayo.moayoeats.backend.domain.offer.entity.Offer;
 import com.moayo.moayoeats.backend.domain.offer.exception.OfferErrorCode;
 import com.moayo.moayoeats.backend.domain.offer.repository.OfferRepository;
@@ -25,7 +25,7 @@ import com.moayo.moayoeats.backend.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -74,37 +74,48 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
-    public List<NickMenusResponse> viewApplication(
-        OfferRelatedPostRequest offerRelatedPostReq,
+    public List<OfferResponse> viewApplication(
+        Long postId,
         User user
     ) {
 
-        Long userId = user.getId();
-        Long postId = offerRelatedPostReq.postId();
         checkIfPostExists(postId);
-        checkIfUserExistsAboutPost(userId, postId);
 
         List<Menu> menus = menuRepository.findAllByPostId(postId);
-        Set<User> users = new HashSet<>();
+        Set<User> users = new LinkedHashSet<>();
         menus.forEach(menu ->
             users.add(menu.getUser()));
 
-        List<NickMenusResponse> offerResList = new ArrayList<>();
+        List<OfferResponse> offerResList = new ArrayList<>();
         for (User userInfo : users) {
             List<MenuResponse> menuResList = new ArrayList<>();
+            Set<Long> offerIdList = new LinkedHashSet<>();
             menus.forEach(menu -> {
                     if (userInfo.getId().equals(menu.getUser().getId())) {
-                        menuResList.add(
-                            new MenuResponse(menu.getId(), menu.getMenuname(), menu.getPrice()));
+                        Offer offer = offerRepository.findByUserIdAndPostId(
+                            menu.getUser().getId(),
+                            menu.getPost().getId()
+                        );
+                        if (offer != null) {
+                            offerIdList.add(offer.getId());
+                            menuResList.add(
+                                new MenuResponse(
+                                    menu.getId(), menu.getMenuname(), menu.getPrice())
+                            );
+                        }
                     }
                 }
             );
-            offerResList.add(
-                NickMenusResponse.builder()
-                    .nickname(userInfo.getNickname())
-                    .menus(menuResList)
-                    .build()
-            );
+
+            for (Long offerId : offerIdList) {
+                offerResList.add(
+                    OfferResponse.builder()
+                        .offerId(offerId)
+                        .nickname(userInfo.getNickname())
+                        .menus(new ArrayList<>(menuResList))
+                        .build()
+                );
+            }
         }
         return offerResList;
     }

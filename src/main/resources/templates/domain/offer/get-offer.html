@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <div th:replace="/global/header :: header"></div>
+  <style>
+    #offer-pack {
+      margin: 60px 120px 60px 120px;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 0;
+    }
+
+    #offer-pack h1 {
+      text-align: center;
+      font-weight: bolder;
+      margin-bottom: 10px;
+    }
+
+    .offer {
+      margin: 5px 50px 20px 50px;
+      border: solid 1px black;
+      padding: 20px;
+      border-radius: 7px;
+    }
+
+    .menu-pack {
+      margin: 20px 0;
+    }
+
+    .menu-pack p {
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<header>
+  <div th:replace="/global/navbar :: navbar"></div>
+</header>
+<body>
+<div id="offer-pack">
+  <h1>요청 조회</h1>
+  <div id="offers"></div>
+</div>
+<script th:inline="javascript">
+  $(document).ready(function () {
+    getOffer();
+  });
+
+  function getOffer() {
+    let postId = [[${postId}]];
+    $.ajax({
+      type: "GET",
+      url: `/api/v1/offers/[[${postId}]]`,
+      dataType: "json",
+      contentType: 'application/json',
+    })
+    .done(function (res, status, xhr) {
+      let datas = res.data;
+
+      datas.forEach(data => {
+        let nickname = data.nickname;
+        let menus = data.menus;
+        let offerId = data.offerId;
+        let menuPackId = `menu-pack-${offerId}`;
+        let btnPackId = `btn-pack-${offerId}`
+
+        let menuPack = $(`
+          <div class="offer">
+            <div class="nickname">신청자: ${nickname} 님</div>
+
+            <div id="${menuPackId}" class="menu-pack">
+            <p>메뉴</p>
+            </div>
+          </div>
+        `);
+        $("#offers").append(menuPack);
+
+        menus.forEach(menu => {
+          console.log(menu);
+          let menuDiv = $(`
+                <div class="menu">
+                  <div class="menu-name-price">- ${menu.menuname} (${menu.price})</div>
+                </div>
+          `);
+          menuPack.find(`#${menuPackId}`).append(menuDiv);
+        });
+
+        let buttonDiv = $(`
+              <div id="${btnPackId}">
+                <button type="button" class="btn btn-secondary" id="cancel-offer-btn" onclick="cancelParticipation()">신청 취소</button>
+              </div>
+          `);
+        menuPack.append(buttonDiv);
+      });
+    });
+  }
+
+  function cancelParticipation() {
+    $.ajax({
+      type: "DELETE",
+      url: `/api/v1/offers`,
+    })
+    .done(function (res, status, xhr) {
+
+    })
+  }
+</script>
+<script src="/js/basic.js"></script>
+</body>
+</html>
