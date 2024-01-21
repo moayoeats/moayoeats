@@ -9,10 +9,8 @@ import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.notification.event.Event;
 import com.moayo.moayoeats.backend.domain.order.entity.Order;
 import com.moayo.moayoeats.backend.domain.order.repository.OrderRepository;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
@@ -22,13 +20,11 @@ import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
-import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.backend.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +101,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPosts(int page,User user) {
+    public List<BriefPostResponse> getPosts(int page, User user) {
         List<Post> posts = findPage(page);
         return postsToBriefResponses(posts);
     }
@@ -129,32 +125,35 @@ public class PostServiceImpl implements PostService {
             .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(userPosts, post))
             .deadline(getDeadline(post))
-            .role(getRoleByUserAndUserPosts(user,userPosts))
+            .role(getRoleByUserAndUserPosts(user, userPosts))
             .build();
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategoryForAnyone(int page,String category) {
+    public List<BriefPostResponse> getPostsByCategoryForAnyone(int page, String category) {
         List<Post> posts;
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
             Pageable pageWithTenPosts = PageRequest.of(page, 10);
-            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts,categoryEnum).getContent();
+            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
+                .getContent();
         }
         return postsToBriefResponses(posts);
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(String category,
+    public List<BriefPostResponse> getPostsByCategory(int page, String category,
         User user) {
         List<Post> posts;
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         if (category.equals(CategoryEnum.ALL.toString())) {
-            posts = findAll();
+            posts = findPage(page);
         } else {
-            posts = postRepository.findAllByCategoryEquals(categoryEnum).orElse(null);
+            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
+                .getContent();
         }
         return postsToBriefResponses(posts);
     }
@@ -162,16 +161,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> searchPostForAnyone(int page, String keyword) {
         Pageable pageWithTenPosts = PageRequest.of(page, 10);
-        List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts,keyword).getContent();
+        List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
+            .getContent();
         return postsToBriefResponses(posts);
     }
 
     @Override
-    public List<BriefPostResponse> searchPost(String keyword, User user) {
-        //get all posts filtered by search keyword
-        List<Post> posts = postRepository.findPostByStoreContaining(keyword)
-            .orElse(null);
-        //List<Post> -> List<BriefPostResponse>
+    public List<BriefPostResponse> searchPost(int page, String keyword, User user) {
+        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
+            .getContent();
         return postsToBriefResponses(posts);
     }
 
@@ -187,7 +186,8 @@ public class PostServiceImpl implements PostService {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
         //check the status of the post
-        if(post.getPostStatus()==PostStatusEnum.ORDERED||post.getPostStatus()==PostStatusEnum.RECEIVED){
+        if (post.getPostStatus() == PostStatusEnum.ORDERED
+            || post.getPostStatus() == PostStatusEnum.RECEIVED) {
             throw new GlobalException(PostErrorCode.CANNOT_CLOSE_AFTER_ORDERED);
         }
 
@@ -267,7 +267,7 @@ public class PostServiceImpl implements PostService {
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
         UserPost userPost = getUserPostIfParticipant(user, post);
-        if(post.getPostStatus()!= PostStatusEnum.OPEN){
+        if (post.getPostStatus() != PostStatusEnum.OPEN) {
             throw new GlobalException(PostErrorCode.CANNOT_EXIT_AFTER_CLOSED);
         }
         menuRepository.deleteAll(getUserMenus(user, post));
@@ -289,11 +289,11 @@ public class PostServiceImpl implements PostService {
         Order hostOrder = makeAndSaveOrder(post, user, host, UserPostRole.HOST);
 
         //relate the order with the menus
-        relateOrderWithMenus(user,post,order);
+        relateOrderWithMenus(user, post, order);
 
         if (userPosts.size() <= 2) {
             post.allReceived();
-            relateOrderWithMenus(host,post,hostOrder);
+            relateOrderWithMenus(host, post, hostOrder);
             userPostRepository.deleteAll(userPosts);
             postRepository.delete(post);
             return;
@@ -301,9 +301,9 @@ public class PostServiceImpl implements PostService {
         userPostRepository.delete(userpost);
     }
 
-    private void relateOrderWithMenus(User user,Post post,Order order){
+    private void relateOrderWithMenus(User user, Post post, Order order) {
         List<Menu> menus = getUserMenus(user, post);
-        for(Menu menu : menus){
+        for (Menu menu : menus) {
             menu = menu.receive(order);
         }
         menuRepository.saveAll(menus);
@@ -324,7 +324,7 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAll();
     }
 
-    private List<Post> findPage(int page){
+    private List<Post> findPage(int page) {
         Pageable pageWithTenPosts = PageRequest.of(page, 10);
         Page<Post> postPage = postRepository.findAll(pageWithTenPosts);
         List<Post> posts = postPage.getContent();
@@ -391,7 +391,8 @@ public class PostServiceImpl implements PostService {
                 .map((UserPost userpost) -> new NickMenusResponse(userpost.getUser().getNickname(),
                     //List<Menu> menus -> List<MenuResponse>
                     getUserMenus(userpost.getUser(), userpost.getPost()).stream()
-                        .map((Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(), menu.getPrice()))
+                        .map((Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(),
+                            menu.getPrice()))
                         .toList())).toList();
         return menus;
     }
