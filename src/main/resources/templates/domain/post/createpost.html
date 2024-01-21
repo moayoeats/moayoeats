@@ -102,14 +102,47 @@
 </div>
 
 <script th:inline="javascript">
+
+  var lat;
+  var lng;
+  var latlng;
+  var categoryEnum;
+
+  $(document).ready(function () {
+    getAddress();
+  });
+
+  function getAddress(){
+    $.ajax({
+      type: 'GET',
+      url: "/api/v1/users/address",
+      dataType: "json",
+      contentType: 'application/json',
+      data: {},
+      success: function (response) {
+        lat = response.data.latitude;
+        lng = response.data.longitude;
+        drawMap(lat,lng);
+      },
+      error: function (error,response) {
+        alert(response.message);
+        console.error('Error:', error);
+      }
+    });
+  }
+  function drawMap(lat, lng) {
+    map = new naver.maps.Map("map", {
+      center: new naver.maps.LatLng(lat, lng),
+      zoom: 16
+    }),
+        infoWindow = null;
+  }
+
   var map = new naver.maps.Map("map", {
-        center: new naver.maps.LatLng(37.5666103, 126.9783882),
+        center: new naver.maps.LatLng(lat, lng),
         zoom: 16
       }),
       infoWindow = null;
-
-  var latlng;
-  var categoryEnum;
 
   function initGeocoder() {
     latlng = map.getCenter();
