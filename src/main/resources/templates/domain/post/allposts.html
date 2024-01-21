@@ -92,7 +92,7 @@
     var page = page;
     $.ajax({
       type: 'GET',
-      url: `/api/v1/readonly/posts/${page}`,
+      url: `/api/v1/readonly/posts/page/${page}`,
       dataType: "json",
       contentType: 'application/json',
       data: {},
@@ -112,7 +112,7 @@
   function sendData(button) {
     var postId = $(button).attr("post");
     const host = 'http://' + window.location.host;
-    window.location.href = host + `/post/${postId}`;
+    window.location.href = host + `/readonly/post/${postId}`;
   }
 
   function search() {
@@ -171,7 +171,7 @@
 
     $.ajax({
       type: 'GET',
-      url: `/api/v1/readonly/posts/page/${page}?category=${category}`,
+      url: `/api/v1/readonly/posts/category/${page}?category=${category}`,
       dataType: "json",
       contentType: 'application/json',
       data: {},
