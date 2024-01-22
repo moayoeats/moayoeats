@@ -20,8 +20,11 @@
       <a class="navbar-brand" href="/">
         <img src="/images/logo.png" alt="logo" width="60" height="60">
       </a>
-      <a class="navbar-brand" href="/">
-        <img src="/images/logo.png" alt="logo" width="60" height="60">
+      <a class="navbar-brand" href="/notification">
+        <img src="/images/bell.png" alt="notification" width="30" height="30">
+      </a>
+      <a class="navbar-brand" href="/mypage">
+        <img src="/images/user.png" alt="mypage" width="30" height="30">
       </a>
     </div>
   </nav>
@@ -198,6 +201,9 @@
   }
 
   function getOffers(button){
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.href = host + `/post/${postId}/offer`;
 
   }
   function editmenus(button){
