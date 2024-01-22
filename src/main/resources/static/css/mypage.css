@@ -1,0 +1,130 @@
+#my-page-pack {
+  margin: 60px 120px 60px 120px;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: start;
+
+  border: solid 1px black;
+  padding: 30px 0;
+  border-radius: 10px;
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.3);
+
+  background-color: #ffdab9;
+}
+
+#nickname, #email {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: inline-block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#my-info-pack {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.about-order {
+  margin: 0 30px 0 30px;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+}
+
+.btn-pack {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.btn-pack button {
+  width: 200px;
+  margin-bottom: 5px;
+}
+
+#my-score, #my-review, #my-order-info {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+#score {
+  display: inline-block;
+  font-size: 30px;
+}
+
+.review {
+  margin: 10px 0 5px 0;
+  padding: 10px 20px;
+  background: #fff4eb;
+  border-radius: 5px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.3);
+}
+
+.review div {
+  display: inline-block;
+}
+
+.review-contents {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 30px;
+}
+
+.review-count {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+#my-order-info {
+  width: 100%;
+}
+
+.past-order-pack {
+  margin-bottom: 20px;
+}
+
+.past-order {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  white-space: normal;
+  overflow: auto;
+
+  background-color: white;
+}
+
+.past-order div {
+  margin: 0 0 5px 0;
+}
+
+#my-order-info .btn {
+  padding: 10px;
+  width: 100%;
+}
+
+#no-past-order {
+  text-align: center;
+}
