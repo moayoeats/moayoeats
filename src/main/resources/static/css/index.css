@@ -1,0 +1,121 @@
+.post-pack {
+  padding: 10px;
+  width: 1000px;
+  height: min-content;
+  margin-top: 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#category-select {
+  margin: 10px;
+  display: inline-block;
+}
+
+#category-select p {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 0;
+}
+
+#create-post-btn {
+  padding-left: 10px;
+  display: inline-block;
+}
+
+.search-pack {
+  margin-top: 12px;
+}
+
+.search-pack, .search-pack input, .search-pack button {
+  height: 50px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-container img {
+  margin-right: 20px;
+}
+
+#posts {
+  margin-top: 20px;
+}
+
+.btn-group {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+#pages {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#posts > div {
+  background-color: #fff4eb;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#posts > div button {
+  float: right;
+  margin-top: 10px;
+}
+
+#posts > div .deadline {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+#posts > div div {
+  margin-bottom: 8px;
+}
+
+#posts > div div strong {
+  margin-right: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.btn-group button {
+  background-color: #fff4eb;
+}
+
+.input-group input {
+  border-radius: 5px 0 0 5px;
+}
+
+.input-group button {
+  border-radius: 0 5px 5px 0;
+}
+
+#write-button {
+  background-color: #f8f9fa;
+  color: #212529;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.post {
+  margin: 5px 0 10px 0;
+  padding: 10px;
+  width: 1000px;
+  height: max-content;
+  /* margin:auto*/
+}
