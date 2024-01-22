@@ -17,127 +17,8 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
         rel="stylesheet">
   <title>모아요이츠</title>
+  <link rel="stylesheet" href="/css/mypage.css">
   <link rel="stylesheet" href="/css/navbar.css">
-  <style>
-    #my-page-pack {
-      margin: 60px 120px 60px 120px;
-      display: flex;
-      flex-direction: row;
-      align-items: start;
-      justify-content: start;
-
-      border: solid 1px black;
-      padding: 30px 0;
-      border-radius: 10px;
-    }
-
-    #nickname, #email {
-      font-size: 25px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      display: inline-block;
-      margin-right: auto;
-      margin-left: auto;
-    }
-
-    #my-info-pack {
-      width: 30%;
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
-
-    .about-order {
-      margin: 0 30px 0 30px;
-      width: 70%;
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-      justify-content: center;
-    }
-
-    .btn-pack {
-      width: 100%;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-pack button {
-      width: 200px;
-      margin-bottom: 5px;
-    }
-
-    #my-score, #my-review, #my-order-info {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 30px;
-    }
-
-    #score {
-      display: inline-block;
-      font-size: 30px;
-    }
-
-    .review {
-      margin: 10px 0 5px 0;
-      padding: 10px 20px;
-      background: #F3D7CA;
-      border-radius: 5px;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .review div {
-      display: inline-block;
-    }
-
-    .review-contents {
-      flex: 1;
-      text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-right: 30px;
-    }
-
-    .review-count {
-      flex-shrink: 0;
-      text-align: right;
-    }
-
-    #my-order-info {
-      width: 100%;
-    }
-
-    .past-order-pack {
-      margin-bottom: 20px;
-    }
-
-    .past-order {
-      margin-top: 10px;
-      padding: 10px 20px;
-      border: solid 1px black;
-      border-radius: 5px;
-      white-space: normal;
-      overflow: auto;
-    }
-
-    .past-order div {
-      margin: 0 0 5px 0;
-    }
-
-    #my-order-info .btn {
-      padding: 10px;
-      width: 100%;
-    }
-  </style>
 </head>
 <header class="header-container">
   <nav class="navbar bg-body-tertiary">
@@ -157,6 +38,7 @@
     </div>
   </nav>
 </header>
+
 <body>
 <div id="my-page-pack">
   <div id="my-info-pack">
@@ -195,7 +77,7 @@
   </div>
 
 </div>
-<script th:inline="javascript">
+<script>
   $(document).ready(function () {
     getMyPage();
   });
@@ -216,17 +98,33 @@
       $('#email').text(email);
       $('#score').text(score);
 
-      for (let review in reviews) {
+      if (Object.keys(reviews).length === 0) {
         $('#my-review').append(`
+        <div class="review">
+           <div id="no-review">아직 리뷰가 없어요!💬</div>
+        </div>
+      `);
+      } else {
+        for (let review in reviews) {
+          $('#my-review').append(`
         <div class="review">
            <div class="review-contents">${review}</div> <div class="review-count">${reviews[review]}</div>
         </div>
       `);
+        }
+
       }
 
-      pastOrderList.forEach(order => {
-        let menuList = order.menus.map(menu => menu.menuname).join('<br>');
+      if (pastOrderList.length === 0) {
         $('#my-order-info').append(`
+           <div class="past-order">
+             <div id="no-past-order">아직 주문정보가 없어요!💬</div>
+           </div>
+        `);
+      } else {
+        pastOrderList.forEach(order => {
+          let menuList = order.menus.map(menu => menu.menuname).join('<br>');
+          $('#my-order-info').append(`
          <div class="past-order-pack">
           <div class="past-order">
             <div>가게 이름: ${order.store}</div>
@@ -240,7 +138,8 @@
             </button>
           </div>
       `);
-      });
+        });
+      }
 
     })
   }
