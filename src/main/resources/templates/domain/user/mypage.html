@@ -88,43 +88,46 @@
       url: `/api/v1/users/me`,
     })
     .done(function (res, status, xhr) {
-      let nickname = res.data.nickname;
-      let email = res.data.email;
-      let score = res.data.score;
-      let reviews = res.data.reviews.reviews;
-      let pastOrderList = res.data.pastOrderList;
+      // let errorStatus = xhr.getResponseHeader('error-msg').split(" ");
+      //
+      // console.log(errorStatus + "Zzzzz");
+      console.log(res.status);
+      if (res.status === 200) {
+        let nickname = res.data.nickname;
+        let email = res.data.email;
+        let score = res.data.score;
+        let reviews = res.data.reviews.reviews;
+        let pastOrderList = res.data.pastOrderList;
 
-      $('#nickname').text(nickname);
-      $('#email').text(email);
-      $('#score').text(score);
+        $('#nickname').text(nickname);
+        $('#email').text(email);
+        $('#score').text(score);
 
-      if (Object.keys(reviews).length === 0) {
-        $('#my-review').append(`
+        if (Object.keys(reviews).length === 0) {
+          $('#my-review').append(`
         <div class="review">
            <div id="no-review">아직 리뷰가 없어요!💬</div>
         </div>
       `);
-      } else {
-        for (let review in reviews) {
-          $('#my-review').append(`
+        } else {
+          for (let review in reviews) {
+            $('#my-review').append(`
         <div class="review">
            <div class="review-contents">${review}</div> <div class="review-count">${reviews[review]}</div>
         </div>
       `);
-        }
+          }
 
-      }
-
-      if (pastOrderList.length === 0) {
-        $('#my-order-info').append(`
+          if (pastOrderList.length === 0) {
+            $('#my-order-info').append(`
            <div class="past-order">
              <div id="no-past-order">아직 주문정보가 없어요!💬</div>
            </div>
         `);
-      } else {
-        pastOrderList.forEach(order => {
-          let menuList = order.menus.map(menu => menu.menuname).join('<br>');
-          $('#my-order-info').append(`
+          } else {
+            pastOrderList.forEach(order => {
+              let menuList = order.menus.map(menu => menu.menuname).join('<br>');
+              $('#my-order-info').append(`
          <div class="past-order-pack">
           <div class="past-order">
             <div>가게 이름: ${order.store}</div>
@@ -138,9 +141,17 @@
             </button>
           </div>
       `);
-        });
+            });
+          }
+        }
+      } else if(Number(errorStatus[0]) === 401) {
+        console.log(errorStatus);
+        errorHandler(res, xhr);
       }
-
+    })
+    .fail(function (res, xhr, error) {
+      console.log(res.status);
+      errorHandler(res, xhr, error);
     })
   }
 
