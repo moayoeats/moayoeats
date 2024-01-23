@@ -75,40 +75,21 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
-    public OfferRoleResponse viewApplication(
-        Long postId,
-        User user
-    ) {
+    public OfferRoleResponse viewApplication(Long postId, User user) {
 
-        Post post = postRepository.findById(postId).orElseThrow(()-> new GlobalException(PostErrorCode.NOT_FOUND_POST));
-        UserPost userpost = userPostRepository.findByUserIdAndPostId(user.getId(), postId).orElse(null);
-        UserPostRole role;
-        if(userpost!=null){
-            role = userpost.getRole();
-        }else{
-            role = null;
-        }
-        List<OfferResponse> offerResponses = new ArrayList<>();
+        Post post = checkIfPostExistsAndGet(postId);
+        UserPost userpost = findUserPostByUserAndPost(user.getId(), postId);
+        UserPostRole role = userpost == null ? null : userpost.getRole();
 
-        if(role==null){
-            List<Offer> offers = offerRepository.findAllByPostId(postId);
-            for(Offer offer: offers){
-                if(offer.getUser().getId().equals(user.getId())){
-                    offerResponses.add(new OfferResponse(offer.getId(),offer.getUser().getNickname()
-                        ,menuRepository.findAllByUserAndPost(offer.getUser(),post).stream().map(menu->new MenuResponse(menu.getId(),menu.getMenuname(),menu.getPrice())).toList()));
-                }
-            }
-            return new OfferRoleResponse(offerResponses,role);
-        }
-
-
+        List<OfferResponse> offerResponses;
         List<Offer> offers = offerRepository.findAllByPostId(postId);
-        for(Offer offer: offers){
-            offerResponses.add(new OfferResponse(offer.getId(),offer.getUser().getNickname()
-                ,menuRepository.findAllByUserAndPost(offer.getUser(),post).stream().map(menu->new MenuResponse(menu.getId(),menu.getMenuname(),menu.getPrice())).toList()));
-        }
 
-        return new OfferRoleResponse(offerResponses,role);
+        if (role == null) {
+            offers = offers.stream()
+                .filter(offer -> offer.getUser().getId().equals(user.getId())).toList();
+        }
+        offerResponses = getOfferResponsesByOffers(offers,post);
+        return new OfferRoleResponse(offerResponses, role);
     }
 
     public void approveApplication(OfferRequest offerReq, User user) {
@@ -214,6 +195,19 @@ public class OfferServiceImpl implements OfferService {
         if (!post.getPostStatus().equals(PostStatusEnum.OPEN)) {
             throw new GlobalException(PostErrorCode.POST_ALREADY_CLOSED);
         }
+    }
+
+    private UserPost findUserPostByUserAndPost(Long userId, Long postId) {
+        return userPostRepository.findByUserIdAndPostId(userId, postId).orElse(null);
+    }
+
+    private List<OfferResponse> getOfferResponsesByOffers(List<Offer> offers, Post post) {
+        return offers.stream()
+            .map(offer -> (OfferResponse.builder().offerId(offer.getId())
+                .userId(offer.getUser().getId()).nickname(offer.getUser().getNickname())
+                .menus(menuRepository.findAllByUserAndPost(offer.getUser(), post).stream()
+                    .map(menu -> new MenuResponse(menu.getId(), menu.getMenuname(),
+                        menu.getPrice())).toList()).build())).toList();
     }
 
 }
