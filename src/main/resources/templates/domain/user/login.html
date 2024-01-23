@@ -1,86 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
-            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"/>
-    <!-- Bootstrap CSS -->
-    <link crossorigin="anonymous"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          rel="stylesheet">
-    <title>모아요이츠</title>
-    <style>
-      #login-form {
-        width: 400px;
-        margin: 210px auto 0 auto;
-      }
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+          integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+  <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"/>
+  <!-- Bootstrap CSS -->
+  <link crossorigin="anonymous"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        rel="stylesheet">
+  <title>모아요이츠</title>
+  <style>
+    #login-form {
+      width: 400px;
+      margin: 210px auto 0 auto;
+    }
 
-      #login-form div {
-        text-align: center;
-      }
+    #login-form div {
+      text-align: center;
+    }
 
-      .btn-pack {
-        margin-top: 20px;
-      }
+    .btn-pack {
+      margin-top: 20px;
+    }
 
-      .btn-pack button {
-        width: 400px;
-        height: 52px;
-        margin-bottom: 7px;
-      }
+    .btn-pack button {
+      width: 400px;
+      height: 52px;
+      margin-bottom: 7px;
+    }
 
-      h1 {
-        text-align: center;
-        font-weight: bold;
-      }
+    h1 {
+      text-align: center;
+      font-weight: bold;
+    }
 
-      .go-sign-up {
-        margin-top: 5px;
-      }
+    .go-sign-up {
+      margin-top: 5px;
+    }
 
-      .go-sign-up a {
-        text-decoration: none;
-      }
+    .go-sign-up a {
+      text-decoration: none;
+    }
 
-      #logo {
-        margin-bottom: 50px;
-      }
-    </style>
+    #logo {
+      margin-bottom: 50px;
+    }
+  </style>
 
 </head>
 <body>
 <div id="login-form">
-    <div>
-        <img src="/images/logo.png" alt="logo" id="logo" width="150" height="150">
-        <div class="form-floating">
-            <input type="email" name="email" id="email"
-                   class="login-input form-control" placeholder="email">
-            <label for="email">이메일</label>
-        </div>
-        <div class="form-floating mb-3">
-            <input type="password" name="password" id="password"
-                   class="login-input form-control" placeholder="Password">
-            <label for="password">비밀번호</label>
-        </div>
-
-        <div class="btn-pack">
-            <button type="button" class="btn btn-secondary"
-                    id="login-submit" onclick="login()">로그인
-            </button>
-        </div>
-        <div class="go-sign-up">
-            <p style="font-weight: bold; display: inline-block;">계정이 없으신가요? </p>
-            <a href="/signup">회원가입</a>
-        </div>
+  <div>
+    <img src="/images/logo.png" alt="logo" id="logo" width="150" height="150">
+    <div class="form-floating">
+      <input type="email" name="email" id="email"
+             class="login-input form-control" placeholder="email">
+      <label for="email">이메일</label>
     </div>
+    <div class="form-floating mb-3">
+      <input type="password" name="password" id="password"
+             class="login-input form-control" placeholder="Password">
+      <label for="password">비밀번호</label>
+    </div>
+
+    <div class="btn-pack">
+      <button type="button" class="btn btn-secondary"
+              id="login-submit" onclick="login()">로그인
+      </button>
+    </div>
+    <div class="go-sign-up">
+      <p style="font-weight: bold; display: inline-block;">계정이 없으신가요? </p>
+      <a href="/signup">회원가입</a>
+    </div>
+  </div>
 </div>
 </body>
 
