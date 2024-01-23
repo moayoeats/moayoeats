@@ -1,8 +1,8 @@
 package com.moayo.moayoeats.backend.domain.chat.controlloer;
 
-import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
 import com.moayo.moayoeats.backend.domain.chat.dto.request.ChatMessageRequest;
-import com.moayo.moayoeats.backend.domain.chat.service.ChatMessageService;
+import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
+import com.moayo.moayoeats.backend.domain.chat.service.impl.ChatMessageServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatController {
 
-    private final ChatMessageService chatMessageService;
+    private final ChatMessageServiceImpl chatMessageService;
 
     @MessageMapping("/chats/join/{postId}")
     @SendTo("/sub/chats/room/{postId}")
@@ -37,7 +37,7 @@ public class ChatController {
         String content = req.content();
         String username = req.sender();
 
-        chatMessageService.saveChatMessage(postId, username, content);
+//        chatMessageService.saveChatMessage(postId, username, content);
 
         return new ChatMessageResponse(content);
     }
