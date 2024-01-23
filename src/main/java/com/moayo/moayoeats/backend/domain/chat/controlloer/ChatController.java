@@ -37,7 +37,7 @@ public class ChatController {
         String content = req.content();
         String username = req.sender();
 
-//        chatMessageService.saveChatMessage(postId, username, content);
+        chatMessageService.saveChatMessage(postId, username, content);
 
         return new ChatMessageResponse(content);
     }
