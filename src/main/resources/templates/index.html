@@ -9,96 +9,105 @@
       rel="stylesheet">
 <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
 <link href="./css/style.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/navbar.css">
+<link rel="stylesheet" href="/css/index.css">
 <head>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
-<header>
-    <nav class="navbar bg-body-tertiary">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/images/logo.png" alt="logo" width="60" height="60">
-            </a>
-            <a class="navbar-brand" href="/notification">
-                <img src="/images/bell.png" alt="notification" width="30" height="30">
-            </a>
-          <a class="navbar-brand" href="/login">
-            <img src="/images/login.png" alt="login" width="30" height="30">
-          </a>
-          <a class="navbar-brand" href="/signup">
-            <img src="/images/signup.png" alt="signup" width="30" height="30">
-          </a>
-          <a class="navbar-brand" href="/mypage">
-            <img src="/images/user.png" alt="mypage" width="30" height="30">
-          </a>
-        </div>
-    </nav>
+<header class="header-container">
+  <nav class="navbar bg-body-tertiary">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="brand-container">
+        <a class="navbar-brand" href="/">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
+        </a>
+      </div>
+      <div class="action-container">
+        <a class="navbar-brand" href="/notification">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
+        </a>
+        <a class="navbar-brand" href="/mypage">
+          <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30"
+               onclick="moveMyPage()">
+        </a>
+        <a class="navbar-brand" href="/login">
+          <img src="/images/login.png" alt="login" width="30" height="30">
+        </a>
+        <a class="navbar-brand" href="/signup">
+          <img src="/images/signup.png" alt="signup" width="30" height="30">
+        </a>
+      </div>
+    </div>
+  </nav>
 </header>
+
 <body>
-<div style="padding:10px;width:1000px; height:min-content; margin:auto">
-    <div style="margin:auto">카테고리 선택
-        <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
-            <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="all">전체</label>
-            <input autocomplete="off" category="BURGER" class="btn-check" id="burger"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="burger">버거</label>
-            <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="chicken">치킨</label>
-            <input autocomplete="off" category="KOREAN" class="btn-check" id="korean"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="korean">한식</label>
-            <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="western">양식</label>
-            <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="asian">아시안</label>
-            <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="snack">분식</label>
-            <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="japanese">일식</label>
-            <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="chinese">중식</label>
-            <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
-        </div>
-        <div class="input-group mb-3">
-            <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
-                   id="keyword"
-                   placeholder="검색어"
-                   type="text">
-            <button class="btn btn-outline-secondary" id="search" onclick="search()" type="button">
-                검색
-            </button>
-        </div>
+<div style="padding:10px;width:1000px; height:min-content; margin:auto" class="post-pack">
+  <div id="category-select" style="margin:auto">
+    <p>카테고리 선택</p>
+    <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+      <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="all">전체</label>
+      <input autocomplete="off" category="BURGER" class="btn-check" id="burger"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="burger">버거</label>
+      <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+      <input autocomplete="off" category="KOREAN" class="btn-check" id="korean"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="korean">한식</label>
+      <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="western">양식</label>
+      <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="asian">아시안</label>
+      <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="snack">분식</label>
+      <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="japanese">일식</label>
+      <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="chinese">중식</label>
+      <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
     </div>
-    <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
-    <div id="pages" style="width:1000px; height:min-content; margin:auto">
+    <div class="input-group mb-3 search-pack">
+      <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
+             id="keyword"
+             placeholder="검색어"
+             type="text">
+      <button class="btn btn-secondary" id="search" onclick="search()" type="button">
+        검색
+      </button>
     </div>
+  </div>
+  <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
+  <div id="pages" style="width:1000px; height:min-content; margin:auto">
+  </div>
 </div>
 <script>
   $(document).ready(function () {
@@ -217,18 +226,18 @@
     data.forEach((post) =>
         $('#posts').append(
             `
-              <div style="padding:10px;width:1000px; height:max-content; margin:auto">
-                <div>작성자</div>
+              <div class="post">
+                <button id = "${post.id}" post = "${post.id}"  class="btn btn-secondary" onclick="sendData(this)" type="button">조회</button>
+                <div style="font-weight: bold">작성자</div>
                 <div>${post.author}</div>
-                <div>가게</div>
+                <div style="font-weight: bold">가게</div>
                 <div>${post.store}</div>
-                <div>합계 금액</div>
+                <div style="font-weight: bold">합계 금액</div>
                 <div>${post.sumPrice}</div>
-                <div>최소주문금액</div>
+                <div style="font-weight: bold">최소주문금액</div>
                 <div>${post.minPrice}</div>
-                <div>마감 기한</div>
+                <div style="font-weight: bold">마감 기한</div>
                 <div>${post.deadline}</div>
-                <button id = "${post.id}" post = "${post.id}"  class="btn btn-outline-secondary" onclick="sendData(this)" type="button">조회</button>
               </div>
             `
         )
