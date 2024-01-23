@@ -273,7 +273,8 @@
   }
 
   function chatRoom(button){
-
+    var postId = $(button).attr("post");
+    window.location.href = `/chat/${postId}`;
   }
 
   function exit(button){

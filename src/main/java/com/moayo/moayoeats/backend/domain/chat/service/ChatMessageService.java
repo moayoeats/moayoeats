@@ -1,7 +1,5 @@
 package com.moayo.moayoeats.backend.domain.chat.service;
 
-import com.moayo.moayoeats.backend.domain.user.entity.User;
-
 public interface ChatMessageService {
 
     /**
