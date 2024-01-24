@@ -175,7 +175,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> searchPostForAnyone(int page, String keyword) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
         List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
             .getContent();
         return postsToBriefResponses(posts);
@@ -183,7 +183,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> searchPost(int page, String keyword, User user) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
         List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
             .getContent();
         return postsToBriefResponses(posts);
