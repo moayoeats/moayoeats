@@ -281,8 +281,8 @@ public class PostServiceImpl implements PostService {
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
         UserPost userPost = getUserPostIfParticipant(user, post);
-        if (post.getPostStatus() != PostStatusEnum.OPEN) {
-            throw new GlobalException(PostErrorCode.CANNOT_EXIT_AFTER_CLOSED);
+        if (post.getPostStatus() == PostStatusEnum.ORDERED||post.getPostStatus() == PostStatusEnum.RECEIVED) {
+            throw new GlobalException(PostErrorCode.CANNOT_EXIT_AFTER_ORDERED);
         }
         menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
@@ -358,9 +358,15 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
-        return posts.stream().map((Post post) -> new BriefPostResponse(post.getId(),
-                getAuthor(getUserPostsByPost(post)).getNickname(), post.getStore(),
-                post.getMinPrice(), getSumPrice(getUserPostsByPost(post), post), getDeadline(post)))
+        return posts.stream().map((Post post) -> BriefPostResponse.builder()
+            .id(post.getId())
+            .author(getAuthor(getUserPostsByPost(post)).getNickname())
+            .store(post.getStore())
+            .deadline(getDeadline(getDeadline(post)))
+            .minPrice(post.getMinPrice())
+            .sumPrice(getSumPrice(getUserPostsByPost(post), post))
+            .status(post.getPostStatus())
+            .build())
             .toList();
     }
 
@@ -397,6 +403,18 @@ public class PostServiceImpl implements PostService {
     private LocalDateTime getDeadline(Post post) {
         //remove nano sencods from the LocalDateTime
         return post.getDeadline().withNano(0);
+    }
+
+    private String getDeadline(LocalDateTime deadline) {
+        LocalDateTime now = LocalDateTime.now();
+        int days = deadline.getDayOfYear()-now.getDayOfYear();
+        int hours = deadline.getHour()-now.getHour();
+        int mins = deadline.getMinute()-now.getMinute();
+        if(mins<0){
+            hours--;
+            mins = 60-mins;
+        }
+        return days+"일 "+hours+"시 "+mins+" 분";
     }
 
     private Post getPostById(Long postId) {
@@ -468,7 +486,7 @@ public class PostServiceImpl implements PostService {
         );
     }
 
-    public String [] getAddress(String address){
+    private String [] getAddress(String address){
         address = address.replace("(lat:", "");
         address = address.replace("lng:", "");
         address = address.replace(")", "");

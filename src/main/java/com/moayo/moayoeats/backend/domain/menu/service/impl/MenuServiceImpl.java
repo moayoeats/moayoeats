@@ -89,8 +89,8 @@ public class MenuServiceImpl implements MenuService {
     }
 
     private void checkIfPostIsClosed(Post post) {
-        //모집마감 후에는 메뉴를 생성/삭제할 수 없음
-        if (post.getPostStatus() != PostStatusEnum.OPEN) {
+        //주문완료 후에는 메뉴를 생성/삭제할 수 없음
+        if (post.getPostStatus() == PostStatusEnum.RECEIVED || post.getPostStatus() == PostStatusEnum.ORDERED) {
             throw new GlobalException(PostErrorCode.MENU_NOT_ALLOWED);
         }
     }

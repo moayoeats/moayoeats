@@ -8,28 +8,24 @@
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
         rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-
-  <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
-  <link href="./css/style.css" rel="stylesheet">
   <title>글 상세페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv"
           type="text/javascript"></script>
-  <link rel="stylesheet" href="/css/navbar.css">
-  <link rel="stylesheet" href="/css/readpost.css">
+  <link href="/css/navbar.css" rel="stylesheet">
+  <link href="/css/readpost.css" rel="stylesheet">
 </head>
 <header class="header-container">
   <nav class="navbar bg-body-tertiary">
     <div class="container">
       <div class="brand-container">
         <a class="navbar-brand" href="/">
-          <img src="/images/logo.png" alt="logo" width="60" height="60">
+          <img alt="logo" height="60" src="/images/logo.png" width="60">
         </a>
       </div>
       <div class="action-container">
         <a class="navbar-brand" href="/notification">
-          <img src="/images/bell.png" alt="notification" width="30" height="30">
+          <img alt="notification" height="30" src="/images/bell.png" width="30">
         </a>
         <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
           마이페이지
@@ -88,11 +84,11 @@
         drawMenus(nickmenus);
 
         if (response.data.role === "HOST") {
-          drawHostButtons(response.data.id,response.data.status);
+          drawHostButtons(response.data.id, response.data.status);
         } else if (response.data.role === "PARTICIPANT") {
-          drawParticipantButtons(response.data.id,response.data.status);
+          drawParticipantButtons(response.data.id, response.data.status);
         } else {
-          drawAnyoneButtons(response.data.id,response.data.status);
+          drawAnyoneButtons(response.data.id, response.data.status);
         }
       },
       error: function (error) {
@@ -155,9 +151,9 @@
     )
   }
 
-  function drawHostButtons(postId,status) {
+  function drawHostButtons(postId, status) {
 
-    if(status==="OPEN"){
+    if (status === "OPEN") {
       $('#buttons').append(
           `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -174,7 +170,7 @@
     </div>
             `
       )
-    }else if(status==="CLOSED"){
+    } else if (status === "CLOSED") {
       $('#buttons').append(
           `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -187,20 +183,20 @@
     </div>
             `
       )
-    }else if(status==="ORDERED"||status==="RECEIVED"){
-    $('#buttons').append(
-        `
+    } else if (status === "ORDERED" || status === "RECEIVED") {
+      $('#buttons').append(
+          `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
       <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
       <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
     </div>
             `
-    )
+      )
     }
   }
 
-  function drawParticipantButtons(postId,status) {
-    if(status==="OPEN"){
+  function drawParticipantButtons(postId, status) {
+    if (status === "OPEN") {
       $('#buttons').append(
           `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -211,7 +207,7 @@
     </div>
             `
       )
-    }else if(status==="CLOSED"){
+    } else if (status === "CLOSED") {
       $('#buttons').append(
           `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -224,7 +220,7 @@
     </div>
             `
       )
-    }else if(status==="ORDERED"){
+    } else if (status === "ORDERED") {
       $('#buttons').append(
           `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -236,7 +232,7 @@
             `
       )
 
-    }else if(status==="RECEIVED"){
+    } else if (status === "RECEIVED") {
       $('#buttons').append(
           `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -249,10 +245,10 @@
 
   }
 
-  function drawAnyoneButtons(postId,status) {
-    if(status==="OPEN"){
-    $('#buttons').append(
-        `
+  function drawAnyoneButtons(postId, status) {
+    if (status === "OPEN") {
+      $('#buttons').append(
+          `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
       <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
       <label class="btn btn-outline-secondary" for="editmenus">메뉴 담기</label>
@@ -262,7 +258,7 @@
       <label class="btn btn-outline-secondary" for="getOffers">참가 신청 취소</label>
     </div>
             `
-    )
+      )
     }
   }
 
@@ -341,10 +337,10 @@
       }
     });
   }
-
   function chatRoom(button){
     var postId = $(button).attr("post");
     window.location.href = `/chat/${postId}`;
+
   }
 
   function exit(button) {
