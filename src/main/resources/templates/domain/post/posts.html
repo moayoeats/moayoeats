@@ -10,8 +10,8 @@
         rel="stylesheet">
   <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
   <link href="./css/style.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/navbar.css">
-  <link rel="stylesheet" href="/css/index.css">
+  <link href="/css/navbar.css" rel="stylesheet">
+  <link href="/css/index.css" rel="stylesheet">
   <title>글 전체페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
@@ -20,12 +20,12 @@
     <div class="container">
       <div class="brand-container">
         <a class="navbar-brand" href="/">
-          <img src="/images/logo.png" alt="logo" width="60" height="60">
+          <img alt="logo" height="60" src="/images/logo.png" width="60">
         </a>
       </div>
       <div class="action-container">
         <a class="navbar-brand" href="/notification">
-          <img src="/images/bell.png" alt="notification" width="30" height="30">
+          <img alt="notification" height="30" src="/images/bell.png" width="30">
         </a>
         <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
           마이페이지
@@ -35,7 +35,7 @@
   </nav>
 </header>
 <body>
-<div style="padding:10px;width:1000px; height:min-content; margin:auto" class="post-pack">
+<div class="post-pack" style="padding:10px;width:1000px; height:min-content; margin:auto">
   <div id="category-select" style="margin:auto">
     <p>카테고리 선택</p>
     <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
@@ -230,19 +230,36 @@
     }
   }
 
-  function drawAllPosts(data){
-    data.forEach((post)=> $('#posts').append(
-            `
+  function drawAllPosts(data) {
+    if (data.status === "OPEN") {
+      data.forEach((post) => $('#posts').append(
+              `
               <div class="post" post = "${post.id}" onclick="sendData(this)">
                 <div> <span style="font-weight: bold">작성자   </span> ${post.author} </div>
                 <div> <span style="font-weight: bold">가게   </span>${post.store}</div>
                 <div> <span style="font-weight: bold">모인 금액   </span>${post.sumPrice} / ${post.minPrice}</div>
                 <div>${post.deadline}<span style="font-weight: bold"> 후에 마감됩니다!</span></div>
-                <div><span style="font-weight: bold">${post.status}   </span>${getStatus(post.status)}</div>
+                <div><span style="font-weight: bold">${post.status}   </span>${getStatus(
+                  post.status)}</div>
               </div>
             `
-        )
-    )
+          )
+      )
+    } else {
+      data.forEach((post) => $('#posts').append(
+              `
+              <div class="post" post = "${post.id}" onclick="sendData(this)">
+                <div> <span style="font-weight: bold">작성자   </span> ${post.author} </div>
+                <div> <span style="font-weight: bold">가게   </span>${post.store}</div>
+                <div> <span style="font-weight: bold">모인 금액   </span>${post.sumPrice} / ${post.minPrice}</div>
+                <div><span style="font-weight: bold">${post.status}   </span>${getStatus(
+                  post.status)}</div>
+              </div>
+            `
+          )
+      )
+    }
+
   }
 
   function removeAllPages() {
@@ -392,14 +409,14 @@
     drawSearchPages(ten);
   }
 
-  function getStatus(status){
-    if(status==="OPEN"){
+  function getStatus(status) {
+    if (status === "OPEN") {
       return "모집이 열려있습니다!"
-    }else if(status==="CLOSED"){
+    } else if (status === "CLOSED") {
       return "모집이 마감되었습니다!"
-    }else if(status==="ORDERED"){
+    } else if (status === "ORDERED") {
       return "주문 완료"
-    }else if(status==="RECEIVED"){
+    } else if (status === "RECEIVED") {
       return "주문이 모두 수령된 게시글입니다!"
     }
   }
