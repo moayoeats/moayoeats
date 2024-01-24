@@ -362,7 +362,7 @@ public class PostServiceImpl implements PostService {
             .id(post.getId())
             .author(getAuthor(getUserPostsByPost(post)).getNickname())
             .store(post.getStore())
-            .deadline(getDeadline(post))
+            .deadline(getDeadline(getDeadline(post)))
             .minPrice(post.getMinPrice())
             .sumPrice(getSumPrice(getUserPostsByPost(post), post))
             .status(post.getPostStatus())
@@ -403,6 +403,18 @@ public class PostServiceImpl implements PostService {
     private LocalDateTime getDeadline(Post post) {
         //remove nano sencods from the LocalDateTime
         return post.getDeadline().withNano(0);
+    }
+
+    private String getDeadline(LocalDateTime deadline) {
+        LocalDateTime now = LocalDateTime.now();
+        int days = deadline.getDayOfYear()-now.getDayOfYear();
+        int hours = deadline.getHour()-now.getHour();
+        int mins = deadline.getMinute()-now.getMinute();
+        if(mins<0){
+            hours--;
+            mins = 60-mins;
+        }
+        return days+"일 "+hours+"시 "+mins+" 분";
     }
 
     private Post getPostById(Long postId) {
@@ -474,7 +486,7 @@ public class PostServiceImpl implements PostService {
         );
     }
 
-    public String [] getAddress(String address){
+    private String [] getAddress(String address){
         address = address.replace("(lat:", "");
         address = address.replace("lng:", "");
         address = address.replace(")", "");
