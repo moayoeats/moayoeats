@@ -32,6 +32,13 @@ public interface PostService {
     List<BriefPostResponse> getPosts(int page, User user);
 
     /**
+     *
+     * @param postId : 글 조회에 필요한 postId
+     * @return
+     */
+    public DetailedPostResponse getPostForAnyone(Long postId);
+
+    /**
      * @param postId : 글 조회에 필요한 postId
      * @param user   : 글 조회자, 나의 메뉴 조회에 필요함
      * @return DetailedPostResponse : 글 상세페이지 조회를 위한 dto
@@ -101,7 +108,5 @@ public interface PostService {
      * @param user : 주문완료 처리를 하려는 참가자
      */
     public void receiveOrder(PostIdRequest postIdReq, User user );
-
-    public DetailedPostResponse getPostTest(Long postId);
 
 }
