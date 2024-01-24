@@ -16,5 +16,4 @@ public class MvcConfiguration implements WebMvcConfigurer {
                 "classpath:/static/")
             .setCacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES));
     }
-
 }
