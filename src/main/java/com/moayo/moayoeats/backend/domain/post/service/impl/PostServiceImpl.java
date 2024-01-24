@@ -34,6 +34,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -351,7 +352,7 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<Post> findPage(int page) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
         Page<Post> postPage = postRepository.findAll(pageWithTenPosts);
         List<Post> posts = postPage.getContent();
         return posts;
