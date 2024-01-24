@@ -222,22 +222,15 @@
     }
   }
 
-  function drawAllPosts(data) {
-    data.forEach((post) =>
-        $('#posts').append(
+  function drawAllPosts(data){
+    data.forEach((post)=> $('#posts').append(
             `
-              <div class="post">
-                <button id = "${post.id}" post = "${post.id}"  class="btn btn-secondary" onclick="sendData(this)" type="button">조회</button>
-                <div style="font-weight: bold">작성자</div>
-                <div>${post.author}</div>
-                <div style="font-weight: bold">가게</div>
-                <div>${post.store}</div>
-                <div style="font-weight: bold">합계 금액</div>
-                <div>${post.sumPrice}</div>
-                <div style="font-weight: bold">최소주문금액</div>
-                <div>${post.minPrice}</div>
-                <div style="font-weight: bold">마감 기한</div>
-                <div>${post.deadline}</div>
+              <div class="post" post = "${post.id}" onclick="sendData(this)">
+                <div> <span style="font-weight: bold">작성자   </span> ${post.author} </div>
+                <div> <span style="font-weight: bold">가게   </span>${post.store}</div>
+                <div> <span style="font-weight: bold">모인 금액   </span>${post.sumPrice} / ${post.minPrice}</div>
+                <div>${post.deadline}<span style="font-weight: bold">에 마감됩니다!</span></div>
+                <div>${getStatus(post.status)}</div>
               </div>
             `
         )
@@ -389,6 +382,18 @@
     var ten = +$(button).attr("ten");
     ten = ten + 1;
     drawSearchPages(ten);
+  }
+
+  function getStatus(status){
+    if(status==="OPEN"){
+      return "모집이 열려있습니다!"
+    }else if(status==="CLOSED"){
+      return "모집이 마감되었습니다!"
+    }else if(status==="ORDERED"){
+      return "주문 완료"
+    }else if(status==="RECEIVED"){
+      return "주문이 모두 수령된 게시글입니다!"
+    }
   }
 </script>
 </body>
