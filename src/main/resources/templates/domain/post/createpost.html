@@ -47,18 +47,21 @@
       <input aria-describedby="inputGroup-sizing-default" aria-label="Sizing example input"
              class="form-control" id="minPrice"
              type="text">
+      <span class="input-group-text">원</span>
     </div>
     <div class="input-group mb-3">
       <span class="input-group-text">배달비</span>
       <input aria-describedby="inputGroup-sizing-default" aria-label="Sizing example input"
              class="form-control" id="deliveryCost"
              type="text">
+      <span class="input-group-text">원</span>
     </div>
     <div class="input-group">
       <span class="input-group-text">마감시간</span>
       <input aria-label="시간" placeholder="시간" class="form-control" id="deadlineHours"
-             type="text">
+             type="text"><span class="input-group-text">시간</span>
       <input aria-label="분" placeholder="분" class="form-control" id="deadlineMins" type="text">
+      <span class="input-group-text">분</span>
     </div>
     <div style="margin:auto">카테고리 선택
       <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
@@ -106,7 +109,7 @@
   </div>
 
   <div style="padding:10px;width:1000px; height:max-content; margin:auto">
-    <div>지도를 클릭해서 장소를 지정해 주세요!</div>
+    <div>지도를 클릭해서 음식 픽업 모임 장소를 지정해 주세요!</div>
     <div id="map" padding = "10px"; style="width:1000px; height:450px;"></div>
     <button class="btn btn-outline-secondary" onclick="sendData()" type="button">작성 완료</button>
   </div>
