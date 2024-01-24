@@ -11,7 +11,7 @@ public record BriefPostResponse(
     String store,
     Integer minPrice,
     Integer sumPrice,
-    LocalDateTime deadline,
+    String deadline,
     PostStatusEnum status
 
 ) {
