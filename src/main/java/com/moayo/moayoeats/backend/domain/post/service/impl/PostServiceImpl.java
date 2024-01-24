@@ -151,7 +151,7 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            Pageable pageWithTenPosts = PageRequest.of(page, 10,Sort.by("modifiedAt").descending());
             posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
                 .getContent();
         }
@@ -166,7 +166,7 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            Pageable pageWithTenPosts = PageRequest.of(page, 10,Sort.by("modifiedAt").descending());
             posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
                 .getContent();
         }
