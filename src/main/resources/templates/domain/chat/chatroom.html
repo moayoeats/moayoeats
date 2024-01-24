@@ -3,11 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>실시간 채팅</title>
+  <link rel="stylesheet" href="/css/navbar.css">
   <link rel="stylesheet" th:href="@{/css/style.css}">
   <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
   <script th:src="@{/webjars/sockjs-client/sockjs.min.js}"></script>
   <script th:src="@{/webjars/stomp-websocket/stomp.min.js}"></script>
 </head>
+<header class="header-container">
+  <nav class="navbar bg-body-tertiary">
+    <div class="container">
+      <div class="brand-container">
+        <a class="navbar-brand" href="/">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
+        </a>
+      </div>
+      <div class="action-container">
+        <a class="navbar-brand" href="/notification">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
+        </a>
+        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">마이페이지
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
 <body>
 <div id="chat-container">
   <div id="chat-messages" style="height: 300px; overflow-y: scroll;"></div>
@@ -28,5 +47,6 @@
   });
 </script>
 <script th:src="@{/js/chat.js}"></script>
+<script src="/js/navbar.js"></script>
 </body>
 </html>
