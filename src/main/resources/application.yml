@@ -6,7 +6,7 @@ spring:
     password: ${PASSWORD}
   data:
     mongodb:
-      uri: mongodb+srv://${MONGO_USER_NAME}:${MONGO_PASSWORD}@${CLUSTER_URL}/?retryWrites=true&w=majority
+      uri: mongodb+srv://${MONGO_USER_NAME}:${MONGO_PASSWORD}@${CLUSTER_URL}/moayoeats?retryWrites=true&w=majority
 
   main:
     allow-bean-definition-overriding: true
