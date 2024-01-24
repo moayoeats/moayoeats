@@ -56,17 +56,13 @@ public class PostServiceImpl implements PostService {
             .plusHours(postReq.deadlineHours());
 
         //get latitude and longitude from the coordinate
-        String address = postReq.address();
-        address = address.replace("(lat:", "");
-        address = address.replace("lng:", "");
-        address = address.replace(")", "");
-        String[] location = address.split(",");
+        String [] location = getAddress(postReq.address());
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
         //Build new post with the post request dto
         Post post = Post.builder()
-            .address(address)
+            .address(postReq.address())
             .latitude(latitude)
             .longitude(longitude)
             .store(postReq.store())
@@ -104,6 +100,24 @@ public class PostServiceImpl implements PostService {
     public List<BriefPostResponse> getPosts(int page, User user) {
         List<Post> posts = findPage(page);
         return postsToBriefResponses(posts);
+    }
+
+    @Override
+    public DetailedPostResponse getPostForAnyone(Long postId) {
+        Post post = getPostById(postId);
+        List<UserPost> userPosts = getUserPostsByPost(post);
+
+        return DetailedPostResponse.builder()
+            .longitude(post.getLongitude())
+            .latitude(post.getLatitude())
+            .address(post.getAddress())
+            .store(post.getStore())
+            .minPrice(post.getMinPrice())
+            .deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts))
+            .sumPrice(getSumPrice(userPosts, post))
+            .deadline(getDeadline(post))
+            .build();
     }
 
     @Override
@@ -454,22 +468,11 @@ public class PostServiceImpl implements PostService {
         );
     }
 
-    @Override
-    public DetailedPostResponse getPostTest(Long postId) {
-        Post post = getPostById(postId);
-        List<UserPost> userPosts = getUserPostsByPost(post);
-
-        return DetailedPostResponse.builder()
-            .longitude(post.getLongitude())
-            .latitude(post.getLatitude())
-            .address(post.getAddress())
-            .store(post.getStore())
-            .minPrice(post.getMinPrice())
-            .deliveryCost(post.getDeliveryCost())
-            .menus(getNickMenus(userPosts))
-            .sumPrice(getSumPrice(userPosts, post))
-            .deadline(getDeadline(post))
-            .build();
+    public String [] getAddress(String address){
+        address = address.replace("(lat:", "");
+        address = address.replace("lng:", "");
+        address = address.replace(")", "");
+        return address.split(",");
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
