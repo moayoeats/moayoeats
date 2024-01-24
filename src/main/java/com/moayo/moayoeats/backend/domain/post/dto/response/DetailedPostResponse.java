@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.post.dto.response;
 
 import com.moayo.moayoeats.backend.domain.menu.dto.response.NickMenusResponse;
+import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +22,8 @@ public record DetailedPostResponse(
     List<NickMenusResponse> menus,
     Integer sumPrice,
     LocalDateTime deadline,
-    UserPostRole role
+    UserPostRole role,
+    PostStatusEnum status
 ) {
 
 }
