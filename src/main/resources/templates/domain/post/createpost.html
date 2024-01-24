@@ -208,7 +208,9 @@
       success: function (response) {
         console.log('Success:', response);
         alert(response.message);
-        redirect();
+        if(response.status === 201){
+          redirect();
+        }
       },
       error: function (error,response) {
         alert(response.message);
