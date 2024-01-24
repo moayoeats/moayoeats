@@ -358,9 +358,15 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
-        return posts.stream().map((Post post) -> new BriefPostResponse(post.getId(),
-                getAuthor(getUserPostsByPost(post)).getNickname(), post.getStore(),
-                post.getMinPrice(), getSumPrice(getUserPostsByPost(post), post), getDeadline(post)))
+        return posts.stream().map((Post post) -> BriefPostResponse.builder()
+            .id(post.getId())
+            .author(getAuthor(getUserPostsByPost(post)).getNickname())
+            .store(post.getStore())
+            .deadline(getDeadline(post))
+            .minPrice(post.getMinPrice())
+            .sumPrice(getSumPrice(getUserPostsByPost(post), post))
+            .status(post.getPostStatus())
+            .build())
             .toList();
     }
 
