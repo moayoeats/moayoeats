@@ -63,7 +63,6 @@ public class PostServiceImpl implements PostService {
 
         //Build new post with the post request dto
         Post post = Post.builder()
-            .address(postReq.address())
             .latitude(latitude)
             .longitude(longitude)
             .store(postReq.store())
@@ -111,7 +110,6 @@ public class PostServiceImpl implements PostService {
         return DetailedPostResponse.builder()
             .longitude(post.getLongitude())
             .latitude(post.getLatitude())
-            .address(post.getAddress())
             .store(post.getStore())
             .minPrice(post.getMinPrice())
             .deliveryCost(post.getDeliveryCost())
@@ -133,7 +131,6 @@ public class PostServiceImpl implements PostService {
             .hostNick(host.getNickname())
             .longitude(post.getLongitude())
             .latitude(post.getLatitude())
-            .address(post.getAddress())
             .store(post.getStore())
             .minPrice(post.getMinPrice())
             .deliveryCost(post.getDeliveryCost())
@@ -360,7 +357,7 @@ public class PostServiceImpl implements PostService {
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
         return posts.stream().map((Post post) -> new BriefPostResponse(post.getId(),
-                getAuthor(getUserPostsByPost(post)).getNickname(), post.getAddress(), post.getStore(),
+                getAuthor(getUserPostsByPost(post)).getNickname(), post.getStore(),
                 post.getMinPrice(), getSumPrice(getUserPostsByPost(post), post), getDeadline(post)))
             .toList();
     }

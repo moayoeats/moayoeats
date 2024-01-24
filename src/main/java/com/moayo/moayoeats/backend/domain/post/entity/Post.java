@@ -33,9 +33,6 @@ public class Post extends BaseTime {
     private Long id;
 
     @Column
-    private String address;
-
-    @Column
     private Double latitude;
 
     @Column
@@ -74,10 +71,9 @@ public class Post extends BaseTime {
     private PostStatusEnum postStatus;
 
     @Builder
-    public Post(String address, String store, Integer minPrice, Integer deliveryCost,
+    public Post(String store, Integer minPrice, Integer deliveryCost,
         CategoryEnum category, LocalDateTime deadline, PostStatusEnum postStatus, Double latitude,
         Double longitude) {
-        this.address = address;
         this.store = store;
         this.minPrice = minPrice;
         this.amountIsSatisfied = false;
