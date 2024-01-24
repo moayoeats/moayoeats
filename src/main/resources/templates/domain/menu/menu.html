@@ -140,13 +140,14 @@
       }
     });
 
-    location.reload();
+    redirect(postId);
 
   }
 
   function deleteMenu(button) {
 
     let menuId = $(button).attr("menuId");
+    let postId = [[${postId}]];
 
     $.ajax({
       type: 'DELETE',
@@ -166,7 +167,7 @@
       }
     });
 
-    location.reload();
+    redirect(postId);
 
   }
 
@@ -186,6 +187,13 @@
   </div>
   `
     )
+  }
+
+  function redirect(postId){
+    const host = 'http://' + window.location.host;
+    setTimeout(function(){
+      window.location.href = host + `/menu/${postId}`;
+    }, 1000);
   }
 
 </script>
