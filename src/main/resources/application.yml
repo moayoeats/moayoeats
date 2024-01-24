@@ -4,9 +4,9 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     username: ${USER_NAME}
     password: ${PASSWORD}
-  #    data:
-  #      mongodb:
-  #        uri: mongodb+srv://${MONGO_USER_NAME}:${MONGO_PASSWORD}@${CLUSTER_URL}/?retryWrites=true&w=majority
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGO_USER_NAME}:${MONGO_PASSWORD}@${CLUSTER_URL}/moayoeats?retryWrites=true&w=majority
 
   main:
     allow-bean-definition-overriding: true
@@ -28,8 +28,3 @@ spring:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
-
-  # application.properties
-logging:
-  level:
-    root: debug

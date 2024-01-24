@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
         String nickname = signupReq.nickname();
 
         checkAlreadyExistUser(email);
+        checkAlreadyExistUserNickname(nickname);
         checkMatchPassword(checkPassword, password);
 
         User user = User.builder()
@@ -118,16 +119,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public AddressResponse getAddress(User user) {
         checkNotExistUser(user);
-        if(user.getLatitude()==null||user.getLongitude()==null){
-            return new AddressResponse(37.5773588,126.9771222);//default address to set a map center
+        if (user.getLatitude() == null || user.getLongitude() == null) {
+            return new AddressResponse(37.5773588,
+                126.9771222);//default address to set a map center
         }
-        return new AddressResponse(user.getLatitude(),user.getLongitude());
+        return new AddressResponse(user.getLatitude(), user.getLongitude());
     }
 
     private void checkAlreadyExistUser(String email) {
 
         if (userRepository.existsByEmail(email)) {
             throw new GlobalException(UserErrorCode.ALREADY_EXIST_USER);
+        }
+    }
+
+    private void checkAlreadyExistUserNickname(String nickname) {
+
+        if (userRepository.existsByNickname(nickname)) {
+            throw new GlobalException(UserErrorCode.ALREADY_EXIST_USER_NICKNAME);
         }
     }
 
