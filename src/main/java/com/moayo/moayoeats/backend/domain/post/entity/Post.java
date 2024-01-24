@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.domain.post.entity;
 
 import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.offer.entity.Offer;
+import com.moayo.moayoeats.backend.global.entity.BaseTime;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,14 +26,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "tb_post")
-public class Post {
+public class Post extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
-    private String address;
 
     @Column
     private Double latitude;
@@ -73,10 +71,9 @@ public class Post {
     private PostStatusEnum postStatus;
 
     @Builder
-    public Post(String address, String store, Integer minPrice, Integer deliveryCost,
+    public Post(String store, Integer minPrice, Integer deliveryCost,
         CategoryEnum category, LocalDateTime deadline, PostStatusEnum postStatus, Double latitude,
         Double longitude) {
-        this.address = address;
         this.store = store;
         this.minPrice = minPrice;
         this.amountIsSatisfied = false;

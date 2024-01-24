@@ -16,7 +16,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAll();
 
-    Page<Post> findAllByCategoryEquals(Pageable pageWithTenPosts,CategoryEnum category);
+    Page<Post> findAllByCategoryEquals(Pageable pageable,CategoryEnum category);
+
 
     Optional<List<Post>> findPostByStoreContaining(String store);
 

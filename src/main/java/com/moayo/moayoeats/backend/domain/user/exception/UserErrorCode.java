@@ -11,6 +11,7 @@ public enum UserErrorCode implements ErrorCode {
 
     // 400
     ALREADY_EXIST_USER(HttpStatus.BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
+    ALREADY_EXIST_USER_NICKNAME(HttpStatus.BAD_REQUEST.value(), "이미 존재하는 닉네임입니다."),
     NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."),
 
     // 401

@@ -1,47 +1,58 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-        name="viewport">
+  <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+      name="viewport">
   <link crossorigin="anonymous"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
         rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
   <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
   <link href="./css/style.css" rel="stylesheet">
   <title>글 상세페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv"
           type="text/javascript"></script>
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/readpost.css">
 </head>
-<header>
+<header class="header-container">
   <nav class="navbar bg-body-tertiary">
     <div class="container">
-      <a class="navbar-brand" href="/">
-        <img src="/images/logo.png" alt="logo" width="60" height="60">
-      </a>
-      <a class="navbar-brand" href="/notification">
-        <img src="/images/bell.png" alt="notification" width="30" height="30">
-      </a>
-      <a class="navbar-brand" href="/mypage">
-        <img src="/images/user.png" alt="mypage" width="30" height="30">
-      </a>
+      <div class="brand-container">
+        <a class="navbar-brand" href="/">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
+        </a>
+      </div>
+      <div class="action-container">
+        <a class="navbar-brand" href="/notification">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
+        </a>
+        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
+          마이페이지
+        </button>
+      </div>
     </div>
   </nav>
 </header>
 <body>
-<div style="padding:10px;width:1000px; height:max-content; margin:auto">
-  <div id="field" style="width:1000px; height:min-content;"></div>
-  <div>모인 메뉴</div>
-  <div id="menus" style="width:1000px; height:min-content;"></div>
-<div id = "buttons" style="padding:10px;width:1000px;height:min-content;">
-</div>
-<div style="padding:10px;width:1000px;height:min-content;">
-  <div>주소</div>
-  <div id="map" style="width:100%; height:400px;"></div>
-</div>
-</div>
+<div id="detail-post">
+  <div id="detail-post-pack">
+    <div id="field" style="height:min-content;"></div>
+    <div style="font-weight: bold">모인 메뉴</div>
+    <div id="menus" style="height:min-content;"></div>
+    <div id="buttons" style="padding:10px;width:1000px;height:min-content;">
+    </div>
+    <div class="map-pack">
+      <div class="address" style="font-weight: bold">음식 픽업 장소</div>
+      <div id="map" style="width:100%; height:400px;"></div>
+    </div>
+  </div>
 
+</div>
 <script>
 
   $(document).ready(function () {
@@ -72,16 +83,16 @@
 
         drawMap(latitude, longitude);
 
-        drawField(store,sumPrice,minPrice,deliveryCost,deadline,hostNick,hostId);
+        drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId);
 
         drawMenus(nickmenus);
 
-        if(response.data.role === "HOST"){
-          drawHostButtons(response.data.id);
-        }else if(response.data.role === "PARTICIPANT"){
-          drawParticipantButtons(response.data.id);
-        }else{
-          drawAnyoneButtons(response.data.id);
+        if (response.data.role === "HOST") {
+          drawHostButtons(response.data.id,response.data.status);
+        } else if (response.data.role === "PARTICIPANT") {
+          drawParticipantButtons(response.data.id,response.data.status);
+        } else {
+          drawAnyoneButtons(response.data.id,response.data.status);
         }
       },
       error: function (error) {
@@ -90,7 +101,7 @@
     });
   }
 
-  function getHostPage(button){
+  function getHostPage(button) {
     var hostId = +$(button).attr("hostId");
     const host = 'http://' + window.location.host;
     window.location.href = host + `/user/${hostId}`;
@@ -108,110 +119,167 @@
     });
   }
 
-  function drawField(store,sumPrice,minPrice,deliveryCost,deadline,hostNick,hostId) {
+  function drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId) {
     var temp = `
 <div>
-<div>글쓴이</div>
-  <button type="button" className="btn btn-outline-secondary" hostId = ${hostId} onclick="getHostPage(this)">${hostNick}</button>
-  <div>가게</div>
-  <div>${store}</div>
-  <div>합계 금액</div>
-  <div>${sumPrice}</div>
-  <div>최소주문금액</div>
-  <div>${minPrice}</div>
-  <div>배달비</div>
-  <div>${deliveryCost}</div>
-  <div>마감 기한</div>
-  <div>${deadline}</div>
+  <div style="font-weight: bold">글쓴이</div>
+  <div hostId = ${hostId} onclick="getHostPage(this)">
+    <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30">
+    <a style="font-weight: bold" class="btn">${hostNick}</a>
+  </div>
+  <div><span style="font-weight: bold">${store}</span>에 주문하기 위해서</div>
+  <div><span style="font-weight: bold">${minPrice}</span> 원 필요해요!</div>
+  <div><span style="font-weight: bold">${sumPrice}</span> 원 모였어요!</div>
+  <div>필요한 배달비는<span style="font-weight: bold"> ${deliveryCost} </span>원 입니다!</div>
+  <div><span style="font-weight: bold">${deadline}</span> 까지 모집해요!</div>
  </div>
 `
     $('#field').append(temp)
   }
+
   function drawMenus(nickmenus) {
-    nickmenus.forEach((nickmenu,index)=>
+    nickmenus.forEach((nickmenu, index) =>
         $('#menus').append(
             `
-            <div>닉네임</div>
-  <div id = ${index}>${nickmenu.nickname}</div>
+  <div id = ${index}><span style="font-weight: bold">${nickmenu.nickname}<span></span></div>
             `
         )
     )
-    nickmenus.forEach((nickmenu,index)=>
+    nickmenus.forEach((nickmenu, index) =>
         nickmenu.menus.forEach(
-            (menu)=>
+            (menu) =>
                 $(`#${index}`).append(
-                    `<div>${menu.menuname}</div>
-                     <div>${menu.price}</div>`
+                    `<div>${menu.menuname} (${menu.price} 원)</div>`
                 )
         )
     )
   }
 
-  function drawHostButtons(postId){
-    $('#buttons').append(
-        `
+  function drawHostButtons(postId,status) {
+
+    if(status==="OPEN"){
+      $('#buttons').append(
+          `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
       <input type="radio" class="btn-check" post = "${postId}" onclick="getOffers(this)" name="btnradio" id="getOffers" autocomplete="off" checked>
-      <label class="btn btn-outline-secondary" for="getOffers">요청 조회</label>
+      <label class="btn btn-outline-secondary" for="getOffers">들어온 참가 신청 조회</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 담기</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="closeApplication(this)" name="btnradio"  id="closeApplication" autocomplete="off">
       <label class="btn btn-outline-secondary" for="closeApplication">모집 마감</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="cancelRecruitment(this)" name="btnradio" id="cancelRecruitment" autocomplete="off">
       <label class="btn btn-outline-secondary" for="cancelRecruitment">모집 취소</label>
-      <input type="radio" class="btn-check" post = "${postId}" onclick="completeOrder(this)" name="btnradio" id="completeOrder" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="completeOrder">주문 완료</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="chatRoom">채팅방 참여</label>
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
+    </div>
+            `
+      )
+    }else if(status==="CLOSED"){
+      $('#buttons').append(
+          `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="cancelRecruitment(this)" name="btnradio" id="cancelRecruitment" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="cancelRecruitment">모집 취소</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
+    </div>
+            `
+      )
+    }else if(status==="ORDERED"||status==="RECEIVED"){
+    $('#buttons').append(
+        `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
     </div>
             `
     )
+    }
   }
 
-  function drawParticipantButtons(postId){
-    $('#buttons').append(
-        `
+  function drawParticipantButtons(postId,status) {
+    if(status==="OPEN"){
+      $('#buttons').append(
+          `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
+    </div>
+            `
+      )
+    }else if(status==="CLOSED"){
+      $('#buttons').append(
+          `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
       <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
       <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="exit(this)" name="btnradio"  id="exit" autocomplete="off">
       <label class="btn btn-outline-secondary" for="exit">나가기</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
+    </div>
+            `
+      )
+    }else if(status==="ORDERED"){
+      $('#buttons').append(
+          `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
       <input type="radio" class="btn-check" post = "${postId}" onclick="receiveOrder(this)" name="btnradio" id="receiveOrder" autocomplete="off">
       <label class="btn btn-outline-secondary" for="receiveOrder">수령 완료</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="chatRoom">채팅방 참여</label>
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
     </div>
             `
-    )
+      )
+
+    }else if(status==="RECEIVED"){
+      $('#buttons').append(
+          `
+     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+      <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
+    </div>
+            `
+      )
+    }
+
   }
 
-  function drawAnyoneButtons(postId){
+  function drawAnyoneButtons(postId,status) {
+    if(status==="OPEN"){
     $('#buttons').append(
         `
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-      <input type="radio" class="btn-check" post = "${postId}" onclick="getOffers(this)" name="btnradio" id="getOffers" autocomplete="off" checked>
-      <label class="btn btn-outline-secondary" for="getOffers">요청 조회</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
-      <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <label class="btn btn-outline-secondary" for="editmenus">메뉴 담기</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="applyApplication(this)" name="btnradio"  id="applyApplication" autocomplete="off">
       <label class="btn btn-outline-secondary" for="applyApplication">참가 신청</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="getOffers(this)" name="btnradio" id="getOffers" autocomplete="off" checked>
+      <label class="btn btn-outline-secondary" for="getOffers">참가 신청 취소</label>
     </div>
             `
     )
+    }
   }
 
-  function getOffers(button){
+  function getOffers(button) {
     var postId = $(button).attr("post");
     const host = 'http://' + window.location.host;
     window.location.href = host + `/post/${postId}/offer`;
 
   }
-  function editmenus(button){
+
+  function editmenus(button) {
     var postId = $(button).attr("post");
     const host = 'http://' + window.location.host;
     window.location.replace(host + `/menu/${postId}`);
   }
-  function closeApplication(button){
+
+  function closeApplication(button) {
     var postId = $(button).attr("post");
     $.ajax({
       type: 'PATCH',
@@ -225,13 +293,14 @@
         console.log('Success:', response);
         alert(response.message);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
   }
-  function cancelRecruitment(button){
+
+  function cancelRecruitment(button) {
     var postId = $(button).attr("post");
     $.ajax({
       type: 'DELETE',
@@ -245,13 +314,14 @@
         console.log('Success:', response);
         alert(response.message);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
   }
-  function completeOrder(button){
+
+  function completeOrder(button) {
     var postId = $(button).attr("post");
     $.ajax({
       type: 'PATCH',
@@ -265,7 +335,7 @@
         console.log('Success:', response);
         alert(response.message);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
@@ -273,11 +343,11 @@
   }
 
   function chatRoom(button){
-    var postId = $(button).attr("post");
-    window.location.href = `/chat/${postId}`;
+    // var postId = $(button).attr("post");
+    // window.location.href = `/chat/${postId}`;
   }
 
-  function exit(button){
+  function exit(button) {
     var postId = $(button).attr("post");
     $.ajax({
       type: 'DELETE',
@@ -291,14 +361,14 @@
         console.log('Success:', response);
         alert(response.message);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
   }
 
-  function receiveOrder(button){
+  function receiveOrder(button) {
     var postId = $(button).attr("post");
     $.ajax({
       type: 'DELETE',
@@ -312,14 +382,14 @@
         console.log('Success:', response);
         alert(response.message);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
   }
 
-  function applyApplication(button){
+  function applyApplication(button) {
     var postId = $(button).attr("post");
     $.ajax({
       type: 'POST',
@@ -333,7 +403,7 @@
         console.log('Success:', response);
         alert(response.message);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
@@ -341,5 +411,7 @@
   }
 
 </script>
+<script src="/js/basic.js"></script>
+<script src="/js/navbar.js"></script>
 </body>
 </html>

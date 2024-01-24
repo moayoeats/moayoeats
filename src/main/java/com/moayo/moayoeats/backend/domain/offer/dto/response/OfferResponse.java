@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record OfferResponse(
     Long offerId,
+    Long userId,
     String nickname,
     List<MenuResponse> menus
 ) {

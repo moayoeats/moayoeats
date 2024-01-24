@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.global.config;
 
 
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.security.JwtAccessDeniedHandler;
 import com.moayo.moayoeats.backend.global.security.JwtAuthenticationEntryPoint;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
 import com.moayo.moayoeats.backend.global.security.UserDetailsServiceImpl;
@@ -49,6 +50,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public JwtAccessDeniedHandler jwtAccessDeniedHandler() {
+        return new JwtAccessDeniedHandler();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
@@ -58,12 +64,12 @@ public class WebSecurityConfig {
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-        // 인증 실패시 login 페이지로 이동
-//        http.exceptionHandling((exceptionHandling ->
-//            exceptionHandling
-//                .accessDeniedPage("/login")
-//                .authenticationEntryPoint(jwtAuthenticationEntryPoint()))
-//        );
+        // 인증 실패시 login 페이지로 이동, 로그인은 했지만 접근권한이 없을 시 메인 페이지로 이동
+        http.exceptionHandling((exceptionHandling ->
+            exceptionHandling
+                .accessDeniedHandler(jwtAccessDeniedHandler()) // 인가 실패
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint())) // 인증 실패
+        );
 
         //login,signup 접근 허용 그 외 인증 필요
         http.authorizeHttpRequests((authorizeHttpRequests) ->

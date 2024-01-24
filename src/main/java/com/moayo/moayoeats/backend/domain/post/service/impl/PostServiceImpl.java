@@ -34,6 +34,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -56,17 +57,12 @@ public class PostServiceImpl implements PostService {
             .plusHours(postReq.deadlineHours());
 
         //get latitude and longitude from the coordinate
-        String address = postReq.address();
-        address = address.replace("(lat:", "");
-        address = address.replace("lng:", "");
-        address = address.replace(")", "");
-        String[] location = address.split(",");
+        String [] location = getAddress(postReq.address());
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
         //Build new post with the post request dto
         Post post = Post.builder()
-            .address(address)
             .latitude(latitude)
             .longitude(longitude)
             .store(postReq.store())
@@ -107,6 +103,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public DetailedPostResponse getPostForAnyone(Long postId) {
+        Post post = getPostById(postId);
+        List<UserPost> userPosts = getUserPostsByPost(post);
+
+        return DetailedPostResponse.builder()
+            .longitude(post.getLongitude())
+            .latitude(post.getLatitude())
+            .store(post.getStore())
+            .minPrice(post.getMinPrice())
+            .deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts))
+            .sumPrice(getSumPrice(userPosts, post))
+            .deadline(getDeadline(post))
+            .status(post.getPostStatus())
+            .build();
+    }
+
+    @Override
     public DetailedPostResponse getPost(Long postId, User user) {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
@@ -118,13 +132,13 @@ public class PostServiceImpl implements PostService {
             .hostNick(host.getNickname())
             .longitude(post.getLongitude())
             .latitude(post.getLatitude())
-            .address(post.getAddress())
             .store(post.getStore())
             .minPrice(post.getMinPrice())
             .deliveryCost(post.getDeliveryCost())
             .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(userPosts, post))
             .deadline(getDeadline(post))
+            .status(post.getPostStatus())
             .role(getRoleByUserAndUserPosts(user, userPosts))
             .build();
     }
@@ -136,7 +150,7 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            Pageable pageWithTenPosts = PageRequest.of(page, 10,Sort.by("modifiedAt").descending());
             posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
                 .getContent();
         }
@@ -151,7 +165,7 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10);
+            Pageable pageWithTenPosts = PageRequest.of(page, 10,Sort.by("modifiedAt").descending());
             posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
                 .getContent();
         }
@@ -160,7 +174,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> searchPostForAnyone(int page, String keyword) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
         List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
             .getContent();
         return postsToBriefResponses(posts);
@@ -168,7 +182,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> searchPost(int page, String keyword, User user) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
         List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
             .getContent();
         return postsToBriefResponses(posts);
@@ -337,7 +351,7 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<Post> findPage(int page) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10);
+        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
         Page<Post> postPage = postRepository.findAll(pageWithTenPosts);
         List<Post> posts = postPage.getContent();
         return posts;
@@ -345,7 +359,7 @@ public class PostServiceImpl implements PostService {
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
         return posts.stream().map((Post post) -> new BriefPostResponse(post.getId(),
-                getAuthor(getUserPostsByPost(post)).getNickname(), post.getAddress(), post.getStore(),
+                getAuthor(getUserPostsByPost(post)).getNickname(), post.getStore(),
                 post.getMinPrice(), getSumPrice(getUserPostsByPost(post), post), getDeadline(post)))
             .toList();
     }
@@ -454,22 +468,11 @@ public class PostServiceImpl implements PostService {
         );
     }
 
-    @Override
-    public DetailedPostResponse getPostTest(Long postId) {
-        Post post = getPostById(postId);
-        List<UserPost> userPosts = getUserPostsByPost(post);
-
-        return DetailedPostResponse.builder()
-            .longitude(post.getLongitude())
-            .latitude(post.getLatitude())
-            .address(post.getAddress())
-            .store(post.getStore())
-            .minPrice(post.getMinPrice())
-            .deliveryCost(post.getDeliveryCost())
-            .menus(getNickMenus(userPosts))
-            .sumPrice(getSumPrice(userPosts, post))
-            .deadline(getDeadline(post))
-            .build();
+    public String [] getAddress(String address){
+        address = address.replace("(lat:", "");
+        address = address.replace("lng:", "");
+        address = address.replace(")", "");
+        return address.split(",");
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
