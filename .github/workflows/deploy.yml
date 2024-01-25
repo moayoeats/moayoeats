@@ -73,7 +73,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          access-key-secret: ${{ secrets.ACCESS_KEY_SECRET }}
+          access-secret-key: ${{ secrets.ACCESS_KEY_SECRET }}
           #          access-secret-key: ${{ secrets.ACCESS_KEY_SECRET }}
           aws-region: ap-northeast-2
 
