@@ -228,16 +228,18 @@
     )
   }
 
-  function postPage(button) {
-    var postId = $(button).attr("post");
-    window.location.replace(host + `/post/${postId}`);
-  }
-
   function redirect(postId) {
     setTimeout(function () {
       window.location.href = host + `/post/${postId}/offer`;
     }, 500);
   }
+
+  function postPage(button) {
+    var postId = $(button).attr("post");
+    window.location.replace(host + `/post/${postId}`);
+  }
+
+
 
 </script>
 <script src="/js/basic.js"></script>
