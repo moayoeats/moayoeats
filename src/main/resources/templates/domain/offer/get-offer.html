@@ -13,19 +13,19 @@
   <link href="./css/style.css" rel="stylesheet">
   <title>요청 조회 페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <link rel="stylesheet" href="/css/navbar.css">
+  <link href="/css/navbar.css" rel="stylesheet">
 </head>
 <header class="header-container">
   <nav class="navbar bg-body-tertiary">
     <div class="container">
       <div class="brand-container">
         <a class="navbar-brand" href="/">
-          <img src="/images/logo.png" alt="logo" width="60" height="60">
+          <img alt="logo" height="60" src="/images/logo.png" width="60">
         </a>
       </div>
       <div class="action-container">
         <a class="navbar-brand" href="/notification">
-          <img src="/images/bell.png" alt="notification" width="30" height="30">
+          <img alt="notification" height="30" src="/images/bell.png" width="30">
         </a>
         <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">마이페이지
         </button>
@@ -89,9 +89,9 @@
       success: function (response) {
         drawBackToPost(postId);
         if (response.data.role === "HOST") {
-          drawHostOffers(response.data.offerResponses,postId);
+          drawHostOffers(response.data.offerResponses, postId);
         } else if (response.data.role !== "PARTICIPANT") {
-          drawAnyoneOffers(response.data.offerResponses,postId);
+          drawAnyoneOffers(response.data.offerResponses, postId);
         }
       },
       error: function (error) {
@@ -100,7 +100,7 @@
     });
   }
 
-  function drawHostOffers(data,postId) {
+  function drawHostOffers(data, postId) {
     data.forEach((offer, index) =>
         $('#offers').append(
             `
@@ -129,7 +129,7 @@
     )
   }
 
-  function drawAnyoneOffers(data,postId) {
+  function drawAnyoneOffers(data, postId) {
     data.forEach((offer, index) =>
         $('#offers').append(
             `
@@ -233,8 +233,8 @@
     window.location.replace(host + `/post/${postId}`);
   }
 
-  function redirect(postId){
-    setTimeout(function(){
+  function redirect(postId) {
+    setTimeout(function () {
       window.location.href = host + `/post/${postId}/offer`;
     }, 500);
   }
