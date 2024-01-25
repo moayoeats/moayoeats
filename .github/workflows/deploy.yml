@@ -91,7 +91,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
-          username: ${{ secrets.USER_NAME }}
+          username: ${{ secrets.EC2_INSTANCE_USER_NAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: ${{ secrets.AWS_PORT }}
           # Docker 이미지 풀 및 컨테이너 배포 # 사용하지 않는 Docker 이미지 정리
