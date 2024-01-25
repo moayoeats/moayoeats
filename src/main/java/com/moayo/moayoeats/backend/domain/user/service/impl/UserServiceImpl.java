@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
         String password = infoUpdateReq.password();
 
         checkMatchPassword(password, user.getPassword());
+        checkAlreadyExistUserNickname(nickname);
         user.updateInfo(nickname);
         userRepository.save(user);
     }
