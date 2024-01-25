@@ -56,15 +56,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
-            //토큰이 있을때 현재 요청이 /인지 확인하고 인증이 된 상태이면 인증 후 전체글 페이지로 감
-            boolean isIndexRequest = url.equals("/");
-            if (isIndexRequest) {
-                res.sendRedirect("/posts");
-            }
+            redirect(url,res);
         }
         filterChain.doFilter(req, res);
     }
-//    }
 
     // 인증 처리
     public void setAuthentication(String username) {
@@ -80,5 +75,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
+    }
+
+    //url에 따라 redirect
+    private void redirect(String url, HttpServletResponse res) throws IOException {
+        if (url.equals("/")) {//토큰이 있을때 현재 요청이 /인지 확인하고 인증이 된 상태이면 인증 후 전체글 페이지로 감
+            res.sendRedirect("/posts");
+        }
+        if (url.contains("/moayo/readpost/")) {//토큰이 있을때 로그인 정보 없는 글 조회페이지로 들어오는 요청은 로그인 정보 있는 글 조회페이지로 보냄
+            res.sendRedirect("/post/"+getPostId(url));
+        }
+    }
+
+    private String getPostId(String url){
+        String [] paths = url.split("/");
+        return paths[paths.length-1];
     }
 }
