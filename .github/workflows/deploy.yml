@@ -79,14 +79,13 @@ jobs:
         # 보안 그룹에 GitHub Actions IP 추가
         run: |
           aws ec2 authorize-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
           AWS_DEFAULT_REGION: ap-northeast-2
 
       - name: Deploy to prod
-        if: contains(github.ref, 'develop') || contains(github.ref, 'main')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
@@ -103,13 +102,24 @@ jobs:
             if docker images -f "dangling=true" -q | grep . > /dev/null; then
               docker rmi $(docker images -f "dangling=true" -q)
             fi
+          # 1. 도커 허브(Docker Hub)에서 이미지를 최신 버전으로 가져옵니다.
+          # 2. 이미 실행 중인 도커 컨테이너를 중지합니다.
+          # 3. 중지된 도커 컨테이너를 삭제합니다.
+          # 4. 새로운 도커 컨테이너를 실행합니다.
+          #    -d: 백그라운드에서 실행
+          #    --network moayoeats: 'moayoeats'라는 이름의 도커 네트워크에 연결
+          #    --name moayoeats: 컨테이너에 'moayoeats'라는 이름 부여
+          #    -p 8080:8080: 호스트의 8080 포트와 컨테이너의 8080 포트를 매핑
 
+      # 1. AWS 보안 그룹에서 GitHub Actions IP의 인바운드(Ingress) 규칙을 제거합니다.
       - name: Remove GitHub Actions IP from security group
-
-        # 보안 그룹에서 GitHub Actions IP 제거
+        # 2. aws 명령어를 사용하여 보안 그룹에 대한 인바운드 규칙 제거 요청을 전송합니다.
+        #    - group-name: 보안 그룹의 이름
+        #    - protocol: 프로토콜 (여기서는 TCP)
+        #    - port: 포트 번호 (여기서는 22번 포트, SSH)
+        #    - cidr: GitHub Actions IP 주소 (이전 단계에서 가져옴)
         run: |
           aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
