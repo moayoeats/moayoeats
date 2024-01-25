@@ -412,7 +412,10 @@ public class PostServiceImpl implements PostService {
         int mins = deadline.getMinute()-now.getMinute();
         if(mins<0){
             hours--;
-            mins = 60-mins;
+            mins = 60+mins;
+        }
+        if(hours<0){
+            hours=0;
         }
         return days+"일 "+hours+"시 "+mins+" 분";
     }
@@ -428,7 +431,6 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<NickMenusResponse> getNickMenus(List<UserPost> userposts) {
-
         List<NickMenusResponse> menus =
             //List<UserPost> -> List<NickMenusResponse>
             userposts.stream()
