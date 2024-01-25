@@ -1,24 +1,37 @@
+# deploy.yml
+
+# GitHub Actions 워크플로우의 이름
 name: deploy
 
+# 워크플로우를 언제 실행할지 지정
 on:
   pull_request:
     branches:
       - dev
 #      - main
 
+# 권한 설정
+permissions:
+  contents: read
 
+# Jobs 정의
 jobs:
-  build:
+  
+  # AWS 컨테이너 레지스트리로 푸시하는 작업
+  push_to_registry:
+    name: Push to AWS Container Registry
     runs-on: ubuntu-latest
-
+    
+    # 작업 단계 정의
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: '17'
+          distribution: 'corretto'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -28,19 +41,99 @@ jobs:
         run: ./gradlew clean build --stacktrace
         shell: bash
 
-      - name: Make zip file
-        run: zip -qq -r ./$GITHUB_SHA.zip .
-        shell: bash
+      # Docker 이미지 빌드
+      - name: Docker build
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
+        run: |
+          # Docker에 로그인
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+          
+          # Docker 이미지 빌드 및 태그
+          docker build -t moayoeats -f ./Dockerfile .
+          docker tag moayoeats:latest ${{ secrets.DOCKER_USER }}/moayoeats:latest
+          
+          # Docker 이미지 푸시
+          docker push ${{ secrets.DOCKER_USER }}/moayoeats:latest
+
+      # CodeDeploy를 위한 ZIP 파일 생성
+      #            - name: Make zip file
+      #              run: zip -qq -r ./$GITHUB_SHA.zip .
+      #              shell: bash
+
+  # AWS 컨테이너 레지스트리에서 서버로 풀하는 작업
+  pull_from_registry:
+    name: Connect server SSH and pull from Container Registry
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    
+    # 작업 단계 정의
+    steps:
+      - name: Get GitHub Actions IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Setting environment variables
+        run: |
+          # AWS 지역 및 보안 그룹 이름 설정
+          echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
+          echo "AWS_SG_NAME=launch-wizard-3" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+          access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          access-key-secret: ${{ secrets.ACCESS_KEY_SECRET }}
+          #          access-secret-key: ${{ secrets.ACCESS_KEY_SECRET }}
           aws-region: ap-northeast-2
 
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://moayoeats/$GITHUB_SHA.zip
+      - name: Add GitHub Actions IP to Security group
+        run: |
+          # 보안 그룹에 GitHub Actions IP 추가
+          aws ec2 authorize-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
+          AWS_DEFAULT_REGION: ap-northeast-2
 
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name moayoeats --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name dev --s3-location bucket=moayoeats,bundleType=zip,key=$GITHUB_SHA.zip
+      - name: Deploy to prod
+        if: contains(github.ref, 'develop') || contains(github.ref, 'main')
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_NAME }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_PORT }}
+          script: |
+            # Docker 이미지 풀 및 컨테이너 배포
+            docker pull ${{ secrets.DOCKER_USER }}/moayoeats:latest
+            docker stop moayoeats
+            docker rm moayoeats
+            docker run -d --network moayoeats --name moayoeats -p 8080:8080 ${{ secrets.DOCKER_USER }}/moayoeats:latest
+            
+            # 사용하지 않는 Docker 이미지 정리
+            if docker images -f "dangling=true" -q | grep . > /dev/null; then
+              docker rmi $(docker images -f "dangling=true" -q)
+            fi
+
+      - name: Remove GitHub Actions IP from security group
+        run: |
+          # 보안 그룹에서 GitHub Actions IP 제거
+          aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
+          AWS_DEFAULT_REGION: ap-northeast-2
+
+      # CodeDeploy를 위한 설정
+      #- name: Configure AWS credentials
+      #  uses: aws-actions/configure-aws-credentials@v1
+      #  with:
+      #    aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+      #    aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+      #    aws-region: ap-northeast-2
+      #
+      #- name: Upload to S3
+      #  run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://moayoeats/$GITHUB_SHA.zip
+      #
+      #- name: Code Deploy
+      #  run: aws deploy create-deployment --application-name moayoeats --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name dev --s3-location bucket=moayoeats,bundleType=zip,key=$GITHUB_SHA.zip
