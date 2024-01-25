@@ -47,7 +47,7 @@ jobs:
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t moayoeats -f ./Dockerfile .
+          docker build -t moayoeats -f ./infra/Dockerfile .
           docker tag moayoeats:latest ${{ secrets.DOCKER_USER }}/moayoeats:latest
           docker push ${{ secrets.DOCKER_USER }}/moayoeats:latest
 
@@ -64,10 +64,9 @@ jobs:
         uses: haythem/public-ip@v1.2
 
       - name: Setting environment variables
-        # AWS 지역 및 보안 그룹 이름 설정
         run: |
           echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
-          echo "AWS_SG_NAME=sg-0dbbaa7c0111f8557" >> $GITHUB_ENV
+          echo "AWS_SG_NAME=launch-wizard-1" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
