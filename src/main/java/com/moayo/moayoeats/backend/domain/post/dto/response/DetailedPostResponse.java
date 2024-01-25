@@ -13,7 +13,6 @@ public record DetailedPostResponse(
     Long id,
     Long hostId,
     String hostNick,
-    String address,
     Double latitude,
     Double longitude,
     String store,
