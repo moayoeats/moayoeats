@@ -3,12 +3,16 @@ package com.moayo.moayoeats.backend.domain.chat.controlloer;
 import com.moayo.moayoeats.backend.domain.chat.dto.request.ChatMessageRequest;
 import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
 import com.moayo.moayoeats.backend.domain.chat.service.impl.ChatMessageServiceImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,9 +27,12 @@ public class ChatController {
         @DestinationVariable(value = "postId") String postId,
         ChatMessageRequest req
     ) {
-        String content = req.sender() + "님이 입장하셨습니다.";
+        String content = "님이 입장하셨습니다.";
+        String username = req.sender();
 
-        return new ChatMessageResponse(content);
+        chatMessageService.saveChatMessage(postId, username, content);
+
+        return new ChatMessageResponse(content, req.sender());
     }
 
     @MessageMapping("/chats/message/{postId}")
@@ -39,7 +46,13 @@ public class ChatController {
 
         chatMessageService.saveChatMessage(postId, username, content);
 
-        return new ChatMessageResponse(content);
+        return new ChatMessageResponse(content, req.sender());
+    }
+
+    @GetMapping("/chats/history/{postId}")
+    @ResponseBody
+    public List<ChatMessageResponse> getChatHistory(@PathVariable String postId) {
+        return chatMessageService.getChatHistory(postId);
     }
 
 }
