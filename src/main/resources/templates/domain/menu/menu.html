@@ -32,7 +32,7 @@
 </header>
 <body>
 <div style="padding:10px;width:1000px; height:min-content; margin:auto">
-  <div id="post" post="${postId}"></span></div>
+  <div id="topost"></div>
   <div id="menus" style="width:1000px; height:min-content;"></div>
   <div id="addmenu" style="padding:10px;width:1000px;height:min-content;">
     <div id="addmenubtn">
@@ -50,7 +50,7 @@
         <input aria-label="메뉴 가격" className="form-control" id="menuprice" placeholder="메뉴 가격"
                type="text">
       </div>
-      <button className="btn btn-outline-secondary" onClick="addMenu()"
+      <button class="btn btn-outline-secondary" onClick="addMenu()"
               type="button">추가
       </button>
     </div>
@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<script th:inline="javascript">
+<script>
 
   $(document).ready(function () {
     getData();
@@ -82,6 +82,7 @@
           alert(response.message);
         }
         drawMenus(response.data);
+        drawBackToPost(idForPost);
         $('#dropaddmenu').css('visibility', 'hidden');
 
       },
@@ -143,13 +144,14 @@
       }
     });
 
-    location.reload();
+    redirect(postId);
 
   }
 
   function deleteMenu(button) {
 
     let menuId = $(button).attr("menuId");
+    let postId = [[${postId}]];
 
     $.ajax({
       type: 'DELETE',
@@ -169,10 +171,34 @@
       }
     });
 
-    location.reload();
+    redirect(postId);
 
   }
 
+  function postPage(button) {
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.replace(host + `/post/${postId}`);
+  }
+
+  function drawBackToPost(idForPost) {
+    $('#topost').append(
+        `
+  <div>
+    <button class="btn btn-outline-secondary" post=${idForPost} onclick="postPage(this)"
+            type="button">글로 돌아가기
+    </button>
+  </div>
+  `
+    )
+  }
+
+  function redirect(postId){
+    const host = 'http://' + window.location.host;
+    setTimeout(function(){
+      window.location.href = host + `/menu/${postId}`;
+    }, 1000);
+  }
 
 </script>
 <script src="/js/basic.js"></script>

@@ -230,7 +230,7 @@
     }
   }
 
-  function drawAllPosts(data) {
+function drawAllPosts(data) {
     if (data.status === "OPEN") {
       data.forEach((post) => $('#posts').append(
               `
@@ -259,7 +259,6 @@
           )
       )
     }
-
   }
 
   function removeAllPages() {
@@ -408,8 +407,8 @@
     ten = ten + 1;
     drawSearchPages(ten);
   }
-
-  function getStatus(status) {
+  
+function getStatus(status) {
     if (status === "OPEN") {
       return "모집이 열려있습니다!"
     } else if (status === "CLOSED") {
