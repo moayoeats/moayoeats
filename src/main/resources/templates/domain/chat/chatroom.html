@@ -33,9 +33,11 @@
 </header>
 <body>
 <div id="chat-container">
-  <div id="chat-messages" style="height: 300px; overflow-y: scroll;"></div>
-  <input type="text" id="chat-input" placeholder="메시지 입력...">
-  <button id="send-button">보내기</button>
+  <div id="chat-messages"></div>
+  <div id="input-container">
+    <input type="text" id="chat-input" placeholder="메시지 입력...">
+    <button id="send-button">보내기</button>
+  </div>
 </div>
 
 <script th:inline="javascript">
