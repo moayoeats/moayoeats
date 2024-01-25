@@ -125,7 +125,7 @@
             expires: new Date(new Date().getTime() + expires * 1000),
           });
         }
-        window.location.replace(host + '/mypage');
+        window.location.replace(host + '/');
 
       } else if (res.status === 400 || res.status === 404) {
         alert(res.message);
