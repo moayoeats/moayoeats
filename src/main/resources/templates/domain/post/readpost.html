@@ -47,6 +47,7 @@
   </header>
 <body>
 <div id="detail-post">
+  <div style="font-weight: bold; background-color: red; color: white;">로그인 후 신청 가능합니다.</div>
   <div id="detail-post-pack">
     <div id="field" style="height:min-content;"></div>
     <div style="font-weight: bold">모인 메뉴</div>
@@ -59,6 +60,7 @@
 </div>
 
 <script>
+  const host = 'http://' + window.location.host;
 
   $(document).ready(function () {
     getData();
@@ -146,7 +148,6 @@
   }
 
 </script>
-<!--<script src="/js/basic.js"></script>-->
 <script src="/js/navbar.js"></script>
 </body>
 </html>
