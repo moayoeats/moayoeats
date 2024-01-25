@@ -40,6 +40,10 @@ body {
   border-radius: 5px;
 }
 
+.my-message {
+  background-color: #FFFDE7;
+}
+
 #input-container {
   font-family: 'GmarketSansMedium';
   display: flex;

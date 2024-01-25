@@ -60,6 +60,10 @@ function showMessage(username, message) {
   var messageElement = document.createElement('div');
   messageElement.classList.add('chat-message');
 
+  if (username === window.username) {
+    messageElement.classList.add('my-message');
+  }
+
   if (message === "님이 입장하셨습니다.") {
     messageElement.innerText = username + message;  // 입장 메시지
   } else {
