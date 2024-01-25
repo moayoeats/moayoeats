@@ -11,7 +11,7 @@
         rel="stylesheet">
   <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
   <link href="./css/style.css" rel="stylesheet">
-  <title>글 전체페이지</title>
+  <title>요청 조회 페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <link rel="stylesheet" href="/css/navbar.css">
 </head>
@@ -67,6 +67,7 @@
 <body>
 <div id="offer-pack">
   <h1>요청 조회</h1>
+  <div id="post"></div>
   <div id="offers"></div>
 </div>
 <script>
@@ -83,8 +84,7 @@
       contentType: 'application/json',
       data: {},
       success: function (response) {
-        console.log('Success:', response);
-
+        drawBackToPost(postId);
         if (response.data.role === "HOST") {
           drawHostOffers(response.data.offerResponses);
         } else if (response.data.role !== "PARTICIPANT") {
@@ -210,6 +210,25 @@
     const host = 'http://' + window.location.host;
     window.location.href = host + `/user/${userId}`;
   }
+
+  function drawBackToPost(idForPost) {
+    $('#post').append(
+        `
+  <div>
+    <button class="btn btn-outline-secondary" post=${idForPost} onclick="postPage(this)"
+            type="button">글로 돌아가기
+    </button>
+  </div>
+  `
+    )
+  }
+
+  function postPage(button) {
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.replace(host + `/post/${postId}`);
+  }
+
 </script>
 <script src="/js/basic.js"></script>
 <script src="/js/navbar.js"></script>

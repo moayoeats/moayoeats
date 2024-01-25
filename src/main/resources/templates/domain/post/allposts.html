@@ -42,7 +42,8 @@
 </header>
 <body>
 <div style="padding:10px;width:1000px; height:min-content; margin:auto">
-  <div style="margin:auto">카테고리 선택
+  <div style="margin:auto">
+    <p>카테고리 선택</p>
     <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
       <input autocomplete="off" category="ALL" checked class="btn-check" id="all" name="btnradio"
              onclick="getByCategory(this)"
@@ -99,7 +100,7 @@
   </div>
 </div>
 <script>
-
+  const host = 'http://' + window.location.host;
 
   $(document).ready(function () {
     var index = 0;

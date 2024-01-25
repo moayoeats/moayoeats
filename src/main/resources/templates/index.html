@@ -17,19 +17,26 @@
 </head>
 <header class="header-container">
   <nav class="navbar bg-body-tertiary">
-    <div class="container">
+    <div class="container d-flex justify-content-between align-items-center">
       <div class="brand-container">
         <a class="navbar-brand" href="/">
-          <img alt="logo" height="60" src="/images/logo.png" width="60">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
         </a>
       </div>
       <div class="action-container">
         <a class="navbar-brand" href="/notification">
-          <img alt="notification" height="30" src="/images/bell.png" width="30">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
         </a>
-        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
-          마이페이지
-        </button>
+        <a class="navbar-brand" href="/mypage">
+          <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30"
+               onclick="moveMyPage()">
+        </a>
+        <a class="navbar-brand" href="/login">
+          <img src="/images/login.png" alt="login" width="30" height="30">
+        </a>
+        <a class="navbar-brand" href="/signup">
+          <img src="/images/signup.png" alt="signup" width="30" height="30">
+        </a>
       </div>
     </div>
   </nav>
@@ -86,10 +93,6 @@
              type="radio">
       <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
     </div>
-    <div id="create-post-btn">
-      <button class="btn btn-secondary" onclick="createPost()" type="button">글 작성하기
-      </button>
-    </div>
     <div class="input-group mb-3 search-pack">
       <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
              id="keyword"
@@ -105,17 +108,12 @@
   </div>
 </div>
 <script>
-
+  const host = 'http://' + window.location.host;
 
   $(document).ready(function () {
     var index = 0;
     getData(index, 0);
   });
-
-  function createPost() {
-    const host = 'http://' + window.location.host;
-    window.location.href = host + `/createpost`;
-  }
 
   function getPage(button) {
     var index = $(button).attr("index");
@@ -127,7 +125,7 @@
     var page = page;
     $.ajax({
       type: 'GET',
-      url: `/api/v1/posts/page/${page}`,
+      url: `/api/v1/readonly/posts/page/${page}`,
       dataType: "json",
       contentType: 'application/json',
       data: {},
@@ -147,7 +145,7 @@
   function sendData(button) {
     var postId = $(button).attr("post");
     const host = 'http://' + window.location.host;
-    window.location.href = host + `/post/${postId}`;
+    window.location.href = host + `/moayo/readpost/${postId}`;
   }
 
   function search() {
@@ -169,7 +167,7 @@
 
     $.ajax({
       type: 'GET',
-      url: `/api/v1/posts/search/${page}?keyword=${keyword}`,
+      url: `/api/v1/readonly/posts/search/${page}?keyword=${keyword}`,
       dataType: "json",
       contentType: 'application/json',
       data: {},
@@ -203,7 +201,7 @@
 
     $.ajax({
       type: 'GET',
-      url: `/api/v1/posts/category/${page}?category=${category}`,
+      url: `/api/v1/readonly/posts/category/${page}?category=${category}`,
       dataType: "json",
       contentType: 'application/json',
       data: {},

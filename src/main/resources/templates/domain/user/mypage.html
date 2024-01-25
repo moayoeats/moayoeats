@@ -88,9 +88,9 @@
       url: `/api/v1/users/me`,
     })
     .done(function (res, status, xhr) {
-      // let errorStatus = xhr.getResponseHeader('error-msg').split(" ");
-      //
-      // console.log(errorStatus + "Zzzzz");
+      //let errorStatus = xhr.getResponseHeader('error-msg').split(":");
+
+      //console.log(errorStatus + "Zzzzz");
       console.log(res.status);
       if (res.status === 200) {
         let nickname = res.data.nickname;
@@ -144,13 +144,14 @@
             });
           }
         }
-      } else if(Number(errorStatus[0]) === 401) {
-        console.log(errorStatus);
-        errorHandler(res, xhr);
       }
+      // } else if(Number(errorStatus[0]) === 401) {
+      //   console.log(errorStatus);
+      //   errorHandler(res, xhr);
+      // }
     })
     .fail(function (res, xhr, error) {
-      console.log(res.status);
+      console.log(res.status + " - " + res.message);
       errorHandler(res, xhr, error);
     })
   }
