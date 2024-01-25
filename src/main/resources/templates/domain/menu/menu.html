@@ -10,19 +10,23 @@
         rel="stylesheet">
   <title>나의 메뉴</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" href="/css/navbar.css">
 </head>
-<header>
+<header class="header-container">
   <nav class="navbar bg-body-tertiary">
     <div class="container">
-      <a class="navbar-brand" href="/">
-        <img alt="logo" height="60" src="/images/logo.png" width="60">
-      </a>
-      <a class="navbar-brand" href="/notification">
-        <img alt="notification" height="30" src="/images/bell.png" width="30">
-      </a>
-      <a class="navbar-brand" href="/mypage">
-        <img alt="mypage" height="30" src="/images/user.png" width="30">
-      </a>
+      <div class="brand-container">
+        <a class="navbar-brand" href="/">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
+        </a>
+      </div>
+      <div class="action-container">
+        <a class="navbar-brand" href="/notification">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
+        </a>
+        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">마이페이지
+        </button>
+      </div>
     </div>
   </nav>
 </header>
@@ -197,5 +201,7 @@
   }
 
 </script>
+<script src="/js/basic.js"></script>
+<script src="/js/navbar.js"></script>
 </body>
 </html>

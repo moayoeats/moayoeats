@@ -1,12 +1,22 @@
 var stompClient = null;
 
 document.getElementById('send-button').addEventListener('click', function() {
+  sendMessageFromInput();
+});
+
+document.addEventListener('keypress', function(event) {
+  if(event.key === 'Enter') {
+    sendMessageFromInput();
+  }
+});
+
+function sendMessageFromInput() {
   var messageContent = document.getElementById('chat-input').value;
   if (messageContent.trim() !== '') {
     sendMessage(messageContent, username);
     document.getElementById('chat-input').value = '';
   }
-});
+}
 
 function connect(postId, username) {
   var socket = new SockJS('/ws');

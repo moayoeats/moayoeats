@@ -12,19 +12,31 @@
   <link href="./css/style.css" rel="stylesheet">
   <title>글 전체페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" href="/css/navbar.css">
 </head>
-<header>
+<header class="header-container">
   <nav class="navbar bg-body-tertiary">
-    <div class="container">
-      <a class="navbar-brand" href="/">
-        <img src="/images/logo.png" alt="logo" width="60" height="60">
-      </a>
-      <a class="navbar-brand" href="/notification">
-        <img src="/images/bell.png" alt="notification" width="30" height="30">
-      </a>
-      <a class="navbar-brand" href="/mypage">
-        <img src="/images/user.png" alt="mypage" width="30" height="30">
-      </a>
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="brand-container">
+        <a class="navbar-brand" href="/">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
+        </a>
+      </div>
+      <div class="action-container">
+        <a class="navbar-brand" href="/notification">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
+        </a>
+        <a class="navbar-brand" href="/mypage">
+          <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30"
+               onclick="moveMyPage()">
+        </a>
+        <a class="navbar-brand" href="/login">
+          <img src="/images/login.png" alt="login" width="30" height="30">
+        </a>
+        <a class="navbar-brand" href="/signup">
+          <img src="/images/signup.png" alt="signup" width="30" height="30">
+        </a>
+      </div>
     </div>
   </nav>
 </header>
@@ -346,5 +358,6 @@
   }
 
 </script>
+<script src="/js/navbar.js"></script>
 </body>
 </html>

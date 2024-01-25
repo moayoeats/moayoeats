@@ -16,19 +16,24 @@
   <script
       src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv&submodules=geocoder"
       type="text/javascript"></script>
+  <link rel="stylesheet" href="/css/navbar.css">
 </head>
-<header>
+<header class="header-container">
   <nav class="navbar bg-body-tertiary">
     <div class="container">
-      <a class="navbar-brand" href="/">
-        <img src="/images/logo.png" alt="logo" width="60" height="60">
-      </a>
-      <a class="navbar-brand" href="/notification">
-        <img src="/images/bell.png" alt="notification" width="30" height="30">
-      </a>
-      <a class="navbar-brand" href="/mypage">
-        <img src="/images/user.png" alt="mypage" width="30" height="30">
-      </a>
+      <div class="brand-container">
+        <a class="navbar-brand" href="/">
+          <img src="/images/logo.png" alt="logo" width="60" height="60">
+        </a>
+      </div>
+      <div class="action-container">
+        <a class="navbar-brand" href="/notification">
+          <img src="/images/bell.png" alt="notification" width="30" height="30">
+        </a>
+        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
+          마이페이지
+        </button>
+      </div>
     </div>
   </nav>
 </header>
@@ -93,7 +98,8 @@
                onclick="category(this)"
                type="radio">
         <label class="btn btn-outline-secondary" for="snack">분식</label>
-        <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese" name="btnradio"
+        <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
+               name="btnradio"
                onclick="category(this)"
                type="radio">
         <label class="btn btn-outline-secondary" for="japanese">일식</label>
@@ -101,18 +107,19 @@
                onclick="category(this)"
                type="radio">
         <label class="btn btn-outline-secondary" for="chinese">중식</label>
-        <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox" name="btnradio"
+        <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
+               name="btnradio"
                onclick="category(this)"
                type="radio">
         <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
       </div>
-  </div>
+    </div>
 
-  <div style="padding:10px;width:1000px; height:max-content; margin:auto">
-    <div>지도를 클릭해서 음식 픽업 모임 장소를 지정해 주세요!</div>
-    <div id="map" padding = "10px"; style="width:1000px; height:450px;"></div>
-    <button class="btn btn-outline-secondary" onclick="sendData()" type="button">작성 완료</button>
-  </div>
+    <div style="padding:10px;width:1000px; height:max-content; margin:auto">
+      <div>지도를 클릭해서 음식 픽업 모임 장소를 지정해 주세요!</div>
+      <div id="map" padding="10px" ; style="width:1000px; height:450px;"></div>
+      <button class="btn btn-outline-secondary" onclick="sendData()" type="button">작성 완료</button>
+    </div>
 
   </div>
 </div>
@@ -128,7 +135,7 @@
     getAddress();
   });
 
-  function getAddress(){
+  function getAddress() {
     $.ajax({
       type: 'GET',
       url: "/api/v1/users/address",
@@ -138,14 +145,15 @@
       success: function (response) {
         lat = response.data.latitude;
         lng = response.data.longitude;
-        drawMap(lat,lng);
+        drawMap(lat, lng);
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
   }
+
   function drawMap(lat, lng) {
     map = new naver.maps.Map("map", {
       center: new naver.maps.LatLng(lat, lng),
@@ -181,7 +189,7 @@
 
   naver.maps.onJSContentLoaded = initGeocoder;
 
-  function category(button){
+  function category(button) {
     categoryEnum = $(button).attr("category");
   }
 
@@ -211,22 +219,23 @@
       success: function (response) {
         console.log('Success:', response);
         alert(response.message);
-        if(response.status === 201){
+        if (response.status === 201) {
           redirect();
         }
       },
-      error: function (error,response) {
+      error: function (error, response) {
         alert(response.message);
         console.error('Error:', error);
       }
     });
   }
 
-  function redirect(){
+  function redirect() {
     const host = 'http://' + window.location.host;
     window.location.href = host + `/`;
   }
 </script>
-
+<script src="/js/basic.js"></script>
+<script src="/js/navbar.js"></script>
 </body>
 </html>
