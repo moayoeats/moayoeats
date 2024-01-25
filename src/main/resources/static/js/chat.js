@@ -4,6 +4,12 @@ document.getElementById('send-button').addEventListener('click', function() {
   sendMessageFromInput();
 });
 
+document.addEventListener('keypress', function(event) {
+  if(event.key === 'Enter') {
+    sendMessageFromInput();
+  }
+});
+
 function sendMessageFromInput() {
   var messageContent = document.getElementById('chat-input').value;
   if (messageContent.trim() !== '') {
