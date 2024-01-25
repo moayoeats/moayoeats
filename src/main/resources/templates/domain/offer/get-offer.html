@@ -71,6 +71,9 @@
   <div id="offers"></div>
 </div>
 <script>
+
+  const host = 'http://' + window.location.host;
+
   $(document).ready(function () {
     getOffer();
   });
@@ -86,9 +89,9 @@
       success: function (response) {
         drawBackToPost(postId);
         if (response.data.role === "HOST") {
-          drawHostOffers(response.data.offerResponses);
+          drawHostOffers(response.data.offerResponses,postId);
         } else if (response.data.role !== "PARTICIPANT") {
-          drawAnyoneOffers(response.data.offerResponses);
+          drawAnyoneOffers(response.data.offerResponses,postId);
         }
       },
       error: function (error) {
@@ -97,7 +100,7 @@
     });
   }
 
-  function drawHostOffers(data) {
+  function drawHostOffers(data,postId) {
     data.forEach((offer, index) =>
         $('#offers').append(
             `
@@ -105,10 +108,10 @@
     <button class="btn btn-outline-secondary" userId=${offer.userId} onclick="otherspage(this)"
             type="button">${offer.nickname}
     </button>
-    <button class="btn btn-outline-secondary" offerId=${offer.offerId} onclick="approve(this)"
+    <button class="btn btn-outline-secondary" postId = ${postId} offerId = ${offer.offerId} onclick="approve(this)"
             type="button">수락
     </button>
-    <button class="btn btn-outline-secondary" offerId=${offer.offerId} onclick="reject(this)"
+    <button class="btn btn-outline-secondary" postId = ${postId} offerId=${offer.offerId} onclick="reject(this)"
             type="button">거절
     </button>
   </div>
@@ -126,13 +129,13 @@
     )
   }
 
-  function drawAnyoneOffers(data) {
+  function drawAnyoneOffers(data,postId) {
     data.forEach((offer, index) =>
         $('#offers').append(
             `
                 <div id="${index}">
     <span>${offer.nickname}</span>
-    <button class="btn btn-outline-secondary" offerId=${offer.offerId} onclick="cancelParticipation(this)"
+    <button class="btn btn-outline-secondary" postId = ${postId} offerId=${offer.offerId}  onclick="cancelParticipation(this)"
             type="button">참가 취소
     </button>
   </div>
@@ -144,6 +147,7 @@
 
   function approve(button) {
     var offerId = $(button).attr("offerId");
+    var postId = $(button).attr("postId");
     $.ajax({
       type: "POST",
       url: `/api/v1/offers/approve`,
@@ -153,8 +157,8 @@
         offerId: offerId
       }),
       success: function (response) {
-        console.log('Success:', response);
         alert(response.message);
+        redirect(postId);
       },
       error: function (error, response) {
         alert(response.message);
@@ -165,6 +169,7 @@
 
   function reject(button) {
     var offerId = $(button).attr("offerId");
+    var postId = $(button).attr("postId");
     $.ajax({
       type: "POST",
       url: `/api/v1/offers/reject`,
@@ -174,8 +179,8 @@
         offerId: offerId
       }),
       success: function (response) {
-        console.log('Success:', response);
         alert(response.message);
+        redirect(postId);
       },
       error: function (error, response) {
         alert(response.message);
@@ -186,6 +191,7 @@
 
   function cancelParticipation(button) {
     var offerId = $(button).attr("offerId");
+    var postId = $(button).attr("postId");
     $.ajax({
       type: "DELETE",
       url: `/api/v1/offers`,
@@ -195,8 +201,8 @@
         offerId: offerId
       }),
       success: function (response) {
-        console.log('Success:', response);
         alert(response.message);
+        redirect(postId);
       },
       error: function (error, response) {
         alert(response.message);
@@ -207,7 +213,6 @@
 
   function otherspage(button) {
     var userId = +$(button).attr("userId");
-    const host = 'http://' + window.location.host;
     window.location.href = host + `/user/${userId}`;
   }
 
@@ -225,8 +230,13 @@
 
   function postPage(button) {
     var postId = $(button).attr("post");
-    const host = 'http://' + window.location.host;
     window.location.replace(host + `/post/${postId}`);
+  }
+
+  function redirect(postId){
+    setTimeout(function(){
+      window.location.href = host + `/post/${postId}/offer`;
+    }, 500);
   }
 
 </script>
