@@ -1,0 +1,35 @@
+#login-form {
+  width: 400px;
+  margin: 210px auto 0 auto;
+}
+
+#login-form div {
+  text-align: center;
+}
+
+.btn-pack {
+  margin-top: 20px;
+}
+
+.btn-pack button {
+  width: 400px;
+  height: 52px;
+  margin-bottom: 7px;
+}
+
+h1 {
+  text-align: center;
+  font-weight: bold;
+}
+
+.go-sign-up {
+  margin-top: 5px;
+}
+
+.go-sign-up a {
+  text-decoration: none;
+}
+
+#logo {
+  margin-bottom: 50px;
+}
