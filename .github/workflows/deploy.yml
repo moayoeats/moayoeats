@@ -67,7 +67,7 @@ jobs:
         # AWS 지역 및 보안 그룹 이름 설정
         run: |
           echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
-          echo "AWS_SG_NAME=launch-wizard-1" >> $GITHUB_ENV
+          echo "AWS_SG_NAME=${{ secrets.AWS_SG_NAME }}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -81,6 +81,7 @@ jobs:
         # 보안 그룹에 GitHub Actions IP 추가
         run: |
           aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
@@ -110,6 +111,7 @@ jobs:
         # 보안 그룹에서 GitHub Actions IP 제거
         run: |
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
