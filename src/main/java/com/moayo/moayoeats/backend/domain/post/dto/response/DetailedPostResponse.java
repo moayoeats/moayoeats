@@ -20,7 +20,7 @@ public record DetailedPostResponse(
     Integer deliveryCost,
     List<NickMenusResponse> menus,
     Integer sumPrice,
-    LocalDateTime deadline,
+    String deadline,
     UserPostRole role,
     PostStatusEnum status
 ) {
