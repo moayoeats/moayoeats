@@ -1,0 +1,38 @@
+#sign-up-form {
+  width: 400px;
+  margin: 150px auto 0 auto;
+}
+
+#sign-up-form div {
+  text-align: center;
+}
+
+.btn-pack {
+  margin-top: 20px;
+}
+
+.btn-pack button {
+  width: 400px;
+  margin-bottom: 7px;
+}
+
+#social-sign-up-submit {
+  margin-right: 10px;
+}
+
+#logo {
+  margin-bottom: 50px;
+}
+
+.password-requirement {
+  display: none;
+  font-weight: bold;
+  font-size: 13px;
+  background-color: red;
+  color: white;
+  margin-top: 5px;
+}
+
+#password:focus + label + .password-requirement {
+  display: block;
+}

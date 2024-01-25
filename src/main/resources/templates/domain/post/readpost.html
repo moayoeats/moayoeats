@@ -17,6 +17,7 @@
   <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv"
           type="text/javascript"></script>
   <title>글 상세페이지</title>
+  <link rel="icon" href="/images/logo.png">
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="stylesheet" href="/css/readpost.css">
   <header>
@@ -86,13 +87,12 @@
         store = response.data.store;
         sumPrice = response.data.sumPrice;
         nickmenus = response.data.menus;
-        hostNick = response.data.hostNick;
         hostId = response.data.hostId;
         postStatus = response.data.status;
 
         drawMap(latitude, longitude);
 
-        drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId, postStatus);
+        drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostId, postStatus);
 
         drawMenus(nickmenus);
 
@@ -128,16 +128,13 @@
     });
   }
 
-  function drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId,
-      postStatus) {
+  function drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostId, postStatus) {
     var temp;
 
     if (postStatus === "OPEN") {
       temp = `
 <div>
   <div hostId = ${hostId} onclick="getHostPage(this)">
-    <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30">
-    <a style="font-weight: bold" class="btn">${hostNick}</a>
   </div>
   <div><span style="font-weight: bold">${store}</span>에 주문하기 위해서</div>
   <div><span style="font-weight: bold">${minPrice}</span> 원 필요해요!</div>
@@ -150,8 +147,6 @@
       temp = `
 <div>
   <div hostId = ${hostId} onclick="getHostPage(this)">
-    <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30">
-    <a style="font-weight: bold" class="btn">${hostNick}</a>
   </div>
   <div><span style="font-weight: bold">${store}</span>에 주문하기 위해서</div>
   <div><span style="font-weight: bold">${minPrice}</span> 원 필요해요!</div>
