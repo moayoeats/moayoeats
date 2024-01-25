@@ -13,7 +13,6 @@ public record DetailedPostResponse(
     Long id,
     Long hostId,
     String hostNick,
-    String address,
     Double latitude,
     Double longitude,
     String store,
@@ -21,7 +20,7 @@ public record DetailedPostResponse(
     Integer deliveryCost,
     List<NickMenusResponse> menus,
     Integer sumPrice,
-    LocalDateTime deadline,
+    String deadline,
     UserPostRole role,
     PostStatusEnum status
 ) {

@@ -115,7 +115,7 @@ public class PostServiceImpl implements PostService {
             .deliveryCost(post.getDeliveryCost())
             .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(userPosts, post))
-            .deadline(getDeadline(post))
+            .deadline(getDeadline(getDeadline(post)))
             .status(post.getPostStatus())
             .build();
     }
@@ -137,7 +137,7 @@ public class PostServiceImpl implements PostService {
             .deliveryCost(post.getDeliveryCost())
             .menus(getNickMenus(userPosts))
             .sumPrice(getSumPrice(userPosts, post))
-            .deadline(getDeadline(post))
+            .deadline(getDeadline(getDeadline(post)))
             .status(post.getPostStatus())
             .role(getRoleByUserAndUserPosts(user, userPosts))
             .build();

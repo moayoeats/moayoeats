@@ -64,7 +64,6 @@
       contentType: 'application/json',
       data: {},
       success: function (response) {
-        console.log('Success:', response);
         latitude = response.data.latitude;
         longitude = response.data.longitude
 
@@ -76,19 +75,20 @@
         nickmenus = response.data.menus;
         hostNick = response.data.hostNick;
         hostId = response.data.hostId;
+        postStatus = response.data.status;
 
         drawMap(latitude, longitude);
 
-        drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId);
+        drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId, postStatus);
 
         drawMenus(nickmenus);
 
         if (response.data.role === "HOST") {
-          drawHostButtons(response.data.id, response.data.status);
+          drawHostButtons(response.data.id, postStatus);
         } else if (response.data.role === "PARTICIPANT") {
-          drawParticipantButtons(response.data.id, response.data.status);
+          drawParticipantButtons(response.data.id, postStatus);
         } else {
-          drawAnyoneButtons(response.data.id, response.data.status);
+          drawAnyoneButtons(response.data.id, postStatus);
         }
       },
       error: function (error) {
@@ -115,10 +115,13 @@
     });
   }
 
-  function drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId) {
-    var temp = `
+  function drawField(store, sumPrice, minPrice, deliveryCost, deadline, hostNick, hostId,
+      postStatus) {
+    var temp;
+
+    if (postStatus === "OPEN") {
+      temp = `
 <div>
-  <div style="font-weight: bold">글쓴이</div>
   <div hostId = ${hostId} onclick="getHostPage(this)">
     <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30">
     <a style="font-weight: bold" class="btn">${hostNick}</a>
@@ -127,9 +130,26 @@
   <div><span style="font-weight: bold">${minPrice}</span> 원 필요해요!</div>
   <div><span style="font-weight: bold">${sumPrice}</span> 원 모였어요!</div>
   <div>필요한 배달비는<span style="font-weight: bold"> ${deliveryCost} </span>원 입니다!</div>
-  <div><span style="font-weight: bold">${deadline}</span> 까지 모집해요!</div>
+  <div><span style="font-weight: bold">${deadline}</span> 후 까지 모집해요!</div>
  </div>
 `
+    } else {
+      temp = `
+<div>
+  <div hostId = ${hostId} onclick="getHostPage(this)">
+    <img src="/images/user.png" alt="mypage" id="my-page-btn" width="30" height="30">
+    <a style="font-weight: bold" class="btn">${hostNick}</a>
+  </div>
+  <div><span style="font-weight: bold">${store}</span>에 주문하기 위해서</div>
+  <div><span style="font-weight: bold">${minPrice}</span> 원 필요해요!</div>
+  <div><span style="font-weight: bold">${sumPrice}</span> 원 모였어요!</div>
+  <div>필요한 배달비는<span style="font-weight: bold"> ${deliveryCost} </span>원 입니다!</div>
+  <div><span style="font-weight: bold">${postStatus}   </span>${getStatus(
+          postStatus)}</div>
+ </div>
+`
+    }
+
     $('#field').append(temp)
   }
 
@@ -337,7 +357,8 @@
       }
     });
   }
-  function chatRoom(button){
+
+  function chatRoom(button) {
     var postId = $(button).attr("post");
     window.location.href = `/chat/${postId}`;
 
@@ -404,6 +425,18 @@
         console.error('Error:', error);
       }
     });
+  }
+
+  function getStatus(status) {
+    if (status === "OPEN") {
+      return "모집이 열려있습니다!"
+    } else if (status === "CLOSED") {
+      return "모집이 마감되었습니다!"
+    } else if (status === "ORDERED") {
+      return "주문 완료"
+    } else if (status === "RECEIVED") {
+      return "주문이 모두 수령된 게시글입니다!"
+    }
   }
 
 </script>
