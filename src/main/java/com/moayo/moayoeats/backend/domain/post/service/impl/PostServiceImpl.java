@@ -493,27 +493,27 @@ public class PostServiceImpl implements PostService {
         return address.split(",");
     }
 
-    @Scheduled(fixedRate = 60000)//executed every 1 min
-    public void scheduledDelete() {
-        List<Post> posts = findAll();
-        List<Post> pastDeadline = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
-        for (Post post : posts) {
-            //delete if the post hasn't been closed and past deadlinetb_user_post
-            if (post.getPostStatus() == PostStatusEnum.OPEN) {
-                if (post.getDeadline().isBefore(now)) {
-                    pastDeadline.add(post);
-                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
-                }
-            } else {//delete if the post has closed but one more day has passed
-                if (post.getDeadline().plusDays(1).isBefore(now)) {
-                    pastDeadline.add(post);
-                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
-                }
-            }
-        }
-        postRepository.deleteAll(pastDeadline);
-    }
+//    @Scheduled(fixedRate = 60000)//executed every 1 min
+//    public void scheduledDelete() {
+//        List<Post> posts = findAll();
+//        List<Post> pastDeadline = new ArrayList<>();
+//        LocalDateTime now = LocalDateTime.now();
+//        for (Post post : posts) {
+//            //delete if the post hasn't been closed and past deadlinetb_user_post
+//            if (post.getPostStatus() == PostStatusEnum.OPEN) {
+//                if (post.getDeadline().isBefore(now)) {
+//                    pastDeadline.add(post);
+//                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
+//                }
+//            } else {//delete if the post has closed but one more day has passed
+//                if (post.getDeadline().plusDays(1).isBefore(now)) {
+//                    pastDeadline.add(post);
+//                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
+//                }
+//            }
+//        }
+//        postRepository.deleteAll(pastDeadline);
+//    }
 
     private Consumer<User> publishEventToEachParticipants() {
         return participant -> publisher.publishEvent(
