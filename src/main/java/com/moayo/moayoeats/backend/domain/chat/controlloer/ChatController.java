@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 @Controller
 public class ChatController {
-
+// 테스트
     private final ChatMessageServiceImpl chatMessageService;
 
     @MessageMapping("/chats/join/{postId}")
