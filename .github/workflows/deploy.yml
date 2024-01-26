@@ -52,7 +52,7 @@ jobs:
         if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker-process')
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
-          ENV_FILE=./home/ubuntu/moayoeats/env.env
+          ENV_FILE=/home/ubuntu/moayoeats/env.env
           source $ENV_FILE
           
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
