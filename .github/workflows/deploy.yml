@@ -52,6 +52,8 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
+        env:
+          SPRING_PROFILES_ACTIVE: prod
         run: ./gradlew clean build --stacktrace
         shell: bash
 
