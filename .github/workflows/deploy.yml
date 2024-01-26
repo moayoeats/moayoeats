@@ -52,17 +52,8 @@ jobs:
         if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker-process')
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
-          chmod u+x /home/ubuntu/moayoeats/env.env
-          echo "Current directory: $(pwd)"
-          source /home/ubuntu/moayoeats/env.env
-          echo "Current directory: $(pwd)"
-          ENV_FILE=/home/ubuntu/moayoeats/env.env
-          echo "Current directory: $(pwd)"
-          source $ENV_FILE
-          
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t moayoeats -f ./infra/Dockerfile --build-arg ENV_VAR_NAME=$ENV_VAR_NAME .
-          
           docker tag moayoeats:latest ${{ secrets.DOCKER_USER }}/moayoeats:latest
           docker push ${{ secrets.DOCKER_USER }}/moayoeats:latest
 
@@ -109,6 +100,8 @@ jobs:
           port: ${{ secrets.AWS_PORT }}
           # Docker 이미지 풀 및 컨테이너 배포 # 사용하지 않는 Docker 이미지 정리
           script: |
+            chmod u+x /home/ubuntu/moayoeats/env.env
+            source /home/ubuntu/moayoeats/env.env
             docker pull ${{ secrets.DOCKER_USER }}/moayoeats:latest
             docker stop moayoeats
             docker rm moayoeats
