@@ -53,8 +53,11 @@ jobs:
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
           chmod u+x /home/ubuntu/moayoeats/env.env
+          echo "Current directory: $(pwd)"
           source /home/ubuntu/moayoeats/env.env
+          echo "Current directory: $(pwd)"
           ENV_FILE=/home/ubuntu/moayoeats/env.env
+          echo "Current directory: $(pwd)"
           source $ENV_FILE
           
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
