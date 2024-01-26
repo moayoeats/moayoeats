@@ -62,9 +62,16 @@ public class PostServiceImpl implements PostService {
         double longitude = Double.valueOf(location[1]);
 
         //Build new post with the post request dto
-        Post post = Post.builder().latitude(latitude).longitude(longitude).store(postReq.store())
-            .deliveryCost(postReq.deliveryCost()).minPrice(postReq.minPrice()).deadline(deadline)
-            .category(postReq.category()).postStatus(PostStatusEnum.OPEN).build();
+        Post post = Post.builder()
+            .latitude(latitude)
+            .longitude(longitude)
+            .store(postReq.store())
+            .deliveryCost(postReq.deliveryCost())
+            .minPrice(postReq.minPrice())
+            .deadline(deadline)
+            .category(postReq.category())
+            .postStatus(PostStatusEnum.OPEN)
+            .build();
 
         //save the post
         postRepository.save(post);
@@ -97,11 +104,17 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
 
-        return DetailedPostResponse.builder().longitude(post.getLongitude())
-            .latitude(post.getLatitude()).store(post.getStore()).minPrice(post.getMinPrice())
-            .deliveryCost(post.getDeliveryCost()).menus(getNickMenus(userPosts))
-            .sumPrice(getSumPrice(userPosts, post)).deadline(getDeadline(getDeadline(post)))
-            .status(post.getPostStatus()).build();
+        return DetailedPostResponse.builder()
+            .longitude(post.getLongitude())
+            .latitude(post.getLatitude())
+            .store(post.getStore())
+            .minPrice(post.getMinPrice())
+            .deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts))
+            .sumPrice(getSumPrice(userPosts, post))
+            .deadline(getDeadline(getDeadline(post)))
+            .status(post.getPostStatus())
+            .build();
     }
 
     @Override
@@ -110,12 +123,21 @@ public class PostServiceImpl implements PostService {
         List<UserPost> userPosts = getUserPostsByPost(post);
         User host = getAuthor(userPosts);
 
-        return DetailedPostResponse.builder().id(post.getId()).hostId(host.getId())
-            .hostNick(host.getNickname()).longitude(post.getLongitude())
-            .latitude(post.getLatitude()).store(post.getStore()).minPrice(post.getMinPrice())
-            .deliveryCost(post.getDeliveryCost()).menus(getNickMenus(userPosts))
-            .sumPrice(getSumPrice(userPosts, post)).deadline(getDeadline(getDeadline(post)))
-            .status(post.getPostStatus()).role(getRoleByUserAndUserPosts(user, userPosts)).build();
+        return DetailedPostResponse.builder()
+            .id(post.getId())
+            .hostId(host.getId())
+            .hostNick(host.getNickname())
+            .longitude(post.getLongitude())
+            .latitude(post.getLatitude())
+            .store(post.getStore())
+            .minPrice(post.getMinPrice())
+            .deliveryCost(post.getDeliveryCost())
+            .menus(getNickMenus(userPosts))
+            .sumPrice(getSumPrice(userPosts, post))
+            .deadline(getDeadline(getDeadline(post)))
+            .status(post.getPostStatus())
+            .role(getRoleByUserAndUserPosts(user, userPosts))
+            .build();
     }
 
     @Override
