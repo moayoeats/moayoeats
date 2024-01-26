@@ -9,7 +9,6 @@ import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,8 +43,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public ChatMessageResponse createRes(ChatMessageRequest req, ChatMessage msg) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         String formattedTime = msg.getCreatedAt().format(formatter);
+        String contentWithTime = req.content() + " (" + formattedTime + ")"; // 시간을 내용에 포함시킴
 
-        return new ChatMessageResponse(req.content(), req.sender(), formattedTime);
+        return new ChatMessageResponse(contentWithTime, req.sender());
     }
 
     public List<ChatMessageResponse> getChatHistory(String postId) {
@@ -54,8 +54,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             .map(message -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
                 String formattedTime = message.getCreatedAt().format(formatter);
-                return new ChatMessageResponse(message.getContent(), message.getSender(),
-                    formattedTime);
+                String contentWithTime = message.getContent() + " (" + formattedTime + ")";
+                return new ChatMessageResponse(contentWithTime, message.getSender());
             })
             .collect(Collectors.toList());
     }

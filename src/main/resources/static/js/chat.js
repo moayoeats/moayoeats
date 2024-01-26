@@ -26,7 +26,7 @@ function connect(postId, username) {
       console.log('Connected: ' + frame);
       stompClient.subscribe('/sub/chats/room/' + postId, function (message) {
         var receivedMessage = JSON.parse(message.body);
-        showMessage(receivedMessage.sender, receivedMessage.content, receivedMessage.createdAt);
+        showMessage(receivedMessage.sender, receivedMessage.content);
       });
 
       var chatMessage = {
@@ -55,7 +55,12 @@ function sendMessage(message) {
       JSON.stringify(chatMessage));
 }
 
-function showMessage(username, message, createdAt) {
+function showMessage(username, messageWithTime) {
+  // 마지막 괄호로부터 시간 정보 추출
+  var lastIndex = messageWithTime.lastIndexOf(" (");
+  var messageText = lastIndex !== -1 ? messageWithTime.substring(0, lastIndex) : messageWithTime;
+  var createdAt = lastIndex !== -1 ? messageWithTime.substring(lastIndex + 2, messageWithTime.length - 1) : '';
+
   var messageArea = document.getElementById('chat-messages');
   var messageElement = document.createElement('div');
   var contentElement = document.createElement('div');
@@ -69,9 +74,10 @@ function showMessage(username, message, createdAt) {
     messageElement.classList.add('my-message');
   }
 
-  var messageText = (message === "님이 입장하셨습니다.") ? username + message : username + " : " + message;
+  var isEntranceMessage = messageText.endsWith("님이 입장하셨습니다.");
+  var displayedMessage = isEntranceMessage ? username + messageText : username + " : " + messageText;
 
-  contentElement.innerText = messageText;
+  contentElement.innerText = displayedMessage;
   timeElement.innerText = createdAt;
 
   messageElement.appendChild(contentElement);
@@ -87,7 +93,7 @@ function fetchAndShowHistory(postId, callback) {
     type: 'GET',
     success: function (messages) {
       messages.forEach(function (message) {
-        showMessage(message.sender, message.content, message.createdAt);
+        showMessage(message.sender, message.content);
       });
       if (callback) {
         callback();
