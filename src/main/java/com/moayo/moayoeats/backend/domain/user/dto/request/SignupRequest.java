@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Pattern;
 public record SignupRequest(
     @Email
     String email,
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])[a-zA-Z0-9!@#$]{8,15}$",
-        message = "비밀번호는 a-z, A-Z, 0-9, !@#$ 만 포함하고 8-15자이어야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9!@#$]{8,15}$",
+        message = "비밀번호는 a-z, A-Z, 0-9, !@#$ 중 하나 이상을 포함하고 8-15자이어야 합니다.")
     String password,
     String checkPassword,
     @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,20}$",
