@@ -14,7 +14,7 @@ public enum PostErrorCode implements ErrorCode {
     LOWER_THAN_MINIMUM_PRICE(HttpStatus.BAD_REQUEST.value(), "최소주문금액보다 적으면 모집마감을 할 수 없습니다."),
     POST_ALREADY_CLOSED(HttpStatus.BAD_REQUEST.value(), "이미 모집이 마감된 게시글 입니다."),
     MENU_NOT_ALLOWED(HttpStatus.BAD_REQUEST.value(), "주문완료 후에는 메뉴를 생성/삭제할 수 없습니다."),
-    CANNOT_EXIT_AFTER_ORDERED(HttpStatus.BAD_REQUEST.value(), "주문완료 후에 나가기를 할 수 없습니다."),
+    CANNOT_AFTER_ORDERED(HttpStatus.BAD_REQUEST.value(), "주문완료 후에 수행할 수 없는 동작입니다."),
     CLOSE_FIRST(HttpStatus.BAD_REQUEST.value(), "모집마감이 먼저 완료되어야 합니다."),
     ORDER_FIRST(HttpStatus.BAD_REQUEST.value(), "주문완료인 게시글에서만 할 수 있습니다."),
     POST_ALREADY_COMPLETED_ORDER(HttpStatus.BAD_REQUEST.value(), "이미 주문완료가 된 게시글 입니다."),

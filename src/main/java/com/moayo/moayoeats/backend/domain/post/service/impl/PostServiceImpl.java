@@ -57,7 +57,7 @@ public class PostServiceImpl implements PostService {
             .plusHours(postReq.deadlineHours());
 
         //get latitude and longitude from the coordinate
-        String [] location = getAddress(postReq.address());
+        String[] location = getAddress(postReq.address());
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
@@ -77,10 +77,7 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
 
         //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder()
-            .user(user)
-            .post(post)
-            .role(UserPostRole.HOST)
+        UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
             .build();
 
         //save the relation
@@ -150,7 +147,8 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10,Sort.by("modifiedAt").descending());
+            Pageable pageWithTenPosts = PageRequest.of(page, 10,
+                Sort.by("modifiedAt").descending());
             posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
                 .getContent();
         }
@@ -158,14 +156,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BriefPostResponse> getPostsByCategory(int page, String category,
-        User user) {
+    public List<BriefPostResponse> getPostsByCategory(int page, String category, User user) {
         List<Post> posts;
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10,Sort.by("modifiedAt").descending());
+            Pageable pageWithTenPosts = PageRequest.of(page, 10,
+                Sort.by("modifiedAt").descending());
             posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
                 .getContent();
         }
@@ -206,10 +204,8 @@ public class PostServiceImpl implements PostService {
         }
 
         //참가자들에게 알림
-        userPosts.stream()
-            .filter(userPost -> userPost.getRole().equals(UserPostRole.PARTICIPANT))
-            .map(UserPost::getUser)
-            .forEach(publishEventToEachParticipants());
+        userPosts.stream().filter(userPost -> userPost.getRole().equals(UserPostRole.PARTICIPANT))
+            .map(UserPost::getUser).forEach(publishEventToEachParticipants());
 
         userPostRepository.deleteAll(userPosts);
         chatRoomService.deleteRoom(post.getId());
@@ -251,10 +247,8 @@ public class PostServiceImpl implements PostService {
         }
 
         //참가자들에게 알림
-        userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT)
-            .stream()
-            .map(UserPost::getUser)
-            .forEach(publishEventToEachParticipants());
+        userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT).stream()
+            .map(UserPost::getUser).forEach(publishEventToEachParticipants());
 
         post.closeApplication();
         postRepository.save(post);
@@ -281,11 +275,8 @@ public class PostServiceImpl implements PostService {
     public void exit(PostIdRequest postIdReq, User user) {
         Post post = getPostById(postIdReq.postId());
         UserPost userPost = getUserPostIfParticipant(user, post);
-        if (post.getPostStatus() == PostStatusEnum.ORDERED||post.getPostStatus() == PostStatusEnum.RECEIVED) {
-            throw new GlobalException(PostErrorCode.CANNOT_EXIT_AFTER_ORDERED);
-        }
-        menuRepository.deleteAll(getUserMenus(user, post));
-        userPostRepository.delete(userPost);
+        checkIfOrdered(post.getPostStatus());
+        deleteParticipant(userPost,user,post);
 
         List<UserPost> userposts = getUserPostsByPost(post);
         int sumPrice = getSumPrice(userposts, post);
@@ -305,7 +296,7 @@ public class PostServiceImpl implements PostService {
         User host = getAuthor(userPosts);
 
         //check if the status of the post is ordered
-        if(post.getPostStatus()!=PostStatusEnum.ORDERED){
+        if (post.getPostStatus() != PostStatusEnum.ORDERED) {
             throw new GlobalException(PostErrorCode.ORDER_FIRST);
         }
 
@@ -358,16 +349,11 @@ public class PostServiceImpl implements PostService {
     }
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
-        return posts.stream().map((Post post) -> BriefPostResponse.builder()
-            .id(post.getId())
-            .author(getAuthor(getUserPostsByPost(post)).getNickname())
-            .store(post.getStore())
-            .deadline(getDeadline(getDeadline(post)))
-            .minPrice(post.getMinPrice())
-            .sumPrice(getSumPrice(getUserPostsByPost(post), post))
-            .status(post.getPostStatus())
-            .build())
-            .toList();
+        return posts.stream().map((Post post) -> BriefPostResponse.builder().id(post.getId())
+            .author(getAuthor(getUserPostsByPost(post)).getNickname()).store(post.getStore())
+            .deadline(getDeadline(getDeadline(post))).minPrice(post.getMinPrice())
+            .sumPrice(getSumPrice(getUserPostsByPost(post), post)).status(post.getPostStatus())
+            .build()).toList();
     }
 
     private User getAuthor(List<UserPost> userPosts) {
@@ -407,17 +393,17 @@ public class PostServiceImpl implements PostService {
 
     private String getDeadline(LocalDateTime deadline) {
         LocalDateTime now = LocalDateTime.now();
-        int days = deadline.getDayOfYear()-now.getDayOfYear();
-        int hours = deadline.getHour()-now.getHour();
-        int mins = deadline.getMinute()-now.getMinute();
-        if(mins<0){
+        int days = deadline.getDayOfYear() - now.getDayOfYear();
+        int hours = deadline.getHour() - now.getHour();
+        int mins = deadline.getMinute() - now.getMinute();
+        if (mins < 0) {
             hours--;
-            mins = 60+mins;
+            mins = 60 + mins;
         }
-        if(hours<0){
-            hours=0;
+        if (hours < 0) {
+            hours = 0;
         }
-        return days+"일 "+hours+"시 "+mins+" 분";
+        return days + "일 " + hours + "시 " + mins + " 분";
     }
 
     private Post getPostById(Long postId) {
@@ -436,10 +422,9 @@ public class PostServiceImpl implements PostService {
             userposts.stream()
                 .map((UserPost userpost) -> new NickMenusResponse(userpost.getUser().getNickname(),
                     //List<Menu> menus -> List<MenuResponse>
-                    getUserMenus(userpost.getUser(), userpost.getPost()).stream()
-                        .map((Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(),
-                            menu.getPrice()))
-                        .toList())).toList();
+                    getUserMenus(userpost.getUser(), userpost.getPost()).stream().map(
+                        (Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(),
+                            menu.getPrice())).toList())).toList();
         return menus;
     }
 
@@ -483,16 +468,31 @@ public class PostServiceImpl implements PostService {
 
     private UserPost getUserPostIfParticipant(User user, Post post) {
         return userPostRepository.findByPostAndUserAndRoleEquals(post, user,
-            UserPostRole.PARTICIPANT).orElseThrow(() ->
-            new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT)
-        );
+                UserPostRole.PARTICIPANT)
+            .orElseThrow(() -> new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT));
     }
 
-    private String [] getAddress(String address){
+    private String[] getAddress(String address) {
         address = address.replace("(lat:", "");
         address = address.replace("lng:", "");
         address = address.replace(")", "");
         return address.split(",");
+    }
+
+    private void checkIfOrdered(PostStatusEnum status){
+        if (status == PostStatusEnum.ORDERED
+            || status == PostStatusEnum.RECEIVED) {
+            throw new GlobalException(PostErrorCode.CANNOT_AFTER_ORDERED);
+        }
+    }
+
+    private void deleteParticipant(UserPost userPost, User user, Post post){
+        menuRepository.deleteAll(getUserMenus(user, post));
+        userPostRepository.delete(userPost);
+    }
+
+    private void deleteParticipant(Long userId ,Post post){
+
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
@@ -524,8 +524,7 @@ public class PostServiceImpl implements PostService {
 
     private void publishEventToHostAndChagePostStatus(Post post) {
         post.changeAmountGoalStatus(); //게시글의 목표금액 충족상태 변경
-        User targetHost = userPostRepository.findByPostIdAndRole(post.getId(),
-            UserPostRole.HOST);
+        User targetHost = userPostRepository.findByPostIdAndRole(post.getId(), UserPostRole.HOST);
 
         publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_IS_NOT_COLLECTED));
     }

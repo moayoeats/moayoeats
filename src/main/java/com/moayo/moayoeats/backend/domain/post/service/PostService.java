@@ -1,12 +1,9 @@
 package com.moayo.moayoeats.backend.domain.post.service;
 
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostCategoryRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
-import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostIdRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
-import com.moayo.moayoeats.backend.domain.post.dto.request.PostSearchRequest;
-import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
+import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
+import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import java.util.List;
 
@@ -17,14 +14,15 @@ public interface PostService {
      */
     void createPost(PostRequest postReq, User user);
 
-    /** 인증정보 없이 전체 글 조회
+    /**
+     * 인증정보 없이 전체 글 조회
+     *
      * @param page : 몇페이지 조회할건지 int pageNumber
      * @return Lists of brief information about the post
      */
     List<BriefPostResponse> getPostsForAnyone(int page);
 
     /**
-     *
      * @param page : 몇페이지 조회할건지 int pageNumber
      * @param user : 글 조회자
      * @return
@@ -32,11 +30,10 @@ public interface PostService {
     List<BriefPostResponse> getPosts(int page, User user);
 
     /**
-     *
      * @param postId : 글 조회에 필요한 postId
      * @return
      */
-    public DetailedPostResponse getPostForAnyone(Long postId);
+    DetailedPostResponse getPostForAnyone(Long postId);
 
     /**
      * @param postId : 글 조회에 필요한 postId
@@ -46,23 +43,21 @@ public interface PostService {
     DetailedPostResponse getPost(Long postId, User user);
 
     /**
-     *
-     * @param page : 페이지 조회에 필요한 int pageNumber
+     * @param page     : 페이지 조회에 필요한 int pageNumber
      * @param category : 카테고리
      * @return
      */
-    List<BriefPostResponse> getPostsByCategoryForAnyone(int page,String category);
+    List<BriefPostResponse> getPostsByCategoryForAnyone(int page, String category);
 
     /**
      * @param category : 카테고리
-     * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @param user     : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
-    List<BriefPostResponse> getPostsByCategory(int page, String category,
-        User user);
+    List<BriefPostResponse> getPostsByCategory(int page, String category, User user);
 
     /**
-     * @param page : 페이지 조회에 필요한 int pageNumber
+     * @param page    : 페이지 조회에 필요한 int pageNumber
      * @param keyword : 검색어
      * @return
      */
@@ -70,7 +65,7 @@ public interface PostService {
 
     /**
      * @param keyword : 검색어
-     * @param user : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @param user    : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
      * @return
      */
     List<BriefPostResponse> searchPost(int page, String keyword, User user);
@@ -82,31 +77,27 @@ public interface PostService {
     void deletePost(PostIdRequest postIdReq, User user);
 
     /**
-     *
      * @param postIdReq : postId
-     * @param user : 글 작성자
+     * @param user      : 글 작성자
      */
-    public void closeApplication(PostIdRequest postIdReq, User user);
+    void closeApplication(PostIdRequest postIdReq, User user);
 
     /**
-     *
      * @param postIdReq : postId
-     * @param user : 글 작성자
+     * @param user      : 글 작성자
      */
-    public void completeOrder(PostIdRequest postIdReq, User user);
+    void completeOrder(PostIdRequest postIdReq, User user);
 
     /**
-     *
      * @param postIdReq : postId
-     * @param user : 글에서 나가려는 참가자
+     * @param user      : 글에서 나가려는 참가자
      */
-    public void exit(PostIdRequest postIdReq, User user);
+    void exit(PostIdRequest postIdReq, User user);
 
     /**
-     *
      * @param postIdReq : postId
-     * @param user : 주문완료 처리를 하려는 참가자
+     * @param user      : 주문완료 처리를 하려는 참가자
      */
-    public void receiveOrder(PostIdRequest postIdReq, User user );
+    void receiveOrder(PostIdRequest postIdReq, User user);
 
 }
