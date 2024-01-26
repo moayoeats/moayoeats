@@ -39,6 +39,14 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      - name: make application-prod.yml
+        if: contains(github.ref, 'develop') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker-process')
+        run: |
+          cd ./src/main/resources
+          touch ./application-prod.yml
+          echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
+        shell: bash
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
@@ -100,13 +108,10 @@ jobs:
           port: ${{ secrets.AWS_PORT }}
           # Docker 이미지 풀 및 컨테이너 배포 # 사용하지 않는 Docker 이미지 정리
           script: |
-            chmod u+x /home/ubuntu/moayoeats/env.env
-            source /home/ubuntu/moayoeats/env.env
             docker pull ${{ secrets.DOCKER_USER }}/moayoeats:latest
             docker stop moayoeats
             docker rm moayoeats
-            docker run -d --network moayoeats --name moayoeats -p 8080:8080 ${{ secrets.DOCKER_USER }}/moayoeats:latest
-            
+            docker run -d --network moayoeats --name moayoeats -p 8080:8080 ${{ secrets.DOCKER_USER }}/moayoeats
             if docker images -f "dangling=true" -q | grep . > /dev/null; then
               docker rmi $(docker images -f "dangling=true" -q)
             fi
