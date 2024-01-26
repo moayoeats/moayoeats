@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.backend.domain.chat.service.impl;
 
+import com.moayo.moayoeats.backend.domain.chat.dto.request.ChatMessageRequest;
 import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
 import com.moayo.moayoeats.backend.domain.chat.entity.ChatMessage;
 import com.moayo.moayoeats.backend.domain.chat.repository.ChatMessageRepository;
@@ -8,6 +9,7 @@ import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final UserRepository userRepository;
 
     @Override
-    public void saveChatMessage(String postId, String sender, String content) {
+    public ChatMessage saveChatMessage(String postId, String sender, String content) {
 
         User user = findByNickname(sender);
 
@@ -34,12 +36,27 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
         chatMessageRepository.save(chatMessage);
 
+        return chatMessage;
+    }
+
+    @Override
+    public ChatMessageResponse createRes(ChatMessageRequest req, ChatMessage msg) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String formattedTime = msg.getCreatedAt().format(formatter);
+        String contentWithTime = req.content() + " (" + formattedTime + ")"; // 시간을 내용에 포함시킴
+
+        return new ChatMessageResponse(contentWithTime, req.sender());
     }
 
     public List<ChatMessageResponse> getChatHistory(String postId) {
         List<ChatMessage> messages = chatMessageRepository.findByPostId(postId);
         return messages.stream()
-            .map(message -> new ChatMessageResponse(message.getContent(), message.getSender()))
+            .map(message -> {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                String formattedTime = message.getCreatedAt().format(formatter);
+                String contentWithTime = message.getContent() + " (" + formattedTime + ")";
+                return new ChatMessageResponse(contentWithTime, message.getSender());
+            })
             .collect(Collectors.toList());
     }
 

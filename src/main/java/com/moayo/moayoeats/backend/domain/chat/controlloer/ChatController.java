@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.domain.chat.controlloer;
 
 import com.moayo.moayoeats.backend.domain.chat.dto.request.ChatMessageRequest;
 import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
+import com.moayo.moayoeats.backend.domain.chat.entity.ChatMessage;
 import com.moayo.moayoeats.backend.domain.chat.service.impl.ChatMessageServiceImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,9 @@ public class ChatController {
         String content = "님이 입장하셨습니다.";
         String username = req.sender();
 
-        chatMessageService.saveChatMessage(postId, username, content);
+        ChatMessage msg = chatMessageService.saveChatMessage(postId, username, content);
 
-        return new ChatMessageResponse(content, req.sender());
+        return chatMessageService.createRes(req, msg);
     }
 
     @MessageMapping("/chats/message/{postId}")
@@ -44,9 +45,9 @@ public class ChatController {
         String content = req.content();
         String username = req.sender();
 
-        chatMessageService.saveChatMessage(postId, username, content);
+        ChatMessage msg = chatMessageService.saveChatMessage(postId, username, content);
 
-        return new ChatMessageResponse(content, req.sender());
+        return chatMessageService.createRes(req, msg);
     }
 
     @GetMapping("/chats/history/{postId}")

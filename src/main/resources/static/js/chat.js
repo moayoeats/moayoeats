@@ -55,20 +55,33 @@ function sendMessage(message) {
       JSON.stringify(chatMessage));
 }
 
-function showMessage(username, message) {
+function showMessage(username, messageWithTime) {
+  // 마지막 괄호로부터 시간 정보 추출
+  var lastIndex = messageWithTime.lastIndexOf(" (");
+  var messageText = lastIndex !== -1 ? messageWithTime.substring(0, lastIndex) : messageWithTime;
+  var createdAt = lastIndex !== -1 ? messageWithTime.substring(lastIndex + 2, messageWithTime.length - 1) : '';
+
   var messageArea = document.getElementById('chat-messages');
   var messageElement = document.createElement('div');
+  var contentElement = document.createElement('div');
+  var timeElement = document.createElement('div');
+
   messageElement.classList.add('chat-message');
+  contentElement.classList.add('message-content');
+  timeElement.classList.add('message-time');
 
   if (username === window.username) {
     messageElement.classList.add('my-message');
   }
 
-  if (message === "님이 입장하셨습니다.") {
-    messageElement.innerText = username + message;  // 입장 메시지
-  } else {
-    messageElement.innerText = username + " : " + message;  // 일반 메시지
-  }
+  var isEntranceMessage = messageText.endsWith("님이 입장하셨습니다.");
+  var displayedMessage = isEntranceMessage ? username + messageText : username + " : " + messageText;
+
+  contentElement.innerText = displayedMessage;
+  timeElement.innerText = createdAt;
+
+  messageElement.appendChild(contentElement);
+  messageElement.appendChild(timeElement);
 
   messageArea.appendChild(messageElement);
   messageArea.scrollTop = messageArea.scrollHeight;
