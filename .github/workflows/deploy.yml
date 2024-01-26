@@ -25,6 +25,9 @@ jobs:
     name: Push to AWS Container Registry
     runs-on: ubuntu-latest
 
+    #    env:
+    #      JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
+
     # 작업 단계 정의
     steps:
       - name: Checkout
@@ -49,8 +52,12 @@ jobs:
         if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker-process')
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
+          ENV_FILE=./home/ubuntu/moayoeats/env.env
+          source $ENV_FILE
+          
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t moayoeats -f ./infra/Dockerfile .
+          docker build -t moayoeats -f ./infra/Dockerfile --build-arg ENV_VAR_NAME=$ENV_VAR_NAME .
+          
           docker tag moayoeats:latest ${{ secrets.DOCKER_USER }}/moayoeats:latest
           docker push ${{ secrets.DOCKER_USER }}/moayoeats:latest
 
