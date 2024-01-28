@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 @Controller
 public class ChatController {
-// 테스트
+
     private final ChatMessageServiceImpl chatMessageService;
 
     @MessageMapping("/chats/join/{postId}")
@@ -31,7 +31,7 @@ public class ChatController {
         String content = "님이 입장하셨습니다.";
         String username = req.sender();
 
-        ChatMessage msg = chatMessageService.saveChatMessage(postId, username, content);
+        chatMessageService.saveChatMessage(postId, username, content);
 
         return new ChatMessageResponse(content, username);
     }
@@ -45,7 +45,7 @@ public class ChatController {
         String content = req.content();
         String username = req.sender();
 
-        ChatMessage msg = chatMessageService.saveChatMessage(postId, username, content);
+        chatMessageService.saveChatMessage(postId, username, content);
 
         return new ChatMessageResponse(content, username);
     }
