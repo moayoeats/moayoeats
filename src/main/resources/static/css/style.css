@@ -45,15 +45,6 @@ body {
   background-color: #FFFDE7;
 }
 
-.message-content {
-  margin-right: 5px; /* 내용과 시간 사이 간격 */
-}
-
-.message-time {
-  font-size: 0.8em;
-  color: #666;
-}
-
 #input-container {
   font-family: 'GmarketSansMedium';
   display: flex;

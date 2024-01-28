@@ -13,9 +13,4 @@ public interface ChatMessageService {
      */
     ChatMessage saveChatMessage(String postId, String sender, String content);
 
-    /**
-     * @param req
-     * @param msg
-     */
-    ChatMessageResponse createRes(ChatMessageRequest req, ChatMessage msg);
 }

@@ -33,7 +33,7 @@ public class ChatController {
 
         ChatMessage msg = chatMessageService.saveChatMessage(postId, username, content);
 
-        return chatMessageService.createRes(req, msg);
+        return new ChatMessageResponse(content, username);
     }
 
     @MessageMapping("/chats/message/{postId}")
@@ -47,7 +47,7 @@ public class ChatController {
 
         ChatMessage msg = chatMessageService.saveChatMessage(postId, username, content);
 
-        return chatMessageService.createRes(req, msg);
+        return new ChatMessageResponse(content, username);
     }
 
     @GetMapping("/chats/history/{postId}")
