@@ -13,6 +13,7 @@
   <script src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=sa2ld1fdvv"
           type="text/javascript"></script>
   <link href="/css/navbar.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/fonts.css">
   <link href="/css/readpost.css" rel="stylesheet">
   <link rel="icon" href="/images/logo.png">
 </head>
@@ -225,6 +226,8 @@
      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
       <input type="radio" class="btn-check" post = "${postId}" onclick="editmenus(this)" name="btnradio" id="editmenus" autocomplete="off">
       <label class="btn btn-outline-secondary" for="editmenus">메뉴 수정</label>
+      <input type="radio" class="btn-check" post = "${postId}" onclick="exit(this)" name="btnradio"  id="exit" autocomplete="off">
+      <label class="btn btn-outline-secondary" for="exit">나가기</label>
       <input type="radio" class="btn-check" post = "${postId}" onclick="chatRoom(this)" name="btnradio" id="chatRoom" autocomplete="off">
       <label class="btn btn-outline-secondary" for="chatRoom">채팅방</label>
     </div>

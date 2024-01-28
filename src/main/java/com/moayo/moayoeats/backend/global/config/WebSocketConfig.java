@@ -14,14 +14,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/sub");
-        config.setApplicationDestinationPrefixes("/pub");
+        config.enableSimpleBroker("/sub"); // topic
+        config.setApplicationDestinationPrefixes("/pub"); // app
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-            .setAllowedOrigins("http://ec2-15-165-159-112.ap-northeast-2.compute.amazonaws.com")
+            .setAllowedOrigins("http://ec2-15-165-159-112.ap-northeast-2.compute.amazonaws.com", "http://moayoeats.store")
             .withSockJS();
     }
 
