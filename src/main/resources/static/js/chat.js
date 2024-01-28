@@ -26,7 +26,7 @@ function connect(postId, username) {
       console.log('Connected: ' + frame);
       stompClient.subscribe('/sub/chats/room/' + postId, function (message) {
         var receivedMessage = JSON.parse(message.body);
-        showMessage(receivedMessage.sender, receivedMessage.content);
+        showMessage(receivedMessage.sender, receivedMessage.content, receivedMessage.createdAt);
       });
 
       var chatMessage = {
@@ -55,20 +55,27 @@ function sendMessage(message) {
       JSON.stringify(chatMessage));
 }
 
-function showMessage(username, message) {
+function showMessage(username, message, createdAt) {
   var messageArea = document.getElementById('chat-messages');
   var messageElement = document.createElement('div');
+  var contentElement = document.createElement('div');
+  var timeElement = document.createElement('div');
+
   messageElement.classList.add('chat-message');
+  contentElement.classList.add('message-content');
+  timeElement.classList.add('message-time');
 
   if (username === window.username) {
     messageElement.classList.add('my-message');
   }
 
-  if (message === "님이 입장하셨습니다.") {
-    messageElement.innerText = username + message;  // 입장 메시지
-  } else {
-    messageElement.innerText = username + " : " + message;  // 일반 메시지
-  }
+  var messageText = (message === "님이 입장하셨습니다.") ? username + message : username + " : " + message;
+
+  contentElement.innerText = messageText;
+  timeElement.innerText = createdAt;
+
+  messageElement.appendChild(contentElement);
+  messageElement.appendChild(timeElement);
 
   messageArea.appendChild(messageElement);
   messageArea.scrollTop = messageArea.scrollHeight;
@@ -80,7 +87,7 @@ function fetchAndShowHistory(postId, callback) {
     type: 'GET',
     success: function (messages) {
       messages.forEach(function (message) {
-        showMessage(message.sender, message.content);
+        showMessage(message.sender, message.content, message.createdAt);
       });
       if (callback) {
         callback();
