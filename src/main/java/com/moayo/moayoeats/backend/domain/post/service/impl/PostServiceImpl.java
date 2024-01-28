@@ -49,7 +49,6 @@ public class PostServiceImpl implements PostService {
     private final ApplicationEventPublisher publisher;
     private final ChatRoomService chatRoomService;
 
-
     @Override
     public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
@@ -311,11 +310,8 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
-            userPostRepository.deleteAll(userPosts);
-            postRepository.delete(post);
             return;
         }
-        userPostRepository.delete(userpost);
     }
 
     private void relateOrderWithMenus(User user, Post post, Order order) {
