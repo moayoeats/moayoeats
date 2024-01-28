@@ -40,7 +40,7 @@ public class PostController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
-    // 인증정보 없이 모든 글 조회하기
+    ///로그인 정보 없이 모든 글 조회하기
     @GetMapping("/readonly/posts/page/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsForAnyone(
         @PathVariable(name = "page") int page
@@ -59,7 +59,7 @@ public class PostController {
             postService.getPosts(page, userDetails.getUser()));
     }
 
-    //인증정보 없이 글 단독 조회
+    //로그인 정보 없이 글 단독 조회
     @GetMapping("/readonly/posts/{postId}")
     public ApiResponse<DetailedPostResponse> getPostTest(
         @PathVariable(name = "postId") Long postId
@@ -78,7 +78,7 @@ public class PostController {
             postService.getPost(postId, userDetails.getUser()));
     }
 
-    //인증정보 없이 글 카테고리별 조회
+    //로그인 정보 없이  글 카테고리별 조회
     @GetMapping("/readonly/posts/category/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategoryForAnyone(
         @PathVariable(name = "page") int page,
@@ -99,7 +99,7 @@ public class PostController {
             postService.getPostsByCategory(page, category, userDetails.getUser()));
     }
 
-    //인증정보 없이 글 검색하기
+    //로그인 정보 없이 글 검색하기
     @GetMapping("/readonly/posts/search/{page}")
     public ApiResponse<List<BriefPostResponse>> searchPostForAnyone(
         @PathVariable(name = "page") int page,
