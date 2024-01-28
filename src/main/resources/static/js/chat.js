@@ -1,4 +1,5 @@
 var stompClient = null;
+const host = 'http://' + window.location.host;
 
 document.getElementById('send-button').addEventListener('click', function () {
   sendMessageFromInput();
