@@ -11,6 +11,11 @@ public interface ChatMessageService {
      * @param sender  채팅 작성자
      * @param content 채팅 내용
      */
-    void saveChatMessage(String postId, String sender, String content);
+    ChatMessage saveChatMessage(String postId, String sender, String content);
 
+    /**
+     * @param req
+     * @param msg
+     */
+    ChatMessageResponse createRes(ChatMessageRequest req, ChatMessage msg);
 }
