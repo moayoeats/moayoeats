@@ -503,11 +503,6 @@ public class PostServiceImpl implements PostService {
                     pastDeadline.add(post);
                     userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
                 }
-            } else {//delete if the post has closed but one more day has passed
-                if (post.getDeadline().plusDays(1).isBefore(now)) {
-                    pastDeadline.add(post);
-                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
-                }
             }
         }
         postRepository.deleteAll(pastDeadline);
