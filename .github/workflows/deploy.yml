@@ -12,7 +12,8 @@ on:
   push: #테스트를 위한 push
     branches:
       - chore/docker-process #remote branch chore/... 로 push 할 시 수행
-
+      #      - main
+      #      - dev
       # 권한 설정
 permissions:
   contents: read
