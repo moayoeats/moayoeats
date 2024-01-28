@@ -1,11 +1,11 @@
 var stompClient = null;
 
-document.getElementById('send-button').addEventListener('click', function () {
+document.getElementById('send-button').addEventListener('click', function() {
   sendMessageFromInput();
 });
 
-document.addEventListener('keypress', function (event) {
-  if (event.key === 'Enter') {
+document.addEventListener('keypress', function(event) {
+  if(event.key === 'Enter') {
     sendMessageFromInput();
   }
 });
@@ -19,23 +19,18 @@ function sendMessageFromInput() {
 }
 
 function connect(postId, username) {
-  fetchAndShowHistory(postId, function () {
-    var socket = new SockJS('/ws');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-      console.log('Connected: ' + frame);
-      stompClient.subscribe('/sub/chats/room/' + postId, function (message) {
-        var receivedMessage = JSON.parse(message.body);
-        showMessage(receivedMessage.sender, receivedMessage.content);
-      });
-
-      var chatMessage = {
-        sender: username,
-        content: "님이 입장하셨습니다."
-      };
-      stompClient.send("/pub/chats/join/" + postId, {},
-          JSON.stringify(chatMessage));
+  var socket = new SockJS('/ws');
+  stompClient = Stomp.over(socket);
+  stompClient.connect({}, function (frame) {
+    console.log('Connected: ' + frame);
+    stompClient.subscribe('/sub/chats/room/' + postId, function (message) {
+      showMessage(JSON.parse(message.body).content);
     });
+    var chatMessage = {
+      sender: username,
+      content: username + "님이 입장하셨습니다."
+    };
+    stompClient.send("/pub/chats/join/" + postId, {}, JSON.stringify(chatMessage));
   });
 }
 
@@ -49,42 +44,17 @@ function disconnect() {
 function sendMessage(message) {
   var chatMessage = {
     sender: username,
-    content: message
+    content:  username + " : " + message
   };
-  stompClient.send("/pub/chats/message/" + postId, {},
-      JSON.stringify(chatMessage));
+  stompClient.send("/pub/chats/message/" + postId, {}, JSON.stringify(chatMessage));
 }
 
-function showMessage(username, message) {
+function showMessage(message) {
+  console.log('Received message:', message);  // 디버깅 코드 추가
   var messageArea = document.getElementById('chat-messages');
   var messageElement = document.createElement('div');
   messageElement.classList.add('chat-message');
-
-  if (username === window.username) {
-    messageElement.classList.add('my-message');
-  }
-
-  if (message === "님이 입장하셨습니다.") {
-    messageElement.innerText = username + message;  // 입장 메시지
-  } else {
-    messageElement.innerText = username + " : " + message;  // 일반 메시지
-  }
-
+  messageElement.innerText = message;
   messageArea.appendChild(messageElement);
   messageArea.scrollTop = messageArea.scrollHeight;
-}
-
-function fetchAndShowHistory(postId, callback) {
-  $.ajax({
-    url: `/chats/history/${postId}`,
-    type: 'GET',
-    success: function (messages) {
-      messages.forEach(function (message) {
-        showMessage(message.sender, message.content);
-      });
-      if (callback) {
-        callback();
-      }
-    }
-  });
 }

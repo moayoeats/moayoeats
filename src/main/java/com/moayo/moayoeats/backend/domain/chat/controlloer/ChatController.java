@@ -28,12 +28,9 @@ public class ChatController {
         @DestinationVariable(value = "postId") String postId,
         ChatMessageRequest req
     ) {
-        String content = "님이 입장하셨습니다.";
-        String username = req.sender();
+        String content = req.sender() + "님이 입장하셨습니다.";
 
-        chatMessageService.saveChatMessage(postId, username, content);
-
-        return new ChatMessageResponse(content, username);
+        return new ChatMessageResponse(content);
     }
 
     @MessageMapping("/chats/message/{postId}")
@@ -47,13 +44,7 @@ public class ChatController {
 
         chatMessageService.saveChatMessage(postId, username, content);
 
-        return new ChatMessageResponse(content, username);
-    }
-
-    @GetMapping("/chats/history/{postId}")
-    @ResponseBody
-    public List<ChatMessageResponse> getChatHistory(@PathVariable String postId) {
-        return chatMessageService.getChatHistory(postId);
+        return new ChatMessageResponse(content);
     }
 
 }

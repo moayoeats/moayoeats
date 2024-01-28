@@ -11,6 +11,6 @@ public interface ChatMessageService {
      * @param sender  채팅 작성자
      * @param content 채팅 내용
      */
-    ChatMessage saveChatMessage(String postId, String sender, String content);
+    void saveChatMessage(String postId, String sender, String content);
 
 }
