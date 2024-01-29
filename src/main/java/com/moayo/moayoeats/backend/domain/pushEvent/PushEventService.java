@@ -39,7 +39,7 @@ public class PushEventService {
                 sseEmitterReceiver.send(SseEmitter
                     .event()
                     .name("message")
-                    .data("참가요청이 들어왔습니다!"));
+                    .data("참가 요청 신청이 도착했습니다!"));
             } catch (IOException e) {
                 PushEventController.sseEmitters.remove(userId);
             }
