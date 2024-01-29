@@ -53,8 +53,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
-            .plusHours(postReq.deadlineHours());
+        LocalDateTime deadline = LocalDateTime.now().plusMinutes(getIntFromString(postReq.deadlineMins()))
+            .plusHours(getIntFromString(postReq.deadlineHours()));
 
         //get latitude and longitude from the coordinate
         String[] location = getAddress(postReq.address());
@@ -66,8 +66,8 @@ public class PostServiceImpl implements PostService {
             .latitude(latitude)
             .longitude(longitude)
             .store(postReq.store())
-            .deliveryCost(postReq.deliveryCost())
-            .minPrice(postReq.minPrice())
+            .deliveryCost(getIntFromString(postReq.deliveryCost()))
+            .minPrice(getIntFromString(postReq.minPrice()))
             .deadline(deadline)
             .category(postReq.category())
             .postStatus(PostStatusEnum.OPEN)
@@ -491,8 +491,12 @@ public class PostServiceImpl implements PostService {
         userPostRepository.delete(userPost);
     }
 
-    private void deleteParticipant(Long userId ,Post post){
-
+    private int getIntFromString(String s){
+        int i=0;
+        if(!s.equals("")){
+            i = Integer.parseInt(s);
+        }
+        return i;
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
