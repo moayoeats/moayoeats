@@ -49,7 +49,6 @@ public class PostServiceImpl implements PostService {
     private final ApplicationEventPublisher publisher;
     private final ChatRoomService chatRoomService;
 
-
     @Override
     public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
@@ -311,11 +310,8 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
-            userPostRepository.deleteAll(userPosts);
-            postRepository.delete(post);
             return;
         }
-        userPostRepository.delete(userpost);
     }
 
     private void relateOrderWithMenus(User user, Post post, Order order) {
@@ -504,11 +500,6 @@ public class PostServiceImpl implements PostService {
             //delete if the post hasn't been closed and past deadlinetb_user_post
             if (post.getPostStatus() == PostStatusEnum.OPEN) {
                 if (post.getDeadline().isBefore(now)) {
-                    pastDeadline.add(post);
-                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
-                }
-            } else {//delete if the post has closed but one more day has passed
-                if (post.getDeadline().plusDays(1).isBefore(now)) {
                     pastDeadline.add(post);
                     userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
                 }
