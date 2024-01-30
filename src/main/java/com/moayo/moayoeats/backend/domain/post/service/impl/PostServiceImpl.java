@@ -17,6 +17,7 @@ import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
 import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
+import com.moayo.moayoeats.backend.domain.post.repository.PostCustomRepository;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -48,6 +49,7 @@ public class PostServiceImpl implements PostService {
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
     private final ChatRoomService chatRoomService;
+    private final PostCustomRepository postCustomRepository;
 
     @Override
     public void createPost(PostRequest postReq, User user) {
@@ -94,7 +96,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> getPosts(int page, User user) {
-        List<Post> posts = findPage(page);
+        List<Post> posts;
+
+        if(user.getLatitude()==null||user.getLongitude()==null){
+            posts = findPage(page);
+        }else{
+            posts = postCustomRepository.getPostsByDistance(page,user);
+        }
         return postsToBriefResponses(posts);
     }
 
