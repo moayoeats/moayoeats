@@ -28,9 +28,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         QueryResults<Post> results = jpaQueryFactory
             .selectFrom(post)
-            .orderBy((post.latitude.subtract(viewer.getLatitude()))
-                .add(post.longitude.subtract(viewer.getLongitude()))
-                .desc())
+            .orderBy(((post.latitude.subtract(viewer.getLatitude())).multiply((post.latitude.subtract(viewer.getLatitude())))
+                .add((post.longitude.subtract(viewer.getLongitude())).multiply((post.longitude.subtract(viewer.getLongitude())))))
+                .asc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetchResults();
