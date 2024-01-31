@@ -60,4 +60,26 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         List<Post> closestPosts = results.getResults();
         return closestPosts;
     }
+
+    @Override
+    public List<Post> getPostsByDistanceAndKeyword(int page, User user, String keyword) {
+        QPost post = QPost.post;
+        int pagesize = 5;
+        int offset = page*pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory
+            .selectFrom(post)
+            .where(post.store.contains(keyword))
+            .orderBy(((post.latitude.subtract(user.getLatitude())).multiply(
+                    (post.latitude.subtract(user.getLatitude())))
+                .add((post.longitude.subtract(user.getLongitude())).multiply(
+                    (post.longitude.subtract(user.getLongitude())))))
+                .asc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        List<Post> closestPosts = results.getResults();
+        return closestPosts;
+    }
 }
