@@ -1,117 +1,124 @@
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
-      name="viewport">
-  <link crossorigin="anonymous"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        rel="stylesheet">
-  <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
-  <link href="./css/style.css" rel="stylesheet">
-  <link href="/css/navbar.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/fonts.css">
-  <link href="/css/index.css" rel="stylesheet">
-  <link rel="icon" href="/images/logo.png">
-  <title>글 전체페이지</title>
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <meta charset="UTF-8">
+    <meta
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+        name="viewport">
+    <link crossorigin="anonymous"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          rel="stylesheet">
+    <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
+    <link href="/css/navbar.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/fonts.css">
+    <link href="/css/index.css" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png">
+    <title>글 전체페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script th:src="@{/js/sse.js}"></script>
 </head>
 <header class="header-container">
-  <nav class="navbar bg-body-tertiary">
-    <div class="container">
-      <div class="brand-container">
-        <a class="navbar-brand" href="/">
-          <img alt="logo" height="60" src="/images/logo.png" width="60">
-        </a>
-      </div>
-      <div class="action-container">
-        <a class="navbar-brand" href="/notification">
-          <img alt="notification" height="30" src="/images/bell.png" width="30">
-        </a>
-        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
-          마이페이지
-        </button>
-      </div>
-    </div>
-  </nav>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container">
+            <div class="brand-container">
+                <a class="navbar-brand" href="/">
+                    <img alt="logo" height="60" src="/images/logo.png" width="60">
+                </a>
+            </div>
+            <div class="action-container">
+                <a class="navbar-brand" href="/notification">
+                    <img alt="notification" height="30" src="/images/bell.png" width="30">
+                </a>
+                <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
+                    마이페이지
+                </button>
+            </div>
+        </div>
+    </nav>
 </header>
 <body>
 <div class="post-pack" style="padding:10px;width:1000px; height:min-content; margin:auto">
-  <div id="category-select" style="margin:auto">
-    <p>카테고리 선택</p>
-    <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
-      <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
-             name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="all">전체</label>
-      <input autocomplete="off" category="BURGER" class="btn-check" id="burger" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="burger">버거</label>
-      <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
-             name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
-      <input autocomplete="off" category="KOREAN" class="btn-check" id="korean" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="korean">한식</label>
-      <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
-             name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="western">양식</label>
-      <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="asian">아시안</label>
-      <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="snack">분식</label>
-      <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
-             name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="japanese">일식</label>
-      <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
-             name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="chinese">중식</label>
-      <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
-             name="btnradio"
-             onclick="getByCategory(this)"
-             type="radio">
-      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+    <div id="category-select" style="margin:auto">
+        <p>카테고리 선택</p>
+        <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+            <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="all">전체</label>
+            <input autocomplete="off" category="BURGER" class="btn-check" id="burger"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="burger">버거</label>
+            <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+            <input autocomplete="off" category="KOREAN" class="btn-check" id="korean"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="korean">한식</label>
+            <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="western">양식</label>
+            <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="asian">아시안</label>
+            <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="snack">분식</label>
+            <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="japanese">일식</label>
+            <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="chinese">중식</label>
+            <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
+                   name="btnradio"
+                   onclick="getByCategory(this)"
+                   type="radio">
+            <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+        </div>
+        <div id="create-post-btn">
+            <button class="btn btn-secondary" onclick="createPost()" type="button">글 작성하기
+            </button>
+        </div>
+        <div class="input-group mb-3 search-pack">
+            <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
+                   id="keyword"
+                   placeholder="검색어"
+                   type="text">
+            <button class="btn btn-secondary" id="search" onclick="search()" type="button">검색
+            </button>
+        </div>
     </div>
-    <div id="create-post-btn">
-      <button class="btn btn-secondary" onclick="createPost()" type="button">글 작성하기
-      </button>
-    </div>
-    <div class="input-group mb-3 search-pack">
-      <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
-             id="keyword"
-             placeholder="검색어"
-             type="text">
-      <button class="btn btn-secondary" id="search" onclick="search()" type="button">검색
-      </button>
-    </div>
-  </div>
-  <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
-  <div id="pages" style="width:1000px; height:min-content; margin:auto">
+    <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
+    <div id="pages" style="width:1000px; height:min-content; margin:auto">
 
-  </div>
+    </div>
 </div>
 <script>
-
+  var userId = [[${userId}]];
 
   $(document).ready(function () {
     var index = 0;
     getData(index, 0);
+
+    if (userId !== undefined && userId !== null && userId !== '') {
+      connectSse();
+    }
   });
 
   function createPost() {
@@ -232,7 +239,7 @@
     }
   }
 
-function drawAllPosts(data) {
+  function drawAllPosts(data) {
     if (data.status === "OPEN") {
       data.forEach((post) => $('#posts').append(
               `
@@ -409,8 +416,8 @@ function drawAllPosts(data) {
     ten = ten + 1;
     drawSearchPages(ten);
   }
-  
-function getStatus(status) {
+
+  function getStatus(status) {
     if (status === "OPEN") {
       return "모집이 열려있습니다!"
     } else if (status === "CLOSED") {
