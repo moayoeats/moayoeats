@@ -54,7 +54,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(getIntFromString(postReq.deadlineMins()))
+        LocalDateTime deadline = LocalDateTime.now()
+            .plusMinutes(getIntFromString(postReq.deadlineMins()))
             .plusHours(getIntFromString(postReq.deadlineHours()));
 
         //get latitude and longitude from the coordinate
@@ -96,14 +97,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> getPosts(int page, User user) {
-        List<Post> posts;
-
-        if(user.getLatitude()==null||user.getLongitude()==null){
-            posts = findPage(page);
-        }else{
-            posts = postCustomRepository.getPostsByDistance(page,user);
-        }
-        return postsToBriefResponses(posts);
+        return getAllPosts(page, user);
     }
 
     @Override
@@ -166,13 +160,11 @@ public class PostServiceImpl implements PostService {
     public List<BriefPostResponse> getPostsByCategory(int page, String category, User user) {
         List<Post> posts;
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+
         if (category.equals(CategoryEnum.ALL.toString())) {
-            posts = findPage(page);
+            return getAllPosts(page, user);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10,
-                Sort.by("modifiedAt").descending());
-            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
-                .getContent();
+            posts = postCustomRepository.getPostsByDistanceAndCategory(page,user,categoryEnum);
         }
         return postsToBriefResponses(posts);
     }
@@ -283,7 +275,7 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(postIdReq.postId());
         UserPost userPost = getUserPostIfParticipant(user, post);
         checkIfOrdered(post.getPostStatus());
-        deleteParticipant(userPost,user,post);
+        deleteParticipant(userPost, user, post);
 
         List<UserPost> userposts = getUserPostsByPost(post);
         int sumPrice = getSumPrice(userposts, post);
@@ -318,7 +310,6 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
-            return;
         }
     }
 
@@ -483,24 +474,35 @@ public class PostServiceImpl implements PostService {
         return address.split(",");
     }
 
-    private void checkIfOrdered(PostStatusEnum status){
+    private void checkIfOrdered(PostStatusEnum status) {
         if (status == PostStatusEnum.ORDERED
             || status == PostStatusEnum.RECEIVED) {
             throw new GlobalException(PostErrorCode.CANNOT_AFTER_ORDERED);
         }
     }
 
-    private void deleteParticipant(UserPost userPost, User user, Post post){
+    private void deleteParticipant(UserPost userPost, User user, Post post) {
         menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
     }
 
-    private int getIntFromString(String s){
-        int i=0;
-        if(!s.equals("")){
+    private int getIntFromString(String s) {
+        int i = 0;
+        if (!s.equals("")) {
             i = Integer.parseInt(s);
         }
         return i;
+    }
+
+    private List<BriefPostResponse> getAllPosts(int page, User user) {
+        List<Post> posts;
+
+        if (user.getLatitude() == null || user.getLongitude() == null) {
+            posts = findPage(page);
+        } else {
+            posts = postCustomRepository.getPostsByDistance(page, user);
+        }
+        return postsToBriefResponses(posts);
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
