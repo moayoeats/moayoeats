@@ -21,6 +21,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         QPost post = QPost.post;
         int pagesize = 5;
+        int offset = page*pagesize;
 
         QueryResults<Post> results = jpaQueryFactory
             .selectFrom(post)
@@ -29,7 +30,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .add((post.longitude.subtract(user.getLongitude())).multiply(
                     (post.longitude.subtract(user.getLongitude())))))
                 .asc())
-            .offset(page)
+            .offset(offset)
             .limit(pagesize)
             .fetchResults();
 
@@ -42,6 +43,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         QPost post = QPost.post;
         int pagesize = 5;
+        int offset = page*pagesize;
 
         QueryResults<Post> results = jpaQueryFactory
             .selectFrom(post)
@@ -51,7 +53,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .add((post.longitude.subtract(user.getLongitude())).multiply(
                     (post.longitude.subtract(user.getLongitude())))))
                 .asc())
-            .offset(page*pagesize)
+            .offset(offset)
             .limit(pagesize)
             .fetchResults();
 
