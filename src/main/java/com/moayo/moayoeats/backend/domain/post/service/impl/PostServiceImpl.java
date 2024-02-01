@@ -17,6 +17,7 @@ import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
 import com.moayo.moayoeats.backend.domain.post.entity.Post;
 import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
+import com.moayo.moayoeats.backend.domain.post.repository.PostCustomRepository;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -48,13 +49,14 @@ public class PostServiceImpl implements PostService {
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
     private final ChatRoomService chatRoomService;
-
+    private final PostCustomRepository postCustomRepository;
 
     @Override
     public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now().plusMinutes(postReq.deadlineMins())
-            .plusHours(postReq.deadlineHours());
+        LocalDateTime deadline = LocalDateTime.now()
+            .plusMinutes(getIntFromString(postReq.deadlineMins()))
+            .plusHours(getIntFromString(postReq.deadlineHours()));
 
         //get latitude and longitude from the coordinate
         String[] location = getAddress(postReq.address());
@@ -66,8 +68,8 @@ public class PostServiceImpl implements PostService {
             .latitude(latitude)
             .longitude(longitude)
             .store(postReq.store())
-            .deliveryCost(postReq.deliveryCost())
-            .minPrice(postReq.minPrice())
+            .deliveryCost(getIntFromString(postReq.deliveryCost()))
+            .minPrice(getIntFromString(postReq.minPrice()))
             .deadline(deadline)
             .category(postReq.category())
             .postStatus(PostStatusEnum.OPEN)
@@ -95,8 +97,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> getPosts(int page, User user) {
-        List<Post> posts = findPage(page);
-        return postsToBriefResponses(posts);
+        return getAllPosts(page, user);
     }
 
     @Override
@@ -159,13 +160,11 @@ public class PostServiceImpl implements PostService {
     public List<BriefPostResponse> getPostsByCategory(int page, String category, User user) {
         List<Post> posts;
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+
         if (category.equals(CategoryEnum.ALL.toString())) {
-            posts = findPage(page);
+            return getAllPosts(page, user);
         } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10,
-                Sort.by("modifiedAt").descending());
-            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
-                .getContent();
+            posts = postCustomRepository.getPostsByDistanceAndCategory(page,user,categoryEnum);
         }
         return postsToBriefResponses(posts);
     }
@@ -180,9 +179,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> searchPost(int page, String keyword, User user) {
-        Pageable pageWithTenPosts = PageRequest.of(page, 10, Sort.by("modifiedAt").descending());
-        List<Post> posts = postRepository.findPostByStoreContaining(pageWithTenPosts, keyword)
-            .getContent();
+        List<Post> posts;
+
+        if (user.getLatitude() == null || user.getLongitude() == null) {
+            Pageable pageable = PageRequest.of(page, 5, Sort.by("modifiedAt").descending());
+            posts = postRepository.findPostByStoreContaining(pageable, keyword).getContent();
+        } else {
+            posts = postCustomRepository.getPostsByDistanceAndKeyword(page,user,keyword);
+        }
         return postsToBriefResponses(posts);
     }
 
@@ -276,7 +280,7 @@ public class PostServiceImpl implements PostService {
         Post post = getPostById(postIdReq.postId());
         UserPost userPost = getUserPostIfParticipant(user, post);
         checkIfOrdered(post.getPostStatus());
-        deleteParticipant(userPost,user,post);
+        deleteParticipant(userPost, user, post);
 
         List<UserPost> userposts = getUserPostsByPost(post);
         int sumPrice = getSumPrice(userposts, post);
@@ -311,11 +315,7 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
-            userPostRepository.deleteAll(userPosts);
-            postRepository.delete(post);
-            return;
         }
-        userPostRepository.delete(userpost);
     }
 
     private void relateOrderWithMenus(User user, Post post, Order order) {
@@ -479,20 +479,35 @@ public class PostServiceImpl implements PostService {
         return address.split(",");
     }
 
-    private void checkIfOrdered(PostStatusEnum status){
+    private void checkIfOrdered(PostStatusEnum status) {
         if (status == PostStatusEnum.ORDERED
             || status == PostStatusEnum.RECEIVED) {
             throw new GlobalException(PostErrorCode.CANNOT_AFTER_ORDERED);
         }
     }
 
-    private void deleteParticipant(UserPost userPost, User user, Post post){
+    private void deleteParticipant(UserPost userPost, User user, Post post) {
         menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
     }
 
-    private void deleteParticipant(Long userId ,Post post){
+    private int getIntFromString(String s) {
+        int i = 0;
+        if (!s.equals("")) {
+            i = Integer.parseInt(s);
+        }
+        return i;
+    }
 
+    private List<BriefPostResponse> getAllPosts(int page, User user) {
+        List<Post> posts;
+
+        if (user.getLatitude() == null || user.getLongitude() == null) {
+            posts = findPage(page);
+        } else {
+            posts = postCustomRepository.getPostsByDistance(page, user);
+        }
+        return postsToBriefResponses(posts);
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
@@ -504,11 +519,6 @@ public class PostServiceImpl implements PostService {
             //delete if the post hasn't been closed and past deadlinetb_user_post
             if (post.getPostStatus() == PostStatusEnum.OPEN) {
                 if (post.getDeadline().isBefore(now)) {
-                    pastDeadline.add(post);
-                    userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
-                }
-            } else {//delete if the post has closed but one more day has passed
-                if (post.getDeadline().plusDays(1).isBefore(now)) {
                     pastDeadline.add(post);
                     userPostRepository.deleteAll(userPostRepository.findAllByPost(post));
                 }

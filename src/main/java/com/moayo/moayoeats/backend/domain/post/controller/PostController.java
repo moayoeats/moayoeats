@@ -82,7 +82,7 @@ public class PostController {
     @GetMapping("/readonly/posts/category/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategoryForAnyone(
         @PathVariable(name = "page") int page,
-        @RequestParam @Category String category
+        @RequestParam(name="category") @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
             postService.getPostsByCategoryForAnyone(page, category));
@@ -93,7 +93,7 @@ public class PostController {
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page,
-        @RequestParam @Category String category
+        @RequestParam(name="category") @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
             postService.getPostsByCategory(page, category, userDetails.getUser()));
@@ -103,7 +103,7 @@ public class PostController {
     @GetMapping("/readonly/posts/search/{page}")
     public ApiResponse<List<BriefPostResponse>> searchPostForAnyone(
         @PathVariable(name = "page") int page,
-        @RequestParam String keyword
+        @RequestParam(name="keyword") String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
             postService.searchPostForAnyone(page, keyword));
@@ -114,7 +114,7 @@ public class PostController {
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page,
-        @RequestParam String keyword
+        @RequestParam(name="keyword") String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
             postService.searchPost(page, keyword, userDetails.getUser()));

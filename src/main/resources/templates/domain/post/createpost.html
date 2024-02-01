@@ -64,11 +64,11 @@
       <span class="input-group-text">원</span>
     </div>
     <div class="input-group">
-      <span class="input-group-text">마감시간</span>
+      <span class="input-group-text">모집마감시간</span>
       <input aria-label="시간" placeholder="시간" class="form-control" id="deadlineHours"
              type="text"><span class="input-group-text">시간</span>
       <input aria-label="분" placeholder="분" class="form-control" id="deadlineMins" type="text">
-      <span class="input-group-text">분</span>
+      <span class="input-group-text">분 후까지</span>
     </div>
     <div style="margin:auto">카테고리 선택
       <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
@@ -220,9 +220,11 @@
       }),
       success: function (response) {
         console.log('Success:', response);
-        alert(response.message);
         if (response.status === 201) {
+          alert(response.message);
           redirect();
+        }else{
+          alert(response.data);
         }
       },
       error: function (error, response) {
