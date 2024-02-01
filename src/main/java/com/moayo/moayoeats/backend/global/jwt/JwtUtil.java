@@ -21,7 +21,6 @@ import java.util.Base64;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -31,12 +30,15 @@ public class JwtUtil {
 
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER = "Refresh";
     // 사용자 권한 값의 KEY
     public static final String AUTHORIZATION_KEY = "auth";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    // 토큰 만료시간
+    // 토큰 만료시간 (1시간)
     private final long TOKEN_TIME = 60 * 60 * 1000L;
+    // refresh 토큰 만료시간 (2주)
+    public static final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L;
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -58,6 +60,19 @@ public class JwtUtil {
                 .setSubject(email) // 사용자 식별자값(ID)
                 .claim(AUTHORIZATION_KEY, email) // 사용자 권한
                 .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                .setIssuedAt(date) // 발급일
+                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                .compact();
+    }
+
+    // refresh 토큰 생성
+    public String createRefreshToken(String email) {
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+            Jwts.builder()
+                .setSubject(email)
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(date) // 발급일
                 .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                 .compact();
@@ -94,16 +109,16 @@ public class JwtUtil {
             return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            res.addHeader("Error-Msg", "401 : Invalid JWT signature");
+            //res.addHeader("Error-Msg", "401 : Invalid JWT signature");
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
-            res.addHeader("Error-Msg", "401 : Expired JWT token");
+            //res.addHeader("Error-Msg", "401 : Expired JWT token");
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            res.addHeader("Error-Msg", "401 : Unsupported JWT token");
+            //res.addHeader("Error-Msg", "401 : Unsupported JWT token");
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            res.addHeader("Error-Msg", "401 : JWT claims is empty");
+            //res.addHeader("Error-Msg", "401 : JWT claims is empty");
         }
         return false;
     }
