@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="/css/fonts.css">
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="icon" href="/images/logo.png">
+  <script th:src="@{/js/sse.js}"></script>
 
 </head>
 <header class="header-container">
@@ -74,11 +75,15 @@
   <div id="offers"></div>
 </div>
 <script>
-
   const host = 'http://' + window.location.host;
+  var userId = [[${userId}]];
 
   $(document).ready(function () {
     getOffer();
+
+    if (userId !== undefined && userId !== null && userId !== '') {
+      connectSse();
+    }
   });
 
   function getOffer() {
