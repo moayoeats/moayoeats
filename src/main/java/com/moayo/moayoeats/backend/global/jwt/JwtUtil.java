@@ -146,4 +146,23 @@ public class JwtUtil {
         }
         return null;
     }
+
+    public String getRefreshTokenFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies(); // 요청에서 쿠키값 가져오기
+
+        if (cookies != null) { // 쿠키 값이 있으면
+            for (Cookie cookie : cookies) {
+                if (cookie.getName()
+                    .equals(REFRESH_TOKEN_HEADER)) { // 쿠키 이름이 AUTHORIZATION_HEADER와 일치하는지 확인
+                    try {
+                        return URLDecoder.decode(cookie.getValue(),
+                            "UTF-8"); // 일치하면 쿠키 값을 UTF-8로 디코딩
+                    } catch (UnsupportedEncodingException e) {
+                        return e.getMessage();
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }
