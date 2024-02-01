@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-        name="viewport">
+  <meta
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+      name="viewport">
   <script crossorigin="anonymous"
           integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
           src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
   <script
       src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"
@@ -91,8 +92,6 @@
     })
 
     .done(function (res, status, xhr) {
-      //let errorStatus = xhr.getResponseHeader('error-msg').split(":");
-      //console.log(errorStatus + "Zzzzz");
       console.log(res);
       if (res.status === 200) {
         let nickname = res.data.nickname;
@@ -147,10 +146,6 @@
           });
         }
       }
-    })
-    .fail(function (res, xhr, error) {
-      console.log(res.status + " - " + res.message);
-      errorHandler(res, xhr, error);
     })
   }
 
