@@ -30,6 +30,14 @@ public interface PostService {
     List<BriefPostResponse> getPosts(int page, User user);
 
     /**
+     * @param page : 몇페이지 조회할건지 int pageNumber
+     * @param status : 조회할 글의 상태 PostStatusEnum
+     * @param user : 글 조회자
+     * @return
+     */
+    List<BriefPostResponse> getStatusPosts(int page, String status, User user);
+
+    /**
      * @param postId : 글 조회에 필요한 postId
      * @return
      */
