@@ -13,7 +13,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -54,8 +53,8 @@ public class JwtUtil {
 
     // 토큰 생성
     public String createToken(String email) {
-        Date date = new Date();
 
+        Date date = new Date();
         return BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(email) // 사용자 식별자값(ID)
@@ -68,8 +67,8 @@ public class JwtUtil {
 
     // refresh 토큰 생성
     public String createRefreshToken(String email) {
-        Date date = new Date();
 
+        Date date = new Date();
         return BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(email)
@@ -79,28 +78,18 @@ public class JwtUtil {
                 .compact();
     }
 
-    public void addJwtToCookie(String token, HttpServletResponse response) {
-        try {
-            // token을 utf-8형식으로 URL 인코딩하여 +를 %20으로 대체해줌.
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
-
-            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
-            cookie.setPath("/"); // 쿠키를 반환할 경로 설정
-
-            response.addHeader("expires-in", String.valueOf(TOKEN_TIME / 1000));
-            response.addCookie(cookie); // 응답 데이터에 쿠키 추가
-        } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    public void addRefreshJwtToCookie(String token, HttpServletResponse response) {
+    public void addJwtToCookie(
+        String token,
+        HttpServletResponse response,
+        String headerName
+    ) {
 
         try {
             // token을 utf-8형식으로 URL 인코딩하여 +를 %20으로 대체해줌.
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+            token = URLEncoder.encode(token, "utf-8")
+                .replaceAll("\\+", "%20");
 
-            Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, token); // 쿠키 생성
+            Cookie cookie = new Cookie(headerName, token); // 쿠키 생성
             cookie.setPath("/"); // 쿠키를 반환할 경로 설정
             response.addCookie(cookie); // 응답 데이터에 쿠키 추가
         } catch (UnsupportedEncodingException e) {
@@ -109,6 +98,7 @@ public class JwtUtil {
     }
 
     public String substringToken(String tokenValue) {
+
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
@@ -117,7 +107,7 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public boolean validateToken(String token, HttpServletResponse res) throws IOException {
+    public boolean validateToken(String token) {
 
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -136,6 +126,7 @@ public class JwtUtil {
 
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
+
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (JwtException e) {
@@ -143,35 +134,15 @@ public class JwtUtil {
         }
     }
 
-    public String getTokenFromRequest(HttpServletRequest request) {
+    public String getTokenFromRequest(HttpServletRequest request, String headerName) {
+
         Cookie[] cookies = request.getCookies(); // 요청에서 쿠키값 가져오기
 
         if (cookies != null) { // 쿠키 값이 있으면
             for (Cookie cookie : cookies) {
-                if (cookie.getName()
-                    .equals(AUTHORIZATION_HEADER)) { // 쿠키 이름이 AUTHORIZATION_HEADER와 일치하는지 확인
-                    try {
-                        return URLDecoder.decode(cookie.getValue(),
-                            "UTF-8"); // 일치하면 쿠키 값을 UTF-8로 디코딩
-                    } catch (UnsupportedEncodingException e) {
-                        return e.getMessage();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public String getRefreshTokenFromRequest(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies(); // 요청에서 쿠키값 가져오기
-
-        if (cookies != null) { // 쿠키 값이 있으면
-            for (Cookie cookie : cookies) {
-                if (cookie.getName()
-                    .equals(REFRESH_TOKEN_HEADER)) { // 쿠키 이름이 AUTHORIZATION_HEADER와 일치하는지 확인
-                    try {
-                        return URLDecoder.decode(cookie.getValue(),
-                            "UTF-8"); // 일치하면 쿠키 값을 UTF-8로 디코딩
+                if (cookie.getName().equals(headerName)) { // 쿠키 이름 일치하는지 확인
+                    try { // 일치하면 쿠키 값을 UTF-8로 디코딩
+                        return URLDecoder.decode(cookie.getValue(), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         return e.getMessage();
                     }

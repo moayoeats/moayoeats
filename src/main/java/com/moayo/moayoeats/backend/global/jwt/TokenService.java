@@ -1,5 +1,7 @@
 package com.moayo.moayoeats.backend.global.jwt;
 
+import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.AUTHORIZATION_HEADER;
+import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.REFRESH_TOKEN_HEADER;
 import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.REFRESH_TOKEN_TIME;
 
 import io.jsonwebtoken.Claims;
@@ -24,43 +26,61 @@ public class TokenService {
         HttpServletResponse res
     ) throws IOException {
 
-        String accessToken = jwtUtil.getTokenFromRequest(req);
-        String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
+        String accessToken = jwtUtil.getTokenFromRequest(req, AUTHORIZATION_HEADER);
+        String refreshToken = jwtUtil.getTokenFromRequest(req, REFRESH_TOKEN_HEADER);
 
         if (StringUtils.hasText(accessToken) && StringUtils.hasText(refreshToken)) {
             accessToken = jwtUtil.substringToken(accessToken);
             refreshToken = jwtUtil.substringToken(refreshToken);
 
-            if (jwtUtil.validateToken(accessToken, res)) { // accessToken 유효
-                Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
+            accessTokenIsValid(accessToken, refreshToken, res);
+            return accessTokenIsInvalid(accessToken, refreshToken, res);
+        }
+        return "";
+    }
 
-                try {
-                    if (info == null) {
-                        info = jwtUtil.getUserInfoFromToken(accessToken);
-                    }
-                    String email = info.getSubject();
-                    if (getRefreshToken(email) == null) { // refreshToken 만료시
-                        String newRefreshToken = jwtUtil.createRefreshToken(
-                            email); // refreshToken 생성
-                        saveRefreshToken(email, newRefreshToken);
-                        jwtUtil.addRefreshJwtToCookie(newRefreshToken, res);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException("refresh token 생성 실패", e);
-                }
-            } else { // accessToken 만료
-                if (jwtUtil.validateToken(refreshToken, res)) { // refreshToken 유효
-                    Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
-                    String email = info.getSubject();
-                    String newAccessToken = jwtUtil.createToken(email);
+    private void accessTokenIsValid(
+        String accessToken,
+        String refreshToken,
+        HttpServletResponse res
+    ) throws IOException { // accessToken 유효할 경우
 
-                    if (!newAccessToken.equals("")) {
-                        jwtUtil.addJwtToCookie(newAccessToken, res);
-                        return newAccessToken;
-                    }
+        if (jwtUtil.validateToken(accessToken)) {
+            Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
+            try {
+                if (info == null) {
+                    info = jwtUtil.getUserInfoFromToken(accessToken);
                 }
-                res.sendRedirect("/login");
+                String email = info.getSubject();
+                if (getRefreshToken(email) == null) { // refreshToken 만료시
+                    String newRefreshToken = jwtUtil.createRefreshToken(email); // refreshToken 생성
+                    saveRefreshToken(email, newRefreshToken);
+                    jwtUtil.addJwtToCookie(newRefreshToken, res, REFRESH_TOKEN_HEADER);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("refresh token 생성 실패", e);
             }
+        }
+    }
+
+    private String accessTokenIsInvalid(
+        String accessToken,
+        String refreshToken,
+        HttpServletResponse res
+    ) throws IOException { // accessToken 만료시
+
+        if (!jwtUtil.validateToken(accessToken)) {
+            if (jwtUtil.validateToken(refreshToken)) { // refreshToken 유효
+                Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
+                String email = info.getSubject();
+                String newAccessToken = jwtUtil.createToken(email);
+
+                if (!newAccessToken.equals("")) {
+                    jwtUtil.addJwtToCookie(newAccessToken, res, AUTHORIZATION_HEADER);
+                    return newAccessToken;
+                }
+            }
+            res.sendRedirect("/login"); // 두 토큰 모두 만료
         }
         return "";
     }

@@ -1,5 +1,7 @@
 package com.moayo.moayoeats.backend.global.security;
 
+import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.AUTHORIZATION_HEADER;
+
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
 import com.moayo.moayoeats.backend.global.jwt.TokenService;
 import io.jsonwebtoken.Claims;
@@ -40,7 +42,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String tokenValue = jwtUtil.getTokenFromRequest(req);
+        String tokenValue = jwtUtil.getTokenFromRequest(req, AUTHORIZATION_HEADER);
         String url = req.getRequestURI();
 
         String token = refreshTokenService.relatedIssuanceOfTokens(req, res);
@@ -51,7 +53,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenValue)) {
             tokenValue = jwtUtil.substringToken(tokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue, res)) {
+            if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
                 return;
             }

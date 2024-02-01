@@ -1,5 +1,6 @@
 package com.moayo.moayoeats.backend.domain.user.controller;
 
+import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.AUTHORIZATION_HEADER;
 import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.REFRESH_TOKEN_HEADER;
 
 import com.moayo.moayoeats.backend.domain.user.dto.request.AddressUpdateRequest;
@@ -59,7 +60,7 @@ public class UserController {
         String accessToken = loginRes.accessToken();
         String refreshToken = loginRes.refreshToken();
 
-        jwtUtil.addJwtToCookie(accessToken, res);
+        jwtUtil.addJwtToCookie(accessToken, res, AUTHORIZATION_HEADER);
         res.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
 
         return new ApiResponse<>(HttpStatus.OK.value(), "로그인을 성공했습니다.", loginRes);
