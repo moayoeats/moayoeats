@@ -227,21 +227,6 @@
   }
 
   function drawAllPosts(data) {
-    if (post.status === "OPEN") {
-      data.forEach((post) => $('#posts').append(
-              `
-              <div class="post" post = "${post.id}" onclick="sendData(this)">
-                <div> <span style="font-weight: bold">작성자   </span> ${post.author} </div>
-                <div> <span style="font-weight: bold">가게   </span>${post.store}</div>
-                <div> <span style="font-weight: bold">모인 금액   </span>${post.sumPrice} / ${post.minPrice}</div>
-                <div>${post.deadline}<span style="font-weight: bold"> 후에 마감됩니다!</span></div>
-                <div><span style="font-weight: bold">${post.status}   </span>${getStatus(
-                  post.status)}</div>
-              </div>
-            `
-          )
-      )
-    } else {
       data.forEach((post) => $('#posts').append(
               `
               <div class="post" post = "${post.id}" onclick="sendData(this)">
@@ -254,7 +239,6 @@
             `
           )
       )
-    }
   }
 
   function removeAllPages() {
