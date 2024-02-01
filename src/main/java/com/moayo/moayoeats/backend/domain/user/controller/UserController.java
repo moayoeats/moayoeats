@@ -56,15 +56,11 @@ public class UserController {
     ) {
 
         LoginResponse loginRes = userService.login(loginReq);
-//        res.setHeader(JwtUtil.AUTHORIZATION_HEADER, token);
-
         String accessToken = loginRes.accessToken();
         String refreshToken = loginRes.refreshToken();
 
         jwtUtil.addJwtToCookie(accessToken, res);
-        //jwtUtil.addJwtToCookie(refreshToken, res, REFRESH_TOKEN_HEADER);
         res.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
-        //res.addHeader("refresh-expires-in", String.valueOf(REFRESH_TOKEN_TIME / 1000));
 
         return new ApiResponse<>(HttpStatus.OK.value(), "로그인을 성공했습니다.", loginRes);
     }

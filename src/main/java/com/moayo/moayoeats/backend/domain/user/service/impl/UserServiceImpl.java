@@ -60,7 +60,6 @@ public class UserServiceImpl implements UserService {
 
         String accessToken = jwtUtil.createToken(email);
         String refreshToken = jwtUtil.createRefreshToken(email);
-
         tokenService.saveRefreshToken(email, refreshToken);
 
         return new LoginResponse(accessToken, refreshToken);

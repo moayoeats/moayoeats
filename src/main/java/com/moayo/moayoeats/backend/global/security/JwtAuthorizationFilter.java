@@ -34,15 +34,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
-        FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest req,
+        HttpServletResponse res,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String tokenValue = jwtUtil.getTokenFromRequest(req);
-//        String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
         String url = req.getRequestURI();
-
-        //checkRefreshTokenAndGet(req, tokenValue);
-        //jwtUtil.accessTokenIfNecessary(req, res);
 
         String token = refreshTokenService.relatedIssuanceOfTokens(req, res);
         if (!token.equals("")) {
@@ -68,25 +67,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(req, res);
     }
-
-//    private void checkRefreshTokenAndGet(HttpServletRequest req, String tokenValue) {
-//        String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
-//
-//        if(StringUtils.hasText(refreshToken) && !StringUtils.hasText(tokenValue)) {
-//            jwtUtil.substringToken(refreshToken);
-//
-//            Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
-//            try {
-//                String email = info.getSubject();
-//                if(refreshTokenService.getRefreshToken(email) == null)
-//                    return;
-//                jwtUtil.createToken(email);
-//            } catch (Exception e) {
-//                log.error(e.getMessage());
-//                return;
-//            }
-//        }
-//    }
 
     // 인증 처리
     public void setAuthentication(String username) {

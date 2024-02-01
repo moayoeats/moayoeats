@@ -58,9 +58,8 @@ public class TokenService {
                         jwtUtil.addJwtToCookie(newAccessToken, res);
                         return newAccessToken;
                     }
-                } /*else { */// 만료
+                }
                 res.sendRedirect("/login");
-//                }
             }
         }
         return "";
