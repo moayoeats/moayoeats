@@ -39,7 +39,11 @@
 <body>
 <div class="post-pack" style="padding:10px;width:1000px; height:min-content; margin:auto">
   <div id="category-select" style="margin:auto">
-    <p>카테고리 선택</p>
+    <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+      <input type="checkbox" autocomplete="off" class="btn-check" id="open"
+             status = "OPEN" onclick="setStatus(this)">
+      <label class="btn btn-outline-secondary" for="open">모집중인 글만 보기</label>
+    </div>
     <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
       <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
              name="btnradio"
@@ -108,10 +112,17 @@
 </div>
 <script>
 
+  const host = 'http://' + window.location.host;
+  var status;
 
   $(document).ready(function () {
     var index = 0;
+    status = "OPEN";
     getData(index, 0);
+
+    if (userId !== undefined && userId !== null && userId !== '') {
+      connectSse();
+    }
   });
 
   function createPost() {
@@ -127,23 +138,44 @@
 
   function getData(page, ten) {
     var page = page;
-    $.ajax({
-      type: 'GET',
-      url: `/api/v1/posts/page/${page}`,
-      dataType: "json",
-      contentType: 'application/json',
-      data: {},
-      success: function (response) {
-        console.log('Success:', response);
+    var statusEnum = status;
+    if(statusEnum==="ALL"){
+      $.ajax({
+        type: 'GET',
+        url: `/api/v1/posts/page/${page}`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: {},
+        success: function (response) {
+          console.log('Success:', response);
 
-        removeAllPosts();
-        drawAllPosts(response.data);
-        drawPages(ten);
-      },
-      error: function (error) {
-        console.error('Error:', error);
-      }
-    });
+          removeAllPosts();
+          drawAllPosts(response.data);
+          drawPages(ten);
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
+      });
+    }else{
+      $.ajax({
+        type: 'GET',
+        url: `/api/v1/posts/status/${statusEnum}/page/${page}`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: {},
+        success: function (response) {
+          console.log('Success:', response);
+
+          removeAllPosts();
+          drawAllPosts(response.data);
+          drawPages(ten);
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
+      });
+    }
   }
 
   function sendData(button) {
@@ -420,6 +452,15 @@ function getStatus(status) {
     } else if (status === "RECEIVED") {
       return "주문이 모두 수령된 게시글입니다!"
     }
+  }
+
+  function setStatus(button){
+    if($(button).prop("checked")){
+      status = "OPEN";
+    }else{
+      status = "ALL";
+    }
+    getData(0,0);
   }
 
 </script>
