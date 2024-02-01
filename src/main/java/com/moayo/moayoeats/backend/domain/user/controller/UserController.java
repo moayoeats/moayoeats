@@ -1,11 +1,15 @@
 package com.moayo.moayoeats.backend.domain.user.controller;
 
+import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.AUTHORIZATION_HEADER;
+import static com.moayo.moayoeats.backend.global.jwt.JwtUtil.REFRESH_TOKEN_HEADER;
+
 import com.moayo.moayoeats.backend.domain.user.dto.request.AddressUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.AddressResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.LoginResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -47,17 +51,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<Void> login(
+    public ApiResponse<LoginResponse> login(
         @RequestBody LoginRequest loginReq,
         HttpServletResponse res
     ) {
 
-        String token = userService.login(loginReq);
-//        res.setHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        LoginResponse loginRes = userService.login(loginReq);
+        String accessToken = loginRes.accessToken();
+        String refreshToken = loginRes.refreshToken();
 
-        jwtUtil.addJwtToCookie(token, res);
+        jwtUtil.addJwtToCookie(accessToken, res, AUTHORIZATION_HEADER);
+        res.setHeader(REFRESH_TOKEN_HEADER, refreshToken);
 
-        return new ApiResponse<>(HttpStatus.OK.value(), "로그인을 성공했습니다.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "로그인을 성공했습니다.", loginRes);
     }
 
 

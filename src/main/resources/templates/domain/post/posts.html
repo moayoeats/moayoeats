@@ -16,25 +16,27 @@
   <link rel="icon" href="/images/logo.png">
   <title>글 전체페이지</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+  <script th:src="@{/js/sse.js}"></script>
 </head>
 <header class="header-container">
-  <nav class="navbar bg-body-tertiary">
-    <div class="container">
-      <div class="brand-container">
-        <a class="navbar-brand" href="/">
-          <img alt="logo" height="60" src="/images/logo.png" width="60">
-        </a>
-      </div>
-      <div class="action-container">
-        <a class="navbar-brand" href="/notification">
-          <img alt="notification" height="30" src="/images/bell.png" width="30">
-        </a>
-        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
-          마이페이지
-        </button>
-      </div>
-    </div>
-  </nav>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container">
+            <div class="brand-container">
+                <a class="navbar-brand" href="/">
+                    <img alt="logo" height="60" src="/images/logo.png" width="60">
+                </a>
+            </div>
+            <div class="action-container">
+                <a class="navbar-brand" href="/notification">
+                    <img alt="notification" height="30" src="/images/bell.png" width="30">
+                </a>
+                <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
+                    마이페이지
+                </button>
+            </div>
+        </div>
+    </nav>
 </header>
 <body>
 <div class="post-pack" style="padding:10px;width:1000px; height:min-content; margin:auto">
@@ -114,6 +116,8 @@
 
   const host = 'http://' + window.location.host;
   var status;
+  var userId = [[${userId}]];
+
 
   $(document).ready(function () {
     var index = 0;
@@ -264,7 +268,7 @@
     }
   }
 
-function drawAllPosts(data) {
+  function drawAllPosts(data) {
     if (data.status === "OPEN") {
       data.forEach((post) => $('#posts').append(
               `
@@ -441,8 +445,8 @@ function drawAllPosts(data) {
     ten = ten + 1;
     drawSearchPages(ten);
   }
-  
-function getStatus(status) {
+
+  function getStatus(status) {
     if (status === "OPEN") {
       return "모집이 열려있습니다!"
     } else if (status === "CLOSED") {

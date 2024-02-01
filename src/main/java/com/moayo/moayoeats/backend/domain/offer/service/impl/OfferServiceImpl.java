@@ -1,7 +1,6 @@
 package com.moayo.moayoeats.backend.domain.offer.service.impl;
 
 import com.moayo.moayoeats.backend.domain.menu.dto.response.MenuResponse;
-import com.moayo.moayoeats.backend.domain.menu.entity.Menu;
 import com.moayo.moayoeats.backend.domain.menu.repository.MenuRepository;
 import com.moayo.moayoeats.backend.domain.notification.entity.NotificationType;
 import com.moayo.moayoeats.backend.domain.notification.event.Event;
@@ -17,6 +16,7 @@ import com.moayo.moayoeats.backend.domain.post.entity.Post;
 import com.moayo.moayoeats.backend.domain.post.entity.PostStatusEnum;
 import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
+import com.moayo.moayoeats.backend.domain.pushEvent.PushEventService;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -25,10 +25,7 @@ import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
 import com.moayo.moayoeats.backend.domain.userpost.exception.UserPostErrorCode;
 import com.moayo.moayoeats.backend.domain.userpost.repository.UserPostRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -43,6 +40,7 @@ public class OfferServiceImpl implements OfferService {
     private final UserPostRepository userPostRepository;
     private final MenuRepository menuRepository;
     private final ApplicationEventPublisher publisher;
+    private final PushEventService pushEventService;
 
     public void applyParticipation(OfferRelatedPostRequest offerRelatedPostReq, User user) {
         Long userId = user.getId();
@@ -62,6 +60,7 @@ public class OfferServiceImpl implements OfferService {
         //방장에게 알림
         User targetHost = userPostRepository.findByPostIdAndRole(postId, UserPostRole.HOST);
         publisher.publishEvent(new Event(targetHost, NotificationType.PARTICIPANT_JOIN_REQUEST));
+        pushEventService.notifyApplyParticipation(targetHost.getId());
 
         offerRepository.save(offer);
     }
@@ -88,7 +87,7 @@ public class OfferServiceImpl implements OfferService {
             offers = offers.stream()
                 .filter(offer -> offer.getUser().getId().equals(user.getId())).toList();
         }
-        offerResponses = getOfferResponsesByOffers(offers,post);
+        offerResponses = getOfferResponsesByOffers(offers, post);
         return new OfferRoleResponse(offerResponses, role);
     }
 
