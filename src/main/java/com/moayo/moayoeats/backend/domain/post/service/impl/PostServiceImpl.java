@@ -101,6 +101,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<BriefPostResponse> getStatusPosts(int page, String status, User user) {
+        PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
+        return getAllStatusPosts(page,statusEnum,user);
+    }
+
+    @Override
     public DetailedPostResponse getPostForAnyone(Long postId) {
         Post post = getPostById(postId);
         List<UserPost> userPosts = getUserPostsByPost(post);
@@ -507,6 +513,11 @@ public class PostServiceImpl implements PostService {
         } else {
             posts = postCustomRepository.getPostsByDistance(page, user);
         }
+        return postsToBriefResponses(posts);
+    }
+
+    private List<BriefPostResponse> getAllStatusPosts(int page, PostStatusEnum status, User user) {
+        List<Post> posts = postCustomRepository.getPostsByStatusOrderByDistance(page, status, user);
         return postsToBriefResponses(posts);
     }
 

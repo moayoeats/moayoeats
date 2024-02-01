@@ -5,6 +5,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.request.PostRequest;
 import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
+import com.moayo.moayoeats.backend.domain.post.exception.validator.PostStatus;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -59,6 +60,17 @@ public class PostController {
             postService.getPosts(page, userDetails.getUser()));
     }
 
+    //모든 글 상태별 조회하기
+    @GetMapping("/posts/status/{status}/page/{page}")
+    public ApiResponse<List<BriefPostResponse>> getStatusPosts(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page,
+        @PathVariable(name = "status") @PostStatus String status
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 상태별 조회에 성공했습니다.",
+            postService.getStatusPosts(page, status, userDetails.getUser()));
+    }
+
     //로그인 정보 없이 글 단독 조회
     @GetMapping("/readonly/posts/{postId}")
     public ApiResponse<DetailedPostResponse> getPostTest(
@@ -82,7 +94,7 @@ public class PostController {
     @GetMapping("/readonly/posts/category/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategoryForAnyone(
         @PathVariable(name = "page") int page,
-        @RequestParam(name="category") @Category String category
+        @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
             postService.getPostsByCategoryForAnyone(page, category));
@@ -93,7 +105,7 @@ public class PostController {
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page,
-        @RequestParam(name="category") @Category String category
+        @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
             postService.getPostsByCategory(page, category, userDetails.getUser()));
@@ -103,7 +115,7 @@ public class PostController {
     @GetMapping("/readonly/posts/search/{page}")
     public ApiResponse<List<BriefPostResponse>> searchPostForAnyone(
         @PathVariable(name = "page") int page,
-        @RequestParam(name="keyword") String keyword
+        @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
             postService.searchPostForAnyone(page, keyword));
@@ -114,7 +126,7 @@ public class PostController {
     public ApiResponse<List<BriefPostResponse>> searchPost(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page,
-        @RequestParam(name="keyword") String keyword
+        @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
             postService.searchPost(page, keyword, userDetails.getUser()));

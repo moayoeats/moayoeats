@@ -40,81 +40,88 @@
 </header>
 <body>
 <div class="post-pack" style="padding:10px;width:1000px; height:min-content; margin:auto">
-    <div id="category-select" style="margin:auto">
-        <p>카테고리 선택</p>
-        <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
-            <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="all">전체</label>
-            <input autocomplete="off" category="BURGER" class="btn-check" id="burger"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="burger">버거</label>
-            <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="chicken">치킨</label>
-            <input autocomplete="off" category="KOREAN" class="btn-check" id="korean"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="korean">한식</label>
-            <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="western">양식</label>
-            <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="asian">아시안</label>
-            <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="snack">분식</label>
-            <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="japanese">일식</label>
-            <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="chinese">중식</label>
-            <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
-                   name="btnradio"
-                   onclick="getByCategory(this)"
-                   type="radio">
-            <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
-        </div>
-        <div id="create-post-btn">
-            <button class="btn btn-secondary" onclick="createPost()" type="button">글 작성하기
-            </button>
-        </div>
-        <div class="input-group mb-3 search-pack">
-            <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
-                   id="keyword"
-                   placeholder="검색어"
-                   type="text">
-            <button class="btn btn-secondary" id="search" onclick="search()" type="button">검색
-            </button>
-        </div>
+  <div id="category-select" style="margin:auto">
+    <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+      <input type="checkbox" autocomplete="off" class="btn-check" id="open"
+             status = "OPEN" onclick="setStatus(this)">
+      <label class="btn btn-outline-secondary" for="open">모집중인 글만 보기</label>
     </div>
-    <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
-    <div id="pages" style="width:1000px; height:min-content; margin:auto">
+    <div aria-label="Basic radio toggle button group" class="btn-group" role="group">
+      <input autocomplete="off" category="ALL" checked class="btn-check" id="all"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="all">전체</label>
+      <input autocomplete="off" category="BURGER" class="btn-check" id="burger" name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="burger">버거</label>
+      <input autocomplete="off" category="CHICKEN" class="btn-check" id="chicken"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="chicken">치킨</label>
+      <input autocomplete="off" category="KOREAN" class="btn-check" id="korean" name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="korean">한식</label>
+      <input autocomplete="off" category="WESTERN" class="btn-check" id="western"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="western">양식</label>
+      <input autocomplete="off" category="ASIAN" class="btn-check" id="asian" name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="asian">아시안</label>
+      <input autocomplete="off" category="SNACK" class="btn-check" id="snack" name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="snack">분식</label>
+      <input autocomplete="off" category="JAPANESE" class="btn-check" id="japanese"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="japanese">일식</label>
+      <input autocomplete="off" category="CHINESE" class="btn-check" id="chinese"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="chinese">중식</label>
+      <input autocomplete="off" category="LUNCHBOX" class="btn-check" id="lunchbox"
+             name="btnradio"
+             onclick="getByCategory(this)"
+             type="radio">
+      <label class="btn btn-outline-secondary" for="lunchbox">도시락</label>
+    </div>
+    <div id="create-post-btn">
+      <button class="btn btn-secondary" onclick="createPost()" type="button">글 작성하기
+      </button>
+    </div>
+    <div class="input-group mb-3 search-pack">
+      <input aria-describedby="button-addon2" aria-label="keyword" class="form-control"
+             id="keyword"
+             placeholder="검색어"
+             type="text">
+      <button class="btn btn-secondary" id="search" onclick="search()" type="button">검색
+      </button>
+    </div>
+  </div>
+  <div id="posts" style="width:1000px; height:min-content; margin:auto"></div>
+  <div id="pages" style="width:1000px; height:min-content; margin:auto">
 
-    </div>
+  </div>
 </div>
 <script>
+
+  const host = 'http://' + window.location.host;
+  var status;
   var userId = [[${userId}]];
+
 
   $(document).ready(function () {
     var index = 0;
+    status = "OPEN";
     getData(index, 0);
 
     if (userId !== undefined && userId !== null && userId !== '') {
@@ -135,23 +142,44 @@
 
   function getData(page, ten) {
     var page = page;
-    $.ajax({
-      type: 'GET',
-      url: `/api/v1/posts/page/${page}`,
-      dataType: "json",
-      contentType: 'application/json',
-      data: {},
-      success: function (response) {
-        console.log('Success:', response);
+    var statusEnum = status;
+    if(statusEnum==="ALL"){
+      $.ajax({
+        type: 'GET',
+        url: `/api/v1/posts/page/${page}`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: {},
+        success: function (response) {
+          console.log('Success:', response);
 
-        removeAllPosts();
-        drawAllPosts(response.data);
-        drawPages(ten);
-      },
-      error: function (error) {
-        console.error('Error:', error);
-      }
-    });
+          removeAllPosts();
+          drawAllPosts(response.data);
+          drawPages(ten);
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
+      });
+    }else{
+      $.ajax({
+        type: 'GET',
+        url: `/api/v1/posts/status/${statusEnum}/page/${page}`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: {},
+        success: function (response) {
+          console.log('Success:', response);
+
+          removeAllPosts();
+          drawAllPosts(response.data);
+          drawPages(ten);
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
+      });
+    }
   }
 
   function sendData(button) {
@@ -428,6 +456,15 @@
     } else if (status === "RECEIVED") {
       return "주문이 모두 수령된 게시글입니다!"
     }
+  }
+
+  function setStatus(button){
+    if($(button).prop("checked")){
+      status = "OPEN";
+    }else{
+      status = "ALL";
+    }
+    getData(0,0);
   }
 
 </script>
