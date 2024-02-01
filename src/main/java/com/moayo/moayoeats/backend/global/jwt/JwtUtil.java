@@ -94,6 +94,20 @@ public class JwtUtil {
         }
     }
 
+    public void addRefreshJwtToCookie(String token, HttpServletResponse response) {
+
+        try {
+            // token을 utf-8형식으로 URL 인코딩하여 +를 %20으로 대체해줌.
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+
+            Cookie cookie = new Cookie(REFRESH_TOKEN_HEADER, token); // 쿠키 생성
+            cookie.setPath("/"); // 쿠키를 반환할 경로 설정
+            response.addCookie(cookie); // 응답 데이터에 쿠키 추가
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
