@@ -93,15 +93,14 @@
 
       if (res.status === 200) {
         const expires = xhr.getResponseHeader('expires-in');
+        const refreshExpires = xhr.getResponseHeader('refresh-expires-in');
 
-        console.log(expires);
-        if (expires) {
-          console.log("expires");
-          Cookies.set('Authorization', token, {
-            path: '/',
-            expires: new Date(new Date().getTime() + expires * 1000),
-          });
-        }
+        console.log(refreshExpires);
+
+        let refreshToken = xhr.getResponseHeader('Refresh');
+        Cookies.set('Refresh', refreshToken, {
+          path: '/'
+        });
         window.location.replace(host + '/');
 
       } else if (res.status === 400 || res.status === 404) {
