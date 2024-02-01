@@ -21,7 +21,7 @@ function sendMessageFromInput() {
 
 function connect(postId, username) {
   fetchAndShowHistory(postId, function () {
-    var socket = new SockJS('/ws');
+    var socket = new SockJS('/wss');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
       console.log('Connected: ' + frame);
