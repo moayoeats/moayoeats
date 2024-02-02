@@ -7,8 +7,9 @@ name: deploy
 on:
   push:
     branches:
-      - main
-      - dev
+      #      - main
+      #      - dev
+      - chore/deploy
       # 권한 설정
 permissions:
   contents: read
@@ -32,12 +33,12 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: make application.yml
-        if: contains(github.ref, 'develop') || contains(github.ref, 'main')
+      - name: make application-prod.yml
+        if: contains(github.ref, 'develop') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker')
         run: |
           cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.YML_PROD }}" > ./application.yml
+          touch ./application-prod.yml
+          echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
@@ -52,7 +53,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: Docker build
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker')
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -94,7 +95,7 @@ jobs:
           AWS_DEFAULT_REGION: ap-northeast-2
 
       - name: Deploy to prod
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
