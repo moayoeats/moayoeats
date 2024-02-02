@@ -7,6 +7,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.AddressResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.LoginResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -15,6 +16,7 @@ import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.domain.user.service.UserService;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.jwt.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final ReviewServiceImpl reviewServiceImpl;
+    private final TokenService tokenService;
 
     public void signup(SignupRequest signupReq) {
         String email = signupReq.email();
@@ -48,13 +51,18 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    public String login(LoginRequest loginReq) {
+    public LoginResponse login(LoginRequest loginReq) {
         String email = loginReq.email();
         String password = loginReq.password();
 
         User user = findByUserEmail(email);
         checkMatchPassword(password, user.getPassword());
-        return jwtUtil.createToken(email);
+
+        String accessToken = jwtUtil.createToken(email);
+        String refreshToken = jwtUtil.createRefreshToken(email);
+        tokenService.saveRefreshToken(email, refreshToken);
+
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     @Transactional

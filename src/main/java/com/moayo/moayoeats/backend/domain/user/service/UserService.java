@@ -6,6 +6,7 @@ import com.moayo.moayoeats.backend.domain.user.dto.request.LoginRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.AddressResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.LoginResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
@@ -19,9 +20,9 @@ public interface UserService {
 
     /**
      * @param loginReq : 회원가입에 필요한 요청 dto
-     * @return : 생성한 토큰
+     * @return : 생성한 토큰들 (access, refresh token)이 담긴 응답 dto
      */
-    String login(LoginRequest loginReq);
+    LoginResponse login(LoginRequest loginReq);
 
     /**
      * @param infoUpdateReq : 회원수정에 필요한 요청 dto
@@ -55,7 +56,6 @@ public interface UserService {
     void updateAddress(AddressUpdateRequest addressUpdateReq, User user);
 
     /**
-     *
      * @param user : 주소를 요청하는 사용자
      * @return : 사용자 주소
      */

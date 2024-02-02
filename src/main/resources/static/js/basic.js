@@ -2,16 +2,15 @@ const host = 'http://' + window.location.host;
 
 $(document).ready(function () {
   const auth = getToken();
+  let refresh = Cookies.get('Refresh');
+  console.log("auth: " + auth);
+  console.log("refresh: " + refresh);
 
   if (auth !== undefined && auth !== '') {
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-      jqXHR.setRequestHeader('Authorization', auth);
+      Cookie.set('Refresh', refresh, {path: '/'});
     });
   } else {
-    // alert("해당 페이지는 로그인 후 사용 가능합니다.");
-    //
-    // window.location.href = host + '/login';
-    // return;
   }
 });
 

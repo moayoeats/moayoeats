@@ -2,6 +2,7 @@ package com.moayo.moayoeats.backend.global.config;
 
 
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
+import com.moayo.moayoeats.backend.global.jwt.TokenService;
 import com.moayo.moayoeats.backend.global.security.JwtAccessDeniedHandler;
 import com.moayo.moayoeats.backend.global.security.JwtAuthenticationEntryPoint;
 import com.moayo.moayoeats.backend.global.security.JwtAuthorizationFilter;
@@ -27,6 +28,7 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final TokenService tokenService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -41,7 +43,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, tokenService);
     }
 
     @Bean
