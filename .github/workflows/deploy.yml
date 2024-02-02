@@ -39,6 +39,7 @@ jobs:
       - name: make application-prod.yml
         #        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker')
         run: |
+          echo ${{ github.ref }}
           cd ./src/main/resources
           touch ./application-prod.yml
           echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
