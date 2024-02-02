@@ -101,14 +101,26 @@ public class PostController {
     }
 
     //글 카테고리별 조회
-    @GetMapping("/posts/category/{page}")
+    @GetMapping("/posts/category/page/{page}")
     public ApiResponse<List<BriefPostResponse>> getPostsByCategory(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable(name = "page") int page,
-        @RequestParam @Category String category
+        @RequestParam(name = "category") @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
             postService.getPostsByCategory(page, category, userDetails.getUser()));
+    }
+
+    //글 카테고리 및 상태별 조회
+    @GetMapping("/posts/status/{status}/category/{category}/page/{page}")
+    public ApiResponse<List<BriefPostResponse>> getStatusPostsByCategory(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page,
+        @PathVariable(name = "category") @Category String category,
+        @PathVariable(name = "status") @PostStatus String status
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리, 상태별 조회에 성공했습니다.",
+            postService.getStatusPostsByCategory(page, category, status, userDetails.getUser()));
     }
 
     //로그인 정보 없이 글 검색하기

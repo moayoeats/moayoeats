@@ -170,9 +170,23 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             return getAllPosts(page, user);
         } else {
-            posts = postCustomRepository.getPostsByDistanceAndCategory(page,user,categoryEnum);
+           posts = postCustomRepository.getPostsByDistanceAndCategory(page,user,categoryEnum);
         }
         return postsToBriefResponses(posts);
+    }
+
+    @Override
+    public List<BriefPostResponse> getStatusPostsByCategory(int page, String category,
+        String status, User user) {
+        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+        PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
+
+        if(category.equals(CategoryEnum.ALL.toString())){
+            return getAllStatusPosts(page,statusEnum,user);
+        }else{
+            List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page, statusEnum, categoryEnum , user);
+            return postsToBriefResponses(posts);
+        }
     }
 
     @Override

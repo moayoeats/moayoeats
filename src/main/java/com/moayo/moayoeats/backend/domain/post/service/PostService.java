@@ -30,9 +30,9 @@ public interface PostService {
     List<BriefPostResponse> getPosts(int page, User user);
 
     /**
-     * @param page : 몇페이지 조회할건지 int pageNumber
+     * @param page   : 몇페이지 조회할건지 int pageNumber
      * @param status : 조회할 글의 상태 PostStatusEnum
-     * @param user : 글 조회자
+     * @param user   : 글 조회자
      * @return
      */
     List<BriefPostResponse> getStatusPosts(int page, String status, User user);
@@ -63,6 +63,16 @@ public interface PostService {
      * @return
      */
     List<BriefPostResponse> getPostsByCategory(int page, String category, User user);
+
+    /**
+     * @param page     : 페이지 조회에 필요한 int pageNumber
+     * @param category : 카테고리
+     * @param status   : 조회할 글의 상태 PostStatusEnum
+     * @param user     : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @return
+     */
+    List<BriefPostResponse> getStatusPostsByCategory(int page, String category, String status,
+        User user);
 
     /**
      * @param page    : 페이지 조회에 필요한 int pageNumber

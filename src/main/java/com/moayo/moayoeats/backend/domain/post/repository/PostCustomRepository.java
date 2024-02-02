@@ -15,4 +15,6 @@ public interface PostCustomRepository {
 
     List<Post> getPostsByDistanceAndKeyword(int page, User user, String keyword);
 
+    List<Post> getPostsByStatusAndCategoryOrderByDistance(int page, PostStatusEnum status, CategoryEnum category ,User user);
+
 }
