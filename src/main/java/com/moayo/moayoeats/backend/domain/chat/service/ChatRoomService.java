@@ -11,4 +11,6 @@ public interface ChatRoomService {
      * @param postId : 채팅방 삭제를 위한 postId
      */
     void deleteRoom(Long postId);
+
+    boolean existsById(Long postId);
 }

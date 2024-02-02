@@ -26,4 +26,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoomRepository.deleteById(postId);
     }
 
+    // 채팅방 조회
+    @Override
+    public boolean existsById(Long postId) {
+        return chatRoomRepository.existsById(postId);
+    }
+
 }

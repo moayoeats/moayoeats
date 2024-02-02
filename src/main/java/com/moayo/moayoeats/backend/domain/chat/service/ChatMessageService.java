@@ -3,6 +3,7 @@ package com.moayo.moayoeats.backend.domain.chat.service;
 import com.moayo.moayoeats.backend.domain.chat.dto.request.ChatMessageRequest;
 import com.moayo.moayoeats.backend.domain.chat.dto.response.ChatMessageResponse;
 import com.moayo.moayoeats.backend.domain.chat.entity.ChatMessage;
+import java.util.List;
 
 public interface ChatMessageService {
 
@@ -18,4 +19,6 @@ public interface ChatMessageService {
      * @param msg
      */
     ChatMessageResponse createRes(ChatMessageRequest req, ChatMessage msg);
+
+    List<ChatMessageResponse> getChatHistory(String postId);
 }

@@ -372,9 +372,15 @@
   }
 
   function chatRoom(button) {
-    var postId = $(button).attr("post");
-    window.location.href = `/chat/${postId}`;
-
+      var postId = $(button).attr("post");
+      $.get(`/chats/exists/${postId}`, function(exists) {
+          if (exists) {
+              window.location.href = `/chat/${postId}`;
+          } else {
+              alert("채팅방이 존재하지 않습니다.");
+              window.location.href = `/post/${postId}`;
+          }
+      });
   }
 
   function exit(button) {

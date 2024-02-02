@@ -47,6 +47,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return new ChatMessageResponse(req.content(), req.sender(), formattedTime);
     }
 
+    @Override
     public List<ChatMessageResponse> getChatHistory(String postId) {
         List<ChatMessage> messages = chatMessageRepository.findByPostId(postId);
         return messages.stream()
