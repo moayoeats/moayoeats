@@ -8,7 +8,7 @@ $(document).ready(function () {
 
   if (auth !== undefined && auth !== '') {
     $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-      Cookie.set('Refresh', refresh, {path: '/'});
+      Cookies.set('Refresh', refresh, {path: '/'});
     });
   } else {
   }
