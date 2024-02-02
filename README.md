@@ -1,10 +1,10 @@
-## Github Wiki
+## 📖Github Wiki
 
 
 - [Github Wiki](https://github.com/moayoeats/moayoeats/wiki)
 <br>
 
-## 아키텍쳐
+## 🏗️아키텍쳐
 
 
 ![Moayoeats-Architecture-v2](https://github.com/moayoeats/moayoeats/assets/144315027/4dcfa283-2d2d-4e5b-a00c-f5a52bf2e2de)
@@ -12,7 +12,7 @@
 
 <br>
 
-## ERD
+## 🧭ERD
 
 
 ![Moayoeats-ERD](https://github.com/moayoeats/moayoeats/assets/144315027/3483b766-3da4-4726-b9a4-04c50a4dfc3f)
