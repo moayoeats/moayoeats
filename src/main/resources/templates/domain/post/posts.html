@@ -114,11 +114,17 @@
 
   const host = 'http://' + window.location.host;
   var status;
+  var type;
+  var page;
+  var ten;
+  var category;
 
   $(document).ready(function () {
-    var index = 0;
-    status = "OPEN";
-    getData(index, 0);
+    page = 0;
+    ten = 0;
+    status = "ALL";
+    type = "ALL"
+    getData(page, ten);
 
     if (userId !== undefined && userId !== null && userId !== '') {
       connectSse();
@@ -131,9 +137,26 @@
   }
 
   function getPage(button) {
-    var index = $(button).attr("index");
-    var ten = $(button).attr("ten");
-    getData(index, ten);
+    if(type === "ALL"){
+
+      page = $(button).attr("index");
+      ten = $(button).attr("ten");
+      getData(page, ten);
+
+    }else if(type==="CATEGORY"){
+
+      page = $(button).attr("index");
+      ten = $(button).attr("ten");
+      getDataByCategory(category, page, ten)
+
+    }else if(type==="SEARCH"){
+
+      page = $(button).attr("index");
+      ten = $(button).attr("ten");
+      var keyword = $('#keyword').val();
+      getDataByKeyword(keyword, page, ten);
+
+    }
   }
 
   function getData(page, ten) {
@@ -178,22 +201,12 @@
     }
   }
 
-  function sendData(button) {
-    var postId = $(button).attr("post");
-    const host = 'http://' + window.location.host;
-    window.location.href = host + `/post/${postId}`;
-  }
-
   function search() {
     var keyword = $('#keyword').val();
-    getDataByKeyword(keyword, 0, 0);
-  }
-
-  function getSearchPage(button) {
-    var keyword = $('#keyword').val();
-    var index = $(button).attr("index");
-    var ten = $(button).attr("ten");
-    getDataByKeyword(keyword, index, ten);
+    type = "SEARCH"
+    page = 0;
+    ten = 0;
+    getDataByKeyword(keyword, page, ten);
   }
 
   function getDataByKeyword(keyword, page, ten) {
@@ -212,7 +225,7 @@
 
         removeAllPosts();
         drawAllPosts(response.data);
-        drawSearchPages(ten);
+        drawPages(ten);
 
       },
       error: function (error) {
@@ -222,39 +235,52 @@
   }
 
   function getByCategory(button) {
-    var category = $(button).attr("category");
-    getDataByCategory(category, 0, 0);
-  }
-
-  function getCategoryPage(button) {
-    var category = $(button).attr("category");
-    var index = $(button).attr("index");
-    var ten = $(button).attr("ten");
-    getDataByCategory(category, index, ten);
+    type = "CATEGORY"
+    category = $(button).attr("category");
+    page = 0;
+    ten = 0;
+    getDataByCategory(category, page, ten);
   }
 
   function getDataByCategory(categoryEnum, page, ten) {
     var category = categoryEnum;
     var page = page;
     var ten = ten;
+    var statusEnum = status;
 
-    $.ajax({
-      type: 'GET',
-      url: `/api/v1/posts/category/${page}?category=${category}`,
-      dataType: "json",
-      contentType: 'application/json',
-      data: {},
-      success: function (response) {
-        console.log('Success:', response);
-        removeAllPosts();
-        drawAllPosts(response.data);
-        drawCategoryPages(category, ten);
-
-      },
-      error: function (error) {
-        console.error('Error:', error);
-      }
-    });
+    if(statusEnum==="ALL"){
+      $.ajax({
+        type: 'GET',
+        url: `/api/v1/posts/category/page/${page}?category=${category}`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: {},
+        success: function (response) {
+          removeAllPosts();
+          drawAllPosts(response.data);
+          drawPages(ten);
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
+      });
+    }else{
+      $.ajax({
+        type: 'GET',
+        url: `/api/v1/posts/status/${statusEnum}/category/${category}/page/${page}`,
+        dataType: "json",
+        contentType: 'application/json',
+        data: {},
+        success: function (response) {
+          removeAllPosts();
+          drawAllPosts(response.data);
+          drawPages(ten);
+        },
+        error: function (error) {
+          console.error('Error:', error);
+        }
+      });
+    }
   }
 
   function removeAllPosts() {
@@ -335,7 +361,7 @@ function drawAllPosts(data) {
   }
 
   function getPreviousPages(button) {
-    var ten = +$(button).attr("ten");
+    ten = +$(button).attr("ten");
     if (ten > 0) {
       ten = ten - 1;
     }
@@ -343,105 +369,11 @@ function drawAllPosts(data) {
   }
 
   function getNextPages(button) {
-    var ten = +$(button).attr("ten");
+    ten = +$(button).attr("ten");
     ten = ten + 1;
     drawPages(ten);
   }
 
-  function drawCategoryPages(category, ten) {
-    removeAllPages();
-    var index = ten * 10;
-    $('#pages').append(
-        `
-    <div class="btn-group" role="group" aria-label="Basic outlined example">
-      <button type="button" class="btn btn-outline-secondary" category = ${category} ten = ${ten} index = ${index} onclick="getPreviousCategoryPages(this)">이전</button>
-      <button type="button" className="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 0} onclick="getCategoryPage(this)">${index + 1}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 1} onclick="getCategoryPage(this)">${index + 2}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 2} onclick="getCategoryPage(this)">${index + 3}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 3} onclick="getCategoryPage(this)">${index + 4}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 4} onclick="getCategoryPage(this)">${index + 5}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 5} onclick="getCategoryPage(this)">${index + 6}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 6} onclick="getCategoryPage(this)">${index + 7}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 7} onclick="getCategoryPage(this)">${index + 8}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 8} onclick="getCategoryPage(this)">${index + 9}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index
-        + 9} onclick="getCategoryPage(this)">${index + 10}</button>
-      <button type="button" class="btn btn-outline-secondary" category = ${category}  ten = ${ten} index = ${index} onclick="getNextCategoryPages(this)">다음</button>
-    </div>
-    `);
-  }
-
-  function getPreviousCategoryPages(button) {
-    var ten = +$(button).attr("ten");
-    var category = $(button).attr("category");
-    if (ten > 0) {
-      ten = ten - 1;
-    }
-    drawCategoryPages(category, ten);
-  }
-
-  function getNextCategoryPages(button) {
-    var ten = +$(button).attr("ten");
-    var category = $(button).attr("category");
-    ten = ten + 1;
-    drawCategoryPages(category, ten);
-  }
-
-  function drawSearchPages(ten) {
-    removeAllPages();
-    var index = ten * 10;
-    $('#pages').append(
-        `
-    <div class="btn-group" role="group" aria-label="Basic outlined example">
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getPreviousSearchPages(this)">이전</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 0} onclick="getSearchPage(this)">${index + 1}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 1} onclick="getSearchPage(this)">${index + 2}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 2} onclick="getSearchPage(this)">${index + 3}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 3} onclick="getSearchPage(this)">${index + 4}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 4} onclick="getSearchPage(this)">${index + 5}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 5} onclick="getSearchPage(this)">${index + 6}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 6} onclick="getSearchPage(this)">${index + 7}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 7} onclick="getSearchPage(this)">${index + 8}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 8} onclick="getSearchPage(this)">${index + 9}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index
-        + 9} onclick="getSearchPage(this)">${index + 10}</button>
-      <button type="button" class="btn btn-outline-secondary" ten = ${ten} index = ${index} onclick="getNextSearchPages(this)">다음</button>
-    </div>
-    `);
-  }
-
-  function getPreviousSearchPages(button) {
-    var ten = +$(button).attr("ten");
-    if (ten > 0) {
-      ten = ten - 1;
-    }
-    drawSearchPages(ten);
-  }
-
-  function getNextSearchPages(button) {
-    var ten = +$(button).attr("ten");
-    ten = ten + 1;
-    drawSearchPages(ten);
-  }
-  
 function getStatus(status) {
     if (status === "OPEN") {
       return "모집이 열려있습니다!"
@@ -460,7 +392,20 @@ function getStatus(status) {
     }else{
       status = "ALL";
     }
-    getData(0,0);
+    if(type==="ALL"){
+      getData(page,ten);
+    }else if(type==="CATEGORY"){
+      getDataByCategory(category,page,ten);
+    }else if(type==="SEARCH"){
+      var keyword = $('#keyword').val();
+      getDataByKeyword(keyword,page,ten);
+    }
+  }
+
+  function sendData(button) {
+    var postId = $(button).attr("post");
+    const host = 'http://' + window.location.host;
+    window.location.href = host + `/post/${postId}`;
   }
 
 </script>
