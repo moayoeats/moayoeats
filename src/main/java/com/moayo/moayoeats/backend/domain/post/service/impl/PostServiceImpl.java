@@ -321,6 +321,7 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
+            postRepository.save(post);
         }
     }
 
