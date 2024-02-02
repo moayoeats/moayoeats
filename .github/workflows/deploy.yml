@@ -32,12 +32,12 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: make application-prod.yml
+      - name: make application.yml
         if: contains(github.ref, 'develop') || contains(github.ref, 'main')
         run: |
           cd ./src/main/resources
-          touch ./application-prod.yml
-          echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
+          touch ./application.yml
+          echo "${{ secrets.YML_PROD }}" > ./application.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
