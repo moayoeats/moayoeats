@@ -37,7 +37,7 @@ jobs:
           distribution: 'corretto'
 
       - name: make application-prod.yml
-        #        if: contains(github.ref, 'develop') || contains(github.ref, 'main') || contains(github.ref, 'chore/docker')
+        if: contains(github.ref, 'develop') || contains(github.ref, 'main') || contains(github.ref, 'origin/chore/docker')
         run: |
           cd ./src/main/resources
           touch ./application-prod.yml
