@@ -336,9 +336,14 @@ public class PostServiceImpl implements PostService {
         //relate the order with the menus
         relateOrderWithMenus(user, post, order);
 
+        //delete relation with the post
+        userPostRepository.delete(userpost);
+
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
+            UserPost hostUserpost = getUserPostByUserIfHost(host,userPosts);
+            userPostRepository.delete(hostUserpost);
             postRepository.save(post);
         }
     }
@@ -489,6 +494,18 @@ public class PostServiceImpl implements PostService {
             }
         }
         throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT);
+    }
+
+    private UserPost getUserPostByUserIfHost(User user, List<UserPost> userPosts) {
+        for (UserPost userPost : userPosts) {
+            if (userPost.getRole().equals(UserPostRole.PARTICIPANT)) {
+                continue;
+            }
+            if (user.getId().equals(userPost.getUser().getId())) {
+                return userPost;
+            }
+        }
+        return null;
     }
 
     private UserPost getUserPostIfParticipant(User user, Post post) {
