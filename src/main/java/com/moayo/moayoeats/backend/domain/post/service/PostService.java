@@ -89,6 +89,15 @@ public interface PostService {
     List<BriefPostResponse> searchPost(int page, String keyword, User user);
 
     /**
+     * @param page    : 페이지 조회에 필요한 int page
+     * @param keyword : 검색어 조회에 필요한 String
+     * @param status  : 조회할 글의 상태 PostStatusEnum
+     * @param user    : 글 조회자, 현재 위치 기준으로 정렬하기 위해 필요함
+     * @return :
+     */
+    List<BriefPostResponse> searchStatusPost(int page, String keyword, String status, User user);
+
+    /**
      * @param postIdReq : 글을 삭제하기 위한 postId
      * @param user      : 글 삭제자, 글 주인과 대조
      */

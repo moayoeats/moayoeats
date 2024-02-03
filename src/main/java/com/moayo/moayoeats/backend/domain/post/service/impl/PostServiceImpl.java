@@ -211,6 +211,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<BriefPostResponse> searchStatusPost(int page, String keyword, String status,
+        User user) {
+        PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
+
+        List<Post> posts = postCustomRepository.getPostsByStatusAndKeywordOrderByDistance(page, statusEnum, keyword , user);
+        return postsToBriefResponses(posts);
+
+    }
+
+    @Override
     public void deletePost(PostIdRequest postIdReq, User user) {
         //check if the post exists
         Post post = getPostById(postIdReq.postId());
