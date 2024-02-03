@@ -19,6 +19,7 @@ import com.moayo.moayoeats.backend.domain.post.exception.PostErrorCode;
 import com.moayo.moayoeats.backend.domain.post.repository.PostCustomRepository;
 import com.moayo.moayoeats.backend.domain.post.repository.PostRepository;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
+import com.moayo.moayoeats.backend.domain.pushEvent.PushEventService;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPost;
 import com.moayo.moayoeats.backend.domain.userpost.entity.UserPostRole;
@@ -48,6 +49,7 @@ public class PostServiceImpl implements PostService {
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
     private final PostCustomRepository postCustomRepository;
+    private final PushEventService pushEventService;
 
     @Override
     public void createPost(PostRequest postReq, User user) {
@@ -98,7 +100,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getStatusPosts(int page, String status, User user) {
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
-        return getAllStatusPosts(page,statusEnum,user);
+        return getAllStatusPosts(page, statusEnum, user);
     }
 
     @Override
@@ -165,7 +167,7 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             return getAllPosts(page, user);
         } else {
-           posts = postCustomRepository.getPostsByDistanceAndCategory(page,user,categoryEnum);
+            posts = postCustomRepository.getPostsByDistanceAndCategory(page, user, categoryEnum);
         }
         return postsToBriefResponses(posts);
     }
@@ -176,10 +178,11 @@ public class PostServiceImpl implements PostService {
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
-        if(category.equals(CategoryEnum.ALL.toString())){
-            return getAllStatusPosts(page,statusEnum,user);
-        }else{
-            List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page, statusEnum, categoryEnum , user);
+        if (category.equals(CategoryEnum.ALL.toString())) {
+            return getAllStatusPosts(page, statusEnum, user);
+        } else {
+            List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page,
+                statusEnum, categoryEnum, user);
             return postsToBriefResponses(posts);
         }
     }
@@ -200,7 +203,7 @@ public class PostServiceImpl implements PostService {
             Pageable pageable = PageRequest.of(page, 5, Sort.by("modifiedAt").descending());
             posts = postRepository.findPostByStoreContaining(pageable, keyword).getContent();
         } else {
-            posts = postCustomRepository.getPostsByDistanceAndKeyword(page,user,keyword);
+            posts = postCustomRepository.getPostsByDistanceAndKeyword(page, user, keyword);
         }
         return postsToBriefResponses(posts);
     }
@@ -210,7 +213,8 @@ public class PostServiceImpl implements PostService {
         User user) {
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
-        List<Post> posts = postCustomRepository.getPostsByStatusAndKeywordOrderByDistance(page, statusEnum, keyword , user);
+        List<Post> posts = postCustomRepository.getPostsByStatusAndKeywordOrderByDistance(page,
+            statusEnum, keyword, user);
         return postsToBriefResponses(posts);
 
     }
@@ -232,12 +236,21 @@ public class PostServiceImpl implements PostService {
             throw new GlobalException(PostErrorCode.CANNOT_CLOSE_AFTER_ORDERED);
         }
 
-        //참가자들에게 알림
-        userPosts.stream().filter(userPost -> userPost.getRole().equals(UserPostRole.PARTICIPANT))
-            .map(UserPost::getUser).forEach(publishEventToEachParticipants());
-
         userPostRepository.deleteAll(userPosts);
         postRepository.delete(post);
+
+        //참가자들에게 알림
+        Consumer<User> action = participant -> {
+            publisher.publishEvent(
+                new Event(participant, NotificationType.MEETING_DELETED));
+            pushEventService.postDeleted(
+                participant.getId());
+        };
+        for (UserPost userPost : userPostRepository.findAllByPostAndRoleEquals(post,
+            UserPostRole.PARTICIPANT)) {
+            User userPostUser = userPost.getUser();
+            action.accept(userPostUser);
+        }
     }
 
     @Override
@@ -274,12 +287,22 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        //참가자들에게 알림
-        userPostRepository.findAllByPostAndRoleEquals(post, UserPostRole.PARTICIPANT).stream()
-            .map(UserPost::getUser).forEach(publishEventToEachParticipants());
-
         post.closeApplication();
         postRepository.save(post);
+
+        //참가자들에게 알림
+        Consumer<User> action = participant -> {
+            publisher.publishEvent(
+                new Event(participant, NotificationType.MEETING_ACTIVATED));
+            pushEventService.notifyCloseApplication(
+                participant.getId());
+        };
+        for (UserPost userPost : userPostRepository.findAllByPostAndRoleEquals(post,
+            UserPostRole.PARTICIPANT)) {
+            User userPostUser = userPost.getUser();
+            action.accept(userPostUser);
+        }
+
     }
 
     @Override
@@ -342,7 +365,7 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
-            UserPost hostUserpost = getUserPostByUserIfHost(host,userPosts);
+            UserPost hostUserpost = getUserPostByUserIfHost(host, userPosts);
             userPostRepository.delete(hostUserpost);
             postRepository.save(post);
         }
@@ -574,15 +597,11 @@ public class PostServiceImpl implements PostService {
         postRepository.deleteAll(pastDeadline);
     }
 
-    private Consumer<User> publishEventToEachParticipants() {
-        return participant -> publisher.publishEvent(
-            new Event(participant, NotificationType.MEETING_DELETED));
-    }
-
     private void publishEventToHostAndChagePostStatus(Post post) {
         post.changeAmountGoalStatus(); //게시글의 목표금액 충족상태 변경
         User targetHost = userPostRepository.findByPostIdAndRole(post.getId(), UserPostRole.HOST);
 
         publisher.publishEvent(new Event(targetHost, NotificationType.AMOUNT_IS_NOT_COLLECTED));
+        pushEventService.notifyApplyParticipation(targetHost.getId());
     }
 }
