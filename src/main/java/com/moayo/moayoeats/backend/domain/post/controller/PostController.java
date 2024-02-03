@@ -144,6 +144,18 @@ public class PostController {
             postService.searchPost(page, keyword, userDetails.getUser()));
     }
 
+    //글 키워드 및 상태별 조회
+    @GetMapping("/posts/status/{status}/keyword/{keyword}/page/{page}")
+    public ApiResponse<List<BriefPostResponse>> searchPost(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable(name = "page") int page,
+        @PathVariable(name = "keyword") String keyword,
+        @PathVariable(name = "status") @PostStatus String status
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "글 상태별 검색 결과",
+            postService.searchStatusPost(page, keyword, status, userDetails.getUser()));
+    }
+
     //모집 취소하기
     @DeleteMapping("/posts")
     public ApiResponse<Void> deletePost(
