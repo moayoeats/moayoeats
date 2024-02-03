@@ -5,11 +5,12 @@ name: deploy
 
 # 워크플로우를 언제 실행할지 지정
 on:
-  push:
+  push: #테스트를 위한 push
     branches:
       - main
       - dev
-      # 권한 설정
+
+# 권한 설정
 permissions:
   contents: read
 
@@ -32,12 +33,13 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: make application.yml
-        if: contains(github.ref, 'develop') || contains(github.ref, 'main')
+      - name: make application-prod.yml
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
         run: |
+          echo ${{ github.ref }}
           cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.YML_PROD }}" > ./application.yml
+          touch ./application-prod.yml
+          echo "${{ secrets.YML_PROD }}" > ./application-prod.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
@@ -94,7 +96,7 @@ jobs:
           AWS_DEFAULT_REGION: ap-northeast-2
 
       - name: Deploy to prod
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/deploy')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
@@ -107,10 +109,12 @@ jobs:
             docker stop moayoeats
             docker rm moayoeats
             docker run -d --network moayoeats --name moayoeats -p 8080:8080 ${{ secrets.DOCKER_USER }}/moayoeats:latest
+
             if docker images -f "dangling=true" -q | grep . > /dev/null; then
               docker rmi $(docker images -f "dangling=true" -q)
             fi
 
+      # 1. AWS 보안 그룹에서 GitHub Actions IP의 인바운드(Ingress) 규칙을 제거합니다.
       - name: Remove GitHub Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-name ${{ env.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
