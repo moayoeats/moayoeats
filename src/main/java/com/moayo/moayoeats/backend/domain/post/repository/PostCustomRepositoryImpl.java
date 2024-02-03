@@ -91,6 +91,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         }
     }
 
+    @Override
+    public List<Post> getPostsByStatusAndKeywordOrderByDistance(int page, PostStatusEnum statusEnum,
+        String keyword, User user) {
+        if(user.getLatitude()==null||user.getLongitude()==null){
+            return getPostsByStatusAndKeyword(page, statusEnum, keyword);
+        }else{
+            return getPostsByStatusAndKeyword(page,statusEnum,keyword,user);
+        }
+    }
+
     private List<Post> getPostsByStatus(int page, PostStatusEnum status) {
         QPost post = QPost.post;
         int offset = page * pagesize;
@@ -191,6 +201,42 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         QueryResults<Post> results = jpaQueryFactory.selectFrom(post)
             .where(post.category.eq(category))
             .orderBy(post.deadline.desc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        List<Post> closestPosts = results.getResults();
+        return closestPosts;
+    }
+
+    private List<Post> getPostsByStatusAndKeyword(int page, PostStatusEnum statusEnum, String keyword){
+        QPost post = QPost.post;
+        int offset = page * pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory
+            .selectFrom(post)
+            .where(post.store.contains(keyword).and(post.postStatus.eq(statusEnum)))
+            .orderBy(post.deadline.desc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        List<Post> closestPosts = results.getResults();
+        return closestPosts;
+    }
+
+    private List<Post> getPostsByStatusAndKeyword(int page, PostStatusEnum statusEnum, String keyword, User user){
+        QPost post = QPost.post;
+        int offset = page * pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory
+            .selectFrom(post)
+            .where(post.store.contains(keyword).and(post.postStatus.eq(statusEnum)))
+            .orderBy(((post.latitude.subtract(user.getLatitude()))
+                .multiply((post.latitude.subtract(user.getLatitude())))
+                .add((post.longitude.subtract(user.getLongitude()))
+                    .multiply((post.longitude.subtract(user.getLongitude())))))
+                .asc())
             .offset(offset)
             .limit(pagesize)
             .fetchResults();
