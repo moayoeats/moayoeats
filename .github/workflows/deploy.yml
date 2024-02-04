@@ -7,8 +7,9 @@ name: deploy
 on:
   push: #테스트를 위한 push
     branches:
-      - main
-      - dev
+      #      - main
+      #      - dev
+      - feat/push-notification
 
 # 권한 설정
 permissions:
@@ -34,7 +35,7 @@ jobs:
           distribution: 'corretto'
 
       - name: make application-prod.yml
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'feat/push-notification')
         run: |
           echo ${{ github.ref }}
           cd ./src/main/resources
@@ -54,7 +55,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: Docker build
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'feat/push-notification')
         # Docker 이미지 빌드 및 태그 # Docker 이미지 푸시
         run: |
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -96,7 +97,7 @@ jobs:
           AWS_DEFAULT_REGION: ap-northeast-2
 
       - name: Deploy to prod
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/deploy')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'feat/push-notification')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
