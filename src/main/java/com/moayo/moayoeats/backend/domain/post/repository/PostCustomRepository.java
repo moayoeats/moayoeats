@@ -22,4 +22,6 @@ public interface PostCustomRepository {
 
     List<Post> getPostsByCuisine(int page, User user, String cuisine);
 
+    List<Post> getPostsByStatusAndCuisine(int page, PostStatusEnum statusEnum, String cuisine, User user);
+
 }

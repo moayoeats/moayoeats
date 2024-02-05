@@ -51,9 +51,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public List<Post> getPostsByDistanceAndCategory(int page, User user, CategoryEnum category) {
 
         List<Post> posts;
-        if(user.getLongitude()==null||user.getLatitude()==null){
+        if (user.getLongitude() == null || user.getLatitude() == null) {
             posts = getPostsByCategory(page, category);
-        }else{
+        } else {
             posts = getPostsByCategory(page, category, user);
         }
         return posts;
@@ -68,10 +68,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             .selectFrom(post)
             .where(post.store.contains(keyword))
             .orderBy(((post.latitude.subtract(user.getLatitude()))
-                    .multiply((post.latitude.subtract(user.getLatitude())))
-                    .add((post.longitude.subtract(user.getLongitude()))
-                        .multiply((post.longitude.subtract(user.getLongitude())))))
-                    .asc())
+                .multiply((post.latitude.subtract(user.getLatitude())))
+                .add((post.longitude.subtract(user.getLongitude()))
+                    .multiply((post.longitude.subtract(user.getLongitude())))))
+                .asc())
             .offset(offset)
             .limit(pagesize)
             .fetchResults();
@@ -94,10 +94,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     @Override
     public List<Post> getPostsByStatusAndKeywordOrderByDistance(int page, PostStatusEnum statusEnum,
         String keyword, User user) {
-        if(user.getLatitude()==null||user.getLongitude()==null){
+        if (user.getLatitude() == null || user.getLongitude() == null) {
             return getPostsByStatusAndKeyword(page, statusEnum, keyword);
-        }else{
-            return getPostsByStatusAndKeyword(page,statusEnum,keyword,user);
+        } else {
+            return getPostsByStatusAndKeyword(page, statusEnum, keyword, user);
         }
     }
 
@@ -107,6 +107,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             return getPostsByCuisineBeforeLogin(page, cuisine);
         } else {
             return getPostsByCuisineAfterLogin(page, cuisine, user);
+        }
+    }
+
+    @Override
+    public List<Post> getPostsByStatusAndCuisine(int page, PostStatusEnum statusEnum,
+        String cuisine, User user) {
+        if (user.getLongitude() == null || user.getLatitude() == null) {
+            return getPostsByStatusAndCuisineBeforeLogin(page, statusEnum, cuisine);
+        } else {
+            return getPostsByStatusAndCuisineAfterLogin(page, statusEnum, cuisine, user);
         }
     }
 
@@ -183,7 +193,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return results.getResults();
     }
 
-    private List<Post> getPostsByCategory(int page, CategoryEnum category, User user){
+    private List<Post> getPostsByCategory(int page, CategoryEnum category, User user) {
         QPost post = QPost.post;
         int offset = page * pagesize;
 
@@ -203,7 +213,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return closestPosts;
     }
 
-    private List<Post> getPostsByCategory(int page, CategoryEnum category){
+    private List<Post> getPostsByCategory(int page, CategoryEnum category) {
         QPost post = QPost.post;
         int offset = page * pagesize;
 
@@ -218,7 +228,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return closestPosts;
     }
 
-    private List<Post> getPostsByStatusAndKeyword(int page, PostStatusEnum statusEnum, String keyword){
+    private List<Post> getPostsByStatusAndKeyword(int page, PostStatusEnum statusEnum,
+        String keyword) {
         QPost post = QPost.post;
         int offset = page * pagesize;
 
@@ -234,7 +245,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return closestPosts;
     }
 
-    private List<Post> getPostsByStatusAndKeyword(int page, PostStatusEnum statusEnum, String keyword, User user){
+    private List<Post> getPostsByStatusAndKeyword(int page, PostStatusEnum statusEnum,
+        String keyword, User user) {
         QPost post = QPost.post;
         int offset = page * pagesize;
 
@@ -254,7 +266,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return closestPosts;
     }
 
-    private List<Post> getPostsByCuisineBeforeLogin(int page, String cuisine){
+    private List<Post> getPostsByCuisineBeforeLogin(int page, String cuisine) {
         QPost post = QPost.post;
         int offset = page * pagesize;
 
@@ -269,7 +281,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return closestPosts;
     }
 
-    private List<Post> getPostsByCuisineAfterLogin(int page, String cuisine, User user){
+    private List<Post> getPostsByCuisineAfterLogin(int page, String cuisine, User user) {
         QPost post = QPost.post;
         int offset = page * pagesize;
 
@@ -281,6 +293,44 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                     .add((post.longitude.subtract(user.getLongitude()))
                         .multiply((post.longitude.subtract(user.getLongitude())))))
                     .asc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        return results.getResults();
+    }
+
+    private List<Post> getPostsByStatusAndCuisineBeforeLogin(int page, PostStatusEnum status,
+        String cuisine) {
+        QPost post = QPost.post;
+        int offset = page * pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory
+            .selectFrom(post)
+            .where(post.postStatus.eq(status)
+                .and(post.cuisine.eq(cuisine)))
+            .orderBy(post.deadline.desc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        return results.getResults();
+    }
+
+    private List<Post> getPostsByStatusAndCuisineAfterLogin(int page, PostStatusEnum status,
+        String cuisine, User user) {
+        QPost post = QPost.post;
+        int offset = page * pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory
+            .selectFrom(post)
+            .where(post.postStatus.eq(status)
+                .and(post.cuisine.eq(cuisine)))
+            .orderBy(((post.latitude.subtract(user.getLatitude()))
+                .multiply((post.latitude.subtract(user.getLatitude())))
+                .add((post.longitude.subtract(user.getLongitude()))
+                    .multiply((post.longitude.subtract(user.getLongitude())))))
+                .asc())
             .offset(offset)
             .limit(pagesize)
             .fetchResults();
