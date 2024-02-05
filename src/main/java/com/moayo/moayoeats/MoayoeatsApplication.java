@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
-@EnableJpaAuditing
-@EnableMongoAuditing
+//@EnableJpaAuditing
+//@EnableMongoAuditing
 @SpringBootApplication
 public class MoayoeatsApplication {
 
