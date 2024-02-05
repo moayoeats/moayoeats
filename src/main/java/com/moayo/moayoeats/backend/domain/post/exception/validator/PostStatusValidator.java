@@ -17,7 +17,8 @@ public class PostStatusValidator implements ConstraintValidator<PostStatus, Stri
         return status.equals(PostStatusEnum.OPEN.toString())||
             status.equals(PostStatusEnum.CLOSED.toString())||
             status.equals(PostStatusEnum.ORDERED.toString())||
-            status.equals(PostStatusEnum.RECEIVED.toString())
+            status.equals(PostStatusEnum.RECEIVED.toString())||
+            status.equals("ALL")
             ;
     }
 }
