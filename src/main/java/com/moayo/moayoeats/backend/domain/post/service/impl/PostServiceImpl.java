@@ -186,7 +186,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getPostsByCategory(int page, String category, User user) {
         List<Post> posts;
-        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
 
         if (category.equals(CategoryEnum.ALL.toString())) {
             return getAllPosts(page, user);
@@ -202,7 +201,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getStatusPostsByCategory(int page, String category,
         String status, User user) {
-        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
         if (category.equals(CategoryEnum.ALL.toString())) {
