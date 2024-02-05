@@ -61,18 +61,32 @@ public class PostServiceImpl implements PostService {
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
-        //Build new post with the post request dto
-        Post post = Post.builder()
-            .latitude(latitude)
-            .longitude(longitude)
-            .store(postReq.store())
-            .deliveryCost(getIntFromString(postReq.deliveryCost()))
-            .minPrice(getIntFromString(postReq.minPrice()))
-            .deadline(deadline)
-            .category(postReq.category())
-            .postStatus(PostStatusEnum.OPEN)
-            .build();
-
+        String category = postReq.category();
+        Post post;
+        if(checkIfCategoryEnum(category)){
+            //Build new post with the post request dto
+            post = Post.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .store(postReq.store())
+                .deliveryCost(getIntFromString(postReq.deliveryCost()))
+                .minPrice(getIntFromString(postReq.minPrice()))
+                .deadline(deadline)
+                .category(CategoryEnum.valueOf(category))
+                .postStatus(PostStatusEnum.OPEN)
+                .build();
+        }else{
+            post = Post.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .store(postReq.store())
+                .deliveryCost(getIntFromString(postReq.deliveryCost()))
+                .minPrice(getIntFromString(postReq.minPrice()))
+                .deadline(deadline)
+                .cuisine(category)
+                .postStatus(PostStatusEnum.OPEN)
+                .build();
+        }
         //save the post
         postRepository.save(post);
 
@@ -555,6 +569,15 @@ public class PostServiceImpl implements PostService {
     private List<BriefPostResponse> getAllStatusPosts(int page, PostStatusEnum status, User user) {
         List<Post> posts = postCustomRepository.getPostsByStatusOrderByDistance(page, status, user);
         return postsToBriefResponses(posts);
+    }
+
+    private boolean checkIfCategoryEnum(String category){
+        for(CategoryEnum c : CategoryEnum.values()){
+            if (c.name().equals(category)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Scheduled(fixedRate = 60000)//executed every 1 min
