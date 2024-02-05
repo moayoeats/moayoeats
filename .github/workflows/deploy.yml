@@ -96,7 +96,7 @@ jobs:
           AWS_DEFAULT_REGION: ap-northeast-2
 
       - name: Deploy to prod
-        if: contains(github.ref, 'dev') || contains(github.ref, 'main') || contains(github.ref, 'chore/deploy')
+        if: contains(github.ref, 'dev') || contains(github.ref, 'main')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_NAME }}
