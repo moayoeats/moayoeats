@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
             .plusHours(getIntFromString(postReq.deadlineHours()));
 
         //get latitude and longitude from the coordinate
-        String[] location = getAddress(postReq.address());
+        String [] location = getAddress(postReq.address());
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
@@ -113,8 +113,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> getStatusPosts(int page, String status, User user) {
-        PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
-        return getAllStatusPosts(page, statusEnum, user);
+        if(status.equals("ALL")){
+            return getAllPosts(page, user);
+        }else{
+            PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
+            return getAllStatusPosts(page, statusEnum, user);
+        }
     }
 
     @Override
@@ -435,7 +439,7 @@ public class PostServiceImpl implements PostService {
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
         return posts.stream().map((Post post) -> BriefPostResponse.builder().id(post.getId())
-            .author(getAuthor(getUserPostsByPost(post)).getNickname()).store(post.getStore())
+            .author(getAuthorNick(getUserPostsByPost(post))).store(post.getStore())
             .deadline(getDeadline(getDeadline(post))).minPrice(post.getMinPrice())
             .sumPrice(getSumPrice(getUserPostsByPost(post), post)).status(post.getPostStatus())
             .build()).toList();
@@ -448,6 +452,15 @@ public class PostServiceImpl implements PostService {
             }
         }
         throw new GlobalException(UserPostErrorCode.NOT_FOUND_HOST);
+    }
+
+    private String getAuthorNick(List<UserPost> userPosts) {
+        for (UserPost userpost : userPosts) {
+            if (userpost.getRole().equals(UserPostRole.HOST)) {
+                return userpost.getUser().getNickname();
+            }
+        }
+        return " ";
     }
 
     private int getSumPrice(List<UserPost> userposts, Post post) {

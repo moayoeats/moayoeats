@@ -120,5 +120,13 @@
 <script src="/js/posts.js"></script>
 <script src="/js/navbar.js"></script>
 <script src="/js/basic.js"></script>
+<script>
+  $(document).ready(function () {
+    if (userId !== undefined && userId !== null && userId !== '') {
+      connectSse();
+    }
+  });
+
+</script>
 </body>
 </html>
