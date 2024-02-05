@@ -1,7 +1,6 @@
 package com.moayo.moayoeats.backend.domain.pushEvent;
 
 import com.moayo.moayoeats.backend.domain.pushEvent.exception.PushEventErrorCode;
-import com.moayo.moayoeats.backend.domain.pushEvent.repository.EmitterRepositoryImpl;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +10,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Service
 @RequiredArgsConstructor
 public class PushEventService {
-
-    private final EmitterRepositoryImpl emitterRepository;
 
     public SseEmitter subscribe(Long userId) {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
@@ -136,24 +133,7 @@ public class PushEventService {
     }
 
     //모두에게 push알림
-    public void notifyCancelPost(Long userId) {
-
-        if (PushEventController.sseEmitters.containsKey(userId)) {
-            SseEmitter sseEmitterReceiver = PushEventController.sseEmitters.get(userId);
-
-            try {
-                sseEmitterReceiver.send(SseEmitter
-                    .event()
-                    .name("canceled")
-                    .data("모집이 취소되었습니다!"));
-            } catch (IOException e) {
-                PushEventController.sseEmitters.remove(userId);
-            }
-        }
-    }
-
-    //모두에게 push알림
-    public void notifyDeletePost(Long userId) {
+    public void postDeleted(Long userId) {
 
         if (PushEventController.sseEmitters.containsKey(userId)) {
             SseEmitter sseEmitterReceiver = PushEventController.sseEmitters.get(userId);
@@ -162,39 +142,11 @@ public class PushEventService {
                 sseEmitterReceiver.send(SseEmitter
                     .event()
                     .name("completed")
-                    .data("모집인원 모두 수령 완료 후 글이 삭제되었습니다!"));
+                    .data("모집글이 삭제 되었습니다!"));
             } catch (IOException e) {
                 PushEventController.sseEmitters.remove(userId);
             }
         }
     }
-//
-//    private boolean hasLostData(String lastEventId) {
-//        return !lastEventId.isEmpty();
-//    }
-//
-//    private String makeTimeIncludedId(Long userId) {
-//        return userId + "_" + System.currentTimeMillis();
-//    }
-//
-//    private void sendLostData(String lastEventId, Long memberId, String emitterId,
-//        SseEmitter emitter) {
-//        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(
-//            String.valueOf(memberId));
-//        eventCaches.entrySet().stream()
-//            .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-//            .forEach(
-//                entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
-//    }
-//
-//    private void sendNotification(SseEmitter emitter, String eventId, String emitterId,
-//        Object data) {
-//        try {
-//            emitter.send(SseEmitter.event()
-//                .id(eventId)
-//                .data(data));
-//        } catch (IOException exception) {
-//            emitterRepository.deleteById(emitterId);
-//        }
-//    }
+
 }
