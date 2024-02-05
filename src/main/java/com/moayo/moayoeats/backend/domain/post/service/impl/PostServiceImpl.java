@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
 
         String category = postReq.category();
         Post post;
-        if(checkIfCategoryEnum(category)){
+        if (checkIfCategoryEnum(category)) {
             //Build new post with the post request dto
             post = Post.builder()
                 .latitude(latitude)
@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
                 .category(CategoryEnum.valueOf(category))
                 .postStatus(PostStatusEnum.OPEN)
                 .build();
-        }else{
+        } else {
             post = Post.builder()
                 .latitude(latitude)
                 .longitude(longitude)
@@ -112,7 +112,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getStatusPosts(int page, String status, User user) {
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
-        return getAllStatusPosts(page,statusEnum,user);
+        return getAllStatusPosts(page, statusEnum, user);
     }
 
     @Override
@@ -159,13 +159,23 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getPostsByCategoryForAnyone(int page, String category) {
         List<Post> posts;
-        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
-        } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10,
+
+        } else if (checkIfCategoryEnum(category)) {
+            CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+            Pageable pageable = PageRequest.of(page, 5,
                 Sort.by("modifiedAt").descending());
-            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
+
+            posts = postRepository.findAllByCategoryEquals(pageable, categoryEnum)
+                .getContent();
+
+        } else {
+            Pageable pageable = PageRequest.of(page, 5,
+                Sort.by("modifiedAt").descending());
+
+            posts = postRepository.findAllByCuisineEquals(pageable, category)
                 .getContent();
         }
         return postsToBriefResponses(posts);
@@ -179,7 +189,7 @@ public class PostServiceImpl implements PostService {
         if (category.equals(CategoryEnum.ALL.toString())) {
             return getAllPosts(page, user);
         } else {
-           posts = postCustomRepository.getPostsByDistanceAndCategory(page,user,categoryEnum);
+            posts = postCustomRepository.getPostsByDistanceAndCategory(page, user, categoryEnum);
         }
         return postsToBriefResponses(posts);
     }
@@ -190,10 +200,11 @@ public class PostServiceImpl implements PostService {
         CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
-        if(category.equals(CategoryEnum.ALL.toString())){
-            return getAllStatusPosts(page,statusEnum,user);
-        }else{
-            List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page, statusEnum, categoryEnum , user);
+        if (category.equals(CategoryEnum.ALL.toString())) {
+            return getAllStatusPosts(page, statusEnum, user);
+        } else {
+            List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page,
+                statusEnum, categoryEnum, user);
             return postsToBriefResponses(posts);
         }
     }
@@ -214,7 +225,7 @@ public class PostServiceImpl implements PostService {
             Pageable pageable = PageRequest.of(page, 5, Sort.by("modifiedAt").descending());
             posts = postRepository.findPostByStoreContaining(pageable, keyword).getContent();
         } else {
-            posts = postCustomRepository.getPostsByDistanceAndKeyword(page,user,keyword);
+            posts = postCustomRepository.getPostsByDistanceAndKeyword(page, user, keyword);
         }
         return postsToBriefResponses(posts);
     }
@@ -224,7 +235,8 @@ public class PostServiceImpl implements PostService {
         User user) {
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
-        List<Post> posts = postCustomRepository.getPostsByStatusAndKeywordOrderByDistance(page, statusEnum, keyword , user);
+        List<Post> posts = postCustomRepository.getPostsByStatusAndKeywordOrderByDistance(page,
+            statusEnum, keyword, user);
         return postsToBriefResponses(posts);
 
     }
@@ -356,7 +368,7 @@ public class PostServiceImpl implements PostService {
         if (userPosts.size() <= 2) {
             post.allReceived();
             relateOrderWithMenus(host, post, hostOrder);
-            UserPost hostUserpost = getUserPostByUserIfHost(host,userPosts);
+            UserPost hostUserpost = getUserPostByUserIfHost(host, userPosts);
             userPostRepository.delete(hostUserpost);
             postRepository.save(post);
         }
@@ -571,8 +583,8 @@ public class PostServiceImpl implements PostService {
         return postsToBriefResponses(posts);
     }
 
-    private boolean checkIfCategoryEnum(String category){
-        for(CategoryEnum c : CategoryEnum.values()){
+    private boolean checkIfCategoryEnum(String category) {
+        for (CategoryEnum c : CategoryEnum.values()) {
             if (c.name().equals(category)) {
                 return true;
             }
