@@ -22,67 +22,77 @@
   <link rel="stylesheet" href="/css/fonts.css">
   <link rel="stylesheet" href="/css/navbar.css">
   <link rel="icon" href="/images/logo.png">
+<script th:src="@{/js/sse.js}"></script>
 </head>
 <header class="header-container">
-  <nav class="navbar bg-body-tertiary">
-    <div class="container">
-      <div class="brand-container">
-        <a class="navbar-brand" href="/">
-          <img alt="logo" height="60" src="/images/logo.png" width="60">
-        </a>
-      </div>
-      <div class="action-container">
-        <a class="navbar-brand" href="/notification">
-          <img alt="notification" height="30" src="/images/bell.png" width="30">
-        </a>
-        <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">마이페이지
-        </button>
-      </div>
-    </div>
-  </nav>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container">
+            <div class="brand-container">
+                <a class="navbar-brand" href="/">
+                    <img alt="logo" height="60" src="/images/logo.png" width="60">
+                </a>
+            </div>
+            <div class="action-container">
+                <a class="navbar-brand" href="/notification">
+                    <img alt="notification" height="30" src="/images/bell.png" width="30">
+                </a>
+                <button class="btn my-page-btn btn-success" id="my-page-btn" onclick="moveMyPage()">
+                    마이페이지
+                </button>
+            </div>
+        </div>
+    </nav>
 </header>
 
 <body>
 <div id="my-page-pack">
-  <div id="my-info-pack">
-    <div id="nickname"></div>
-    <div id="email"></div>
-    <div class="btn-pack">
-      <button class="btn btn-secondary" id="nickname-update-btn" onclick="moveUpdateNickPage()"
-              type="button">
-        닉네임 수정
-      </button>
-      <button class="btn btn-secondary" id="pw-update-btn" onclick="moveUpdatePwPage()"
-              type="button">
-        비밀번호 수정
-      </button>
-      <button class="btn btn-secondary" id="address-update-btn" onclick="moveUpdateAddressPage()"
-              type="button">
-        주소 수정
-      </button>
-    </div>
-  </div>
-
-  <div class="about-order">
-    <div id="my-review-pack">
-      <div id="my-score">
-        <div>평점</div>
-        <div id="score"></div>
-      </div>
-      <div id="my-review">
-        <div>받은 리뷰</div>
-      </div>
+    <div id="my-info-pack">
+        <div id="nickname"></div>
+        <div id="email"></div>
+        <div class="btn-pack">
+            <button class="btn btn-secondary" id="nickname-update-btn"
+                    onclick="moveUpdateNickPage()"
+                    type="button">
+                닉네임 수정
+            </button>
+            <button class="btn btn-secondary" id="pw-update-btn" onclick="moveUpdatePwPage()"
+                    type="button">
+                비밀번호 수정
+            </button>
+            <button class="btn btn-secondary" id="address-update-btn"
+                    onclick="moveUpdateAddressPage()"
+                    type="button">
+                주소 수정
+            </button>
+        </div>
     </div>
 
-    <div id="my-order-info">
-      <div>과거 주문정보</div>
+    <div class="about-order">
+        <div id="my-review-pack">
+            <div id="my-score">
+                <div>평점</div>
+                <div id="score"></div>
+            </div>
+            <div id="my-review">
+                <div>받은 리뷰</div>
+            </div>
+        </div>
+
+        <div id="my-order-info">
+            <div>과거 주문정보</div>
+        </div>
     </div>
-  </div>
 
 </div>
 <script>
+  var userId = [[${userId}]];
+
   $(document).ready(function () {
     getMyPage();
+
+    if (userId !== undefined && userId !== null && userId !== '') {
+      connectSse();
+    }
   });
 
   function getMyPage() {
