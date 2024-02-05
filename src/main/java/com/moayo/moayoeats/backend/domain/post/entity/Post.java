@@ -54,6 +54,9 @@ public class Post extends BaseTime {
     private CategoryEnum category;
 
     @Column
+    private String cuisine;
+
+    @Column
     private Long sumPrice;
 
     @Column
@@ -72,7 +75,7 @@ public class Post extends BaseTime {
     @Builder
     public Post(String store, Integer minPrice, Integer deliveryCost,
         CategoryEnum category, LocalDateTime deadline, PostStatusEnum postStatus, Double latitude,
-        Double longitude) {
+        Double longitude, String cuisine) {
         this.store = store;
         this.minPrice = minPrice;
         this.amountIsSatisfied = false;
@@ -82,6 +85,7 @@ public class Post extends BaseTime {
         this.postStatus = postStatus;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.cuisine = cuisine;
     }
 
     public void closeApplication() {
