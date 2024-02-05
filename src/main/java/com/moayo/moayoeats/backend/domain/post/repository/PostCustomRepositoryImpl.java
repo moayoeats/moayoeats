@@ -101,6 +101,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         }
     }
 
+    @Override
+    public List<Post> getPostsByCuisine(int page, User user, String cuisine) {
+        if (user.getLongitude() == null || user.getLatitude() == null) {
+            return getPostsByCuisineBeforeLogin(page, cuisine);
+        } else {
+            return getPostsByCuisineAfterLogin(page, cuisine, user);
+        }
+    }
+
     private List<Post> getPostsByStatus(int page, PostStatusEnum status) {
         QPost post = QPost.post;
         int offset = page * pagesize;
@@ -243,6 +252,40 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         List<Post> closestPosts = results.getResults();
         return closestPosts;
+    }
+
+    private List<Post> getPostsByCuisineBeforeLogin(int page, String cuisine){
+        QPost post = QPost.post;
+        int offset = page * pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory.selectFrom(post)
+            .where(post.cuisine.eq(cuisine))
+            .orderBy(post.deadline.desc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        List<Post> closestPosts = results.getResults();
+        return closestPosts;
+    }
+
+    private List<Post> getPostsByCuisineAfterLogin(int page, String cuisine, User user){
+        QPost post = QPost.post;
+        int offset = page * pagesize;
+
+        QueryResults<Post> results = jpaQueryFactory.selectFrom(post)
+            .where(post.cuisine.eq(cuisine))
+            .orderBy(
+                ((post.latitude.subtract(user.getLatitude()))
+                    .multiply((post.latitude.subtract(user.getLatitude())))
+                    .add((post.longitude.subtract(user.getLongitude()))
+                        .multiply((post.longitude.subtract(user.getLongitude())))))
+                    .asc())
+            .offset(offset)
+            .limit(pagesize)
+            .fetchResults();
+
+        return results.getResults();
     }
 
 }

@@ -11,6 +11,7 @@ public interface PostCustomRepository {
     List<Post> getPostsByDistance(int page,User user);
 
     List<Post> getPostsByStatusOrderByDistance(int page, PostStatusEnum status, User user);
+
     List<Post> getPostsByDistanceAndCategory(int page, User user, CategoryEnum category);
 
     List<Post> getPostsByDistanceAndKeyword(int page, User user, String keyword);
@@ -18,5 +19,7 @@ public interface PostCustomRepository {
     List<Post> getPostsByStatusAndCategoryOrderByDistance(int page, PostStatusEnum status, CategoryEnum category ,User user);
 
     List<Post> getPostsByStatusAndKeywordOrderByDistance(int page, PostStatusEnum statusEnum, String keyword , User user);
+
+    List<Post> getPostsByCuisine(int page, User user, String cuisine);
 
 }
