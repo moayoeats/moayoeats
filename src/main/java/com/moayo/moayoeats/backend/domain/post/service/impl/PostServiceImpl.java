@@ -63,18 +63,32 @@ public class PostServiceImpl implements PostService {
         double latitude = Double.valueOf(location[0]);
         double longitude = Double.valueOf(location[1]);
 
-        //Build new post with the post request dto
-        Post post = Post.builder()
-            .latitude(latitude)
-            .longitude(longitude)
-            .store(postReq.store())
-            .deliveryCost(getIntFromString(postReq.deliveryCost()))
-            .minPrice(getIntFromString(postReq.minPrice()))
-            .deadline(deadline)
-            .category(postReq.category())
-            .postStatus(PostStatusEnum.OPEN)
-            .build();
-
+        String category = postReq.category();
+        Post post;
+        if (checkIfCategoryEnum(category)) {
+            //Build new post with the post request dto
+            post = Post.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .store(postReq.store())
+                .deliveryCost(getIntFromString(postReq.deliveryCost()))
+                .minPrice(getIntFromString(postReq.minPrice()))
+                .deadline(deadline)
+                .category(CategoryEnum.valueOf(category))
+                .postStatus(PostStatusEnum.OPEN)
+                .build();
+        } else {
+            post = Post.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .store(postReq.store())
+                .deliveryCost(getIntFromString(postReq.deliveryCost()))
+                .minPrice(getIntFromString(postReq.minPrice()))
+                .deadline(deadline)
+                .cuisine(category)
+                .postStatus(PostStatusEnum.OPEN)
+                .build();
+        }
         //save the post
         postRepository.save(post);
 
@@ -147,13 +161,23 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getPostsByCategoryForAnyone(int page, String category) {
         List<Post> posts;
-        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+
         if (category.equals(CategoryEnum.ALL.toString())) {
             posts = findPage(page);
-        } else {
-            Pageable pageWithTenPosts = PageRequest.of(page, 10,
+
+        } else if (checkIfCategoryEnum(category)) {
+            CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
+            Pageable pageable = PageRequest.of(page, 5,
                 Sort.by("modifiedAt").descending());
-            posts = postRepository.findAllByCategoryEquals(pageWithTenPosts, categoryEnum)
+
+            posts = postRepository.findAllByCategoryEquals(pageable, categoryEnum)
+                .getContent();
+
+        } else {
+            Pageable pageable = PageRequest.of(page, 5,
+                Sort.by("modifiedAt").descending());
+
+            posts = postRepository.findAllByCuisineEquals(pageable, category)
                 .getContent();
         }
         return postsToBriefResponses(posts);
@@ -162,12 +186,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getPostsByCategory(int page, String category, User user) {
         List<Post> posts;
-        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
 
         if (category.equals(CategoryEnum.ALL.toString())) {
             return getAllPosts(page, user);
-        } else {
+        } else if (checkIfCategoryEnum(category)) {
+            CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
             posts = postCustomRepository.getPostsByDistanceAndCategory(page, user, categoryEnum);
+        } else {
+            posts = postCustomRepository.getPostsByCuisine(page, user, category);
         }
         return postsToBriefResponses(posts);
     }
@@ -175,14 +201,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<BriefPostResponse> getStatusPostsByCategory(int page, String category,
         String status, User user) {
-        CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
         if (category.equals(CategoryEnum.ALL.toString())) {
             return getAllStatusPosts(page, statusEnum, user);
-        } else {
+
+        } else if (checkIfCategoryEnum(category)) {
+            CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
             List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page,
                 statusEnum, categoryEnum, user);
+            return postsToBriefResponses(posts);
+
+        } else {
+            List<Post> posts = postCustomRepository.getPostsByStatusAndCuisine(page,
+                statusEnum, category, user);
             return postsToBriefResponses(posts);
         }
     }
@@ -580,6 +612,15 @@ public class PostServiceImpl implements PostService {
         return postsToBriefResponses(posts);
     }
 
+    private boolean checkIfCategoryEnum(String category) {
+        for (CategoryEnum c : CategoryEnum.values()) {
+            if (c.name().equals(category)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Scheduled(fixedRate = 60000)//executed every 1 min
     public void scheduledDelete() {
         List<Post> posts = findAll();
@@ -595,6 +636,11 @@ public class PostServiceImpl implements PostService {
             }
         }
         postRepository.deleteAll(pastDeadline);
+    }
+
+    private Consumer<User> publishEventToEachParticipants() {
+        return participant -> publisher.publishEvent(
+            new Event(participant, NotificationType.MEETING_DELETED));
     }
 
     private void publishEventToHostAndChagePostStatus(Post post) {

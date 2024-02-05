@@ -24,6 +24,7 @@ public class CategoryValidator implements ConstraintValidator<Category, String> 
             ||categoryEnum.equals(CategoryEnum.PIZZA.toString())
             ||categoryEnum.equals(CategoryEnum.SNACK.toString())
             ||categoryEnum.equals(CategoryEnum.WESTERN.toString())
+            ||categoryEnum.equals("CAFE")
             ;
     }
 
