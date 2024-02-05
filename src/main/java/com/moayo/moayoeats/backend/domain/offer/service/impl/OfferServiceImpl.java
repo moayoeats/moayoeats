@@ -107,8 +107,9 @@ public class OfferServiceImpl implements OfferService {
         //해당 참가자한테 알림
         User participant = offerRepository.findByOfferId(offerId);
         publisher.publishEvent(new Event(participant, NotificationType.PARTICIPANT_APPROVED));
-
+        pushEventService.notifyApprove(participant.getId());
         userPostRepository.save(userPost);
+
         offerRepository.delete(offer);
     }
 
@@ -122,6 +123,7 @@ public class OfferServiceImpl implements OfferService {
         //해당 참가자한테 알림
         User participant = offerRepository.findByOfferId(offerId);
         publisher.publishEvent(new Event(participant, NotificationType.PARTICIPANT_REJECTED));
+        pushEventService.notifyReject(participant.getId());
 
         offerRepository.delete(offer);
     }

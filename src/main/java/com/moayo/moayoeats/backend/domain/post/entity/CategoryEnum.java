@@ -17,6 +17,6 @@ public enum CategoryEnum {
     ASIAN,
     JAPANESE,
     CHINESE,
-    LUNCHBOX;
+    LUNCHBOX
 
 }
