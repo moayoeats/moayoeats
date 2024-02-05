@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.post.dto.request;
 
 import com.moayo.moayoeats.backend.domain.post.entity.CategoryEnum;
+import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Hours;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Minutes;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Money;
@@ -24,7 +25,9 @@ public record PostRequest(
 
     @Hours
     String deadlineHours,
-    CategoryEnum category
+
+    @Category
+    String category
 
 ) {
 
