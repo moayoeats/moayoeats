@@ -24,9 +24,7 @@ public class PostCreateServiceImpl implements PostCreateService {
     @Override
     public void createPost(PostRequest postReq, User user) {
         //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now()
-            .plusMinutes(getIntFromString(postReq.deadlineMins()))
-            .plusHours(getIntFromString(postReq.deadlineHours()));
+        LocalDateTime deadline = getDeadline(postReq);
 
         //get latitude and longitude from the coordinate
         Double [] location = getAddress(postReq.address());
@@ -93,5 +91,11 @@ public class PostCreateServiceImpl implements PostCreateService {
             }
         }
         return false;
+    }
+
+    private LocalDateTime getDeadline(PostRequest postReq){
+        return LocalDateTime.now()
+            .plusMinutes(getIntFromString(postReq.deadlineMins()))
+            .plusHours(getIntFromString(postReq.deadlineHours()));
     }
 }
