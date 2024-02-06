@@ -29,17 +29,15 @@ public class PostCreateServiceImpl implements PostCreateService {
             .plusHours(getIntFromString(postReq.deadlineHours()));
 
         //get latitude and longitude from the coordinate
-        String [] location = getAddress(postReq.address());
-        double latitude = Double.valueOf(location[0]);
-        double longitude = Double.valueOf(location[1]);
+        Double [] location = getAddress(postReq.address());
 
         String category = postReq.category();
         Post post;
         if (checkIfCategoryEnum(category)) {
             //Build new post with the post request dto
             post = Post.builder()
-                .latitude(latitude)
-                .longitude(longitude)
+                .latitude(location[0])
+                .longitude(location[1])
                 .store(postReq.store())
                 .deliveryCost(getIntFromString(postReq.deliveryCost()))
                 .minPrice(getIntFromString(postReq.minPrice()))
@@ -49,8 +47,8 @@ public class PostCreateServiceImpl implements PostCreateService {
                 .build();
         } else {
             post = Post.builder()
-                .latitude(latitude)
-                .longitude(longitude)
+                .latitude(location[0])
+                .longitude(location[1])
                 .store(postReq.store())
                 .deliveryCost(getIntFromString(postReq.deliveryCost()))
                 .minPrice(getIntFromString(postReq.minPrice()))
@@ -78,11 +76,14 @@ public class PostCreateServiceImpl implements PostCreateService {
         return i;
     }
 
-    private String[] getAddress(String address) {
-        address = address.replace("(lat:", "");
-        address = address.replace("lng:", "");
-        address = address.replace(")", "");
-        return address.split(",");
+    private Double[] getAddress(String address) {
+        //remove useless parts
+        address =  address.replaceAll("[^0-9.,]", "");
+        String [] location =  address.split(",");
+
+        //make longitude and latitude into Double
+        Double [] result = {Double.valueOf(location[0]),Double.valueOf(location[1])};
+        return result;
     }
 
     private boolean checkIfCategoryEnum(String category) {
