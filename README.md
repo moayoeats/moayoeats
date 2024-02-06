@@ -7,7 +7,9 @@
 ## 🏗️아키텍쳐
 
 
-![Moayoeats-Architecture-v2](https://github.com/moayoeats/moayoeats/assets/144315027/4dcfa283-2d2d-4e5b-a00c-f5a52bf2e2de)
+![아키텍쳐-v2 2](https://github.com/moayoeats/moayoeats/assets/144315027/e180f6db-e788-4365-b88f-5e10cb43ed65)
+
+
 
 
 <br>
