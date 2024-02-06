@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
@@ -55,10 +56,10 @@ class UserServiceImplTest implements CommonTest {
             given(passwordEncoder.matches(eq(TEST_USER_PASSWORD), any())).willReturn(true);
             given(userRepository.existsByNickname(TEST_ANOTHER_USER_NICKNAME)).willReturn(false);
 
-            // When
+            // when
             userService.updateInfo(infoUpdateReq, TEST_USER);
 
-            // Then
+            // then
             verify(userRepository, times(1)).save(any(User.class));
             assertThat(TEST_USER.getNickname()).isEqualTo(infoUpdateReq.nickname());
         }
@@ -75,11 +76,11 @@ class UserServiceImplTest implements CommonTest {
 
             given(passwordEncoder.matches(any(), any())).willReturn(false);
 
-            // When
+            // when
             GlobalException exception = assertThrows(GlobalException.class,
                 () -> userService.updateInfo(infoUpdateReq, TEST_USER));
 
-            // Then
+            // then
             assertThat(exception.getErrorCode().getMessage())
                 .isEqualTo(UserErrorCode.NOT_MATCH_PASSWORD.getMessage());
         }
@@ -97,13 +98,85 @@ class UserServiceImplTest implements CommonTest {
             given(passwordEncoder.matches(eq(TEST_USER_PASSWORD), any())).willReturn(true);
             given(userRepository.existsByNickname(any())).willReturn(true);
 
-            // When
+            // when
             GlobalException exception = assertThrows(GlobalException.class,
                 () -> userService.updateInfo(infoUpdateReq, TEST_USER));
 
-            // Then
+            // then
             assertThat(exception.getErrorCode().getMessage())
                 .isEqualTo(UserErrorCode.ALREADY_EXIST_USER_NICKNAME.getMessage());
+        }
+    }
+
+    @DisplayName("비밀번호 수정")
+    @Nested
+    class updatePassword {
+
+        @DisplayName("비밀번호 수정 - 성공")
+        @Test
+        void updatePassword_success() {
+
+            // given
+            PasswordUpdateRequest passwordUpdateReq = PasswordUpdateRequest.builder()
+                .newPassword(TEST_ANOTHER_USER_PASSWORD)
+                .checkPassword(TEST_ANOTHER_USER_PASSWORD)
+                .password(TEST_USER_PASSWORD)
+                .build();
+
+            given(passwordEncoder.matches(eq(TEST_USER_PASSWORD), any())).willReturn(true);
+            given(passwordEncoder.matches(
+                eq(TEST_ANOTHER_USER_PASSWORD), any()))
+                .willReturn(true);
+
+            // when
+            userService.updatePassword(passwordUpdateReq, TEST_USER);
+
+            // then
+            verify(userRepository, times(1)).save(any(User.class));
+            verify(passwordEncoder, times(1))
+                .encode(TEST_ANOTHER_USER_PASSWORD);
+        }
+
+        @DisplayName("비밀번호 수정 - 기존 비밀번호 불일치로 업데이트 실패")
+        @Test
+        void updatePassword_passwordMismatch() {
+
+            // given
+            PasswordUpdateRequest passwordUpdateReq = PasswordUpdateRequest.builder()
+                .newPassword(TEST_ANOTHER_USER_PASSWORD)
+                .checkPassword(TEST_ANOTHER_USER_PASSWORD)
+                .password(TEST_WRONG_USER_PASSWORD)
+                .build();
+
+            given(passwordEncoder.matches(any(), any())).willReturn(false);
+
+            // when
+            GlobalException exception = assertThrows(GlobalException.class,
+                () -> userService.updatePassword(passwordUpdateReq, TEST_USER));
+
+            // then
+            assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo(UserErrorCode.NOT_MATCH_PASSWORD.getMessage());
+        }
+
+        @DisplayName("비밀번호 수정 - 새로운 비밀번호 불일치로 업데이트 실패")
+        @Test
+        void updatePassword_newPasswordMismatch() {
+
+            // given
+            PasswordUpdateRequest passwordUpdateReq = PasswordUpdateRequest.builder()
+                .newPassword(TEST_ANOTHER_USER_PASSWORD)
+                .checkPassword(TEST_WRONG_USER_PASSWORD)
+                .password(TEST_USER_PASSWORD)
+                .build();
+
+            // when
+            GlobalException exception = assertThrows(GlobalException.class,
+                () -> userService.updatePassword(passwordUpdateReq, TEST_USER));
+
+            // then
+            assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo(UserErrorCode.NOT_MATCH_PASSWORD.getMessage());
         }
     }
 }

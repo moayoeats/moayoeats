@@ -20,4 +20,6 @@ public interface CommonTest {
         .build();
 
     String TEST_ANOTHER_USER_PASSWORD = "PASSpass123!";
+
+    String TEST_WRONG_USER_PASSWORD = "WrongPassword123!";
 }
