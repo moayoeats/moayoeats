@@ -6,6 +6,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.response.BriefPostResponse;
 import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.PostStatus;
+import com.moayo.moayoeats.backend.domain.post.service.PostCreateService;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     private final PostService postService;
+    private final PostCreateService postCreateService;
 
     // 글 생성하기
     @PostMapping("/posts")
@@ -37,7 +39,7 @@ public class PostController {
         @Valid @RequestBody PostRequest postReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        postService.createPost(postReq, userDetails.getUser());
+        postCreateService.createPost(postReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 

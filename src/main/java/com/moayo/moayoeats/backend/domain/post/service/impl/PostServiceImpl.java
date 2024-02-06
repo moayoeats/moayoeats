@@ -52,55 +52,6 @@ public class PostServiceImpl implements PostService {
     private final PushEventService pushEventService;
 
     @Override
-    public void createPost(PostRequest postReq, User user) {
-        //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now()
-            .plusMinutes(getIntFromString(postReq.deadlineMins()))
-            .plusHours(getIntFromString(postReq.deadlineHours()));
-
-        //get latitude and longitude from the coordinate
-        String [] location = getAddress(postReq.address());
-        double latitude = Double.valueOf(location[0]);
-        double longitude = Double.valueOf(location[1]);
-
-        String category = postReq.category();
-        Post post;
-        if (checkIfCategoryEnum(category)) {
-            //Build new post with the post request dto
-            post = Post.builder()
-                .latitude(latitude)
-                .longitude(longitude)
-                .store(postReq.store())
-                .deliveryCost(getIntFromString(postReq.deliveryCost()))
-                .minPrice(getIntFromString(postReq.minPrice()))
-                .deadline(deadline)
-                .category(CategoryEnum.valueOf(category))
-                .postStatus(PostStatusEnum.OPEN)
-                .build();
-        } else {
-            post = Post.builder()
-                .latitude(latitude)
-                .longitude(longitude)
-                .store(postReq.store())
-                .deliveryCost(getIntFromString(postReq.deliveryCost()))
-                .minPrice(getIntFromString(postReq.minPrice()))
-                .deadline(deadline)
-                .cuisine(category)
-                .postStatus(PostStatusEnum.OPEN)
-                .build();
-        }
-        //save the post
-        postRepository.save(post);
-
-        //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
-            .build();
-
-        //save the relation
-        userPostRepository.save(userpost);
-    }
-
-    @Override
     public List<BriefPostResponse> getPostsForAnyone(int page) {
         List<Post> posts = findPage(page);
         return postsToBriefResponses(posts);
