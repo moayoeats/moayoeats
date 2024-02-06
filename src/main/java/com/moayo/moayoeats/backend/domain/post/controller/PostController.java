@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     private final PostService postService;
+    private final PostService postCreateService;
 
     // 글 생성하기
     @PostMapping("/posts")
@@ -37,7 +38,7 @@ public class PostController {
         @Valid @RequestBody PostRequest postReq,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        postService.createPost(postReq, userDetails.getUser());
+        postCreateService.createPost(postReq, userDetails.getUser());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "글을 생성했습니다.");
     }
 
