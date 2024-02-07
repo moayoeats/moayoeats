@@ -133,7 +133,7 @@ public class PostReadServiceImpl implements PostReadService {
             return getAllPosts(page, user);
         } else if (checkIfCategoryEnum(category)) {
             CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
-            posts = postCustomRepository.getPostsByDistanceAndCategory(page, user, categoryEnum);
+            posts = postCustomRepository.getPostsByCategory(page, user, categoryEnum);
         } else {
             posts = postCustomRepository.getPostsByCuisine(page, user, category);
         }
@@ -150,7 +150,7 @@ public class PostReadServiceImpl implements PostReadService {
 
         } else if (checkIfCategoryEnum(category)) {
             CategoryEnum categoryEnum = CategoryEnum.valueOf(category);
-            List<Post> posts = postCustomRepository.getPostsByStatusAndCategoryOrderByDistance(page,
+            List<Post> posts = postCustomRepository.getPostsByStatusAndCategory(page,
                 statusEnum, categoryEnum, user);
             return postsToBriefResponses(posts);
 
@@ -171,14 +171,8 @@ public class PostReadServiceImpl implements PostReadService {
 
     @Override
     public List<BriefPostResponse> searchPost(int page, String keyword, User user) {
-        List<Post> posts;
 
-        if (user.getLatitude() == null || user.getLongitude() == null) {
-            Pageable pageable = PageRequest.of(page, pagesize, Sort.by("deadline").descending());
-            posts = postRepository.findPostByStoreContaining(pageable, keyword).getContent();
-        } else {
-            posts = postCustomRepository.getPostsByDistanceAndKeyword(page, user, keyword);
-        }
+        List<Post> posts = postCustomRepository.getPostsByKeyword(page, user, keyword);
         return postsToBriefResponses(posts);
     }
 
@@ -187,10 +181,8 @@ public class PostReadServiceImpl implements PostReadService {
         User user) {
         PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
 
-        List<Post> posts = postCustomRepository.getPostsByStatusAndKeywordOrderByDistance(page,
-            statusEnum, keyword, user);
+        List<Post> posts = postCustomRepository.getPostsByStatusAndKeyword(page, statusEnum, keyword, user);
         return postsToBriefResponses(posts);
-
     }
 
     private List<Post> findPage(int page) {
@@ -322,7 +314,7 @@ public class PostReadServiceImpl implements PostReadService {
     }
 
     private List<BriefPostResponse> getAllStatusPosts(int page, PostStatusEnum status, User user) {
-        List<Post> posts = postCustomRepository.getPostsByStatusOrderByDistance(page, status, user);
+        List<Post> posts = postCustomRepository.getPostsByStatus(page, status, user);
         return postsToBriefResponses(posts);
     }
 
