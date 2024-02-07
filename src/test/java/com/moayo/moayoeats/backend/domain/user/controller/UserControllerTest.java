@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.backend.domain.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -95,5 +96,27 @@ class UserControllerTest extends BaseMvcTest implements UserTest {
             .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
             .andExpect(jsonPath("$.message")
                 .value("마이페이지를 가져왔습니다."));
+    }
+
+    @DisplayName("다른 사람 페이지 조회 요청")
+    @Test
+    void openOtherUserPage() throws Exception {
+
+        // given
+        given(userService.openOtherUserPage(eq(TEST_ANOTHER_USER_ID), any(User.class)))
+            .willReturn(TEST_ANOTHER_USER_PAGE_RES);
+
+        // when
+        ResultActions action = mockMvc.perform(
+            get("/api/v1/users/profile/{otherUserId}", TEST_ANOTHER_USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .principal(mockPrincipal)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        action
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+            .andExpect(jsonPath("$.message")
+                .value("다른사람 페이지를 가져왔습니다."));
     }
 }

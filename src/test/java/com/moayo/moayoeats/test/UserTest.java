@@ -8,6 +8,7 @@ import static com.moayo.moayoeats.test.ReviewTest.TEST_USER_SCORE;
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
+import com.moayo.moayoeats.backend.domain.user.dto.response.OtherUserPageResponse;
 
 public interface UserTest extends CommonTest {
 
@@ -34,5 +35,11 @@ public interface UserTest extends CommonTest {
         .score(TEST_USER_SCORE)
         .reviews(TEST_REVIEW_RES)
         .pastOrderList(TEST_ORDERS)
+        .build();
+
+    OtherUserPageResponse TEST_ANOTHER_USER_PAGE_RES = OtherUserPageResponse.builder()
+        .nickname(TEST_ANOTHER_USER_NICKNAME)
+        .score(TEST_USER_SCORE)
+        .reviews(TEST_REVIEW_RES)
         .build();
 }
