@@ -119,4 +119,44 @@ class UserControllerTest extends BaseMvcTest implements UserTest {
             .andExpect(jsonPath("$.message")
                 .value("다른사람 페이지를 가져왔습니다."));
     }
+
+    @DisplayName("주소 수정 요청")
+    @Test
+    void updateAddress() throws Exception {
+
+        // given
+
+        // when
+        ResultActions action = mockMvc.perform(patch("/api/v1/users/address")
+            .contentType(MediaType.APPLICATION_JSON)
+            .principal(mockPrincipal)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(TEST_USER_ADDRESS_REQ)));
+
+        // then
+        action.andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+            .andExpect(jsonPath("$.message")
+                .value("주소를 수정하였습니다."));
+    }
+
+    @DisplayName("주소 조회 요청")
+    @Test
+    void getAddress() throws Exception {
+
+        // given
+        given(userService.getAddress(any(User.class)))
+            .willReturn(TEST_USER_ADDRESS_RES);
+
+        // when
+        ResultActions action = mockMvc.perform(get("/api/v1/users/address")
+            .contentType(MediaType.APPLICATION_JSON)
+            .principal(mockPrincipal)
+            .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        action
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+            .andExpect(jsonPath("$.message")
+                .value("주소를 가져왔습니다."));
+    }
 }
