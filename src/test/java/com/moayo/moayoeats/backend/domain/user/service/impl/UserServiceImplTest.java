@@ -11,11 +11,12 @@ import static org.mockito.Mockito.verify;
 
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.PasswordUpdateRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.exception.UserErrorCode;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.global.exception.GlobalException;
-import com.moayo.moayoeats.test.CommonTest;
+import com.moayo.moayoeats.test.UserTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplTest implements CommonTest {
+class UserServiceImplTest implements UserTest {
 
     @InjectMocks
     UserServiceImpl userService;
@@ -38,6 +39,111 @@ class UserServiceImplTest implements CommonTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @DisplayName("회원가입")
+    @Nested
+    class signup {
+
+        @DisplayName("회원가입 - 성공")
+        @Test
+        void signup_success() {
+
+            // given
+            SignupRequest signupReq =
+                SignupRequest.builder()
+                    .email(TEST_USER_EMAIL)
+                    .password(TEST_USER_PASSWORD)
+                    .checkPassword(TEST_USER_CHECK_PASSWORD)
+                    .nickname(TEST_USER_NICKNAME)
+                    .build();
+
+            given(userRepository.existsByEmail(TEST_USER_EMAIL)).willReturn(false);
+            given(userRepository.existsByNickname(TEST_USER_NICKNAME)).willReturn(false);
+            given(passwordEncoder.matches(eq(TEST_USER_PASSWORD), any())).willReturn(true);
+
+            // when
+            userService.signup(signupReq);
+
+            // then
+            verify(userRepository, times(1)).save(any(User.class));
+            verify(passwordEncoder, times(1)).encode(TEST_USER_PASSWORD);
+        }
+
+        @DisplayName("회원가입 - email 중복으로 회원가입 실패")
+        @Test
+        void signup_fail_emailDuplicate() {
+
+            // given
+            SignupRequest signupReq =
+                SignupRequest.builder()
+                    .email(TEST_USER_EMAIL)
+                    .password(TEST_USER_PASSWORD)
+                    .checkPassword(TEST_USER_CHECK_PASSWORD)
+                    .nickname(TEST_USER_NICKNAME)
+                    .build();
+
+            given(userRepository.existsByEmail(any())).willReturn(true);
+
+            // when
+            GlobalException exception = assertThrows(GlobalException.class,
+                () -> userService.signup(signupReq));
+
+            // then
+            assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo(UserErrorCode.ALREADY_EXIST_USER.getMessage());
+        }
+
+        @DisplayName("회원가입 - 비밀번호 불일치로 회원가입 실패")
+        @Test
+        void signup_fail_passwordMismatch() {
+
+            // given
+            SignupRequest signupReq =
+                SignupRequest.builder()
+                    .email(TEST_USER_EMAIL)
+                    .password(TEST_USER_PASSWORD)
+                    .checkPassword(TEST_USER_CHECK_PASSWORD)
+                    .nickname(TEST_USER_NICKNAME)
+                    .build();
+
+            given(userRepository.existsByEmail(TEST_USER_EMAIL)).willReturn(false);
+            given(userRepository.existsByNickname(TEST_USER_NICKNAME)).willReturn(false);
+            given(passwordEncoder.matches(any(), any())).willReturn(false);
+
+            // when
+            GlobalException exception = assertThrows(GlobalException.class,
+                () -> userService.signup(signupReq));
+
+            // then
+            assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo(UserErrorCode.NOT_MATCH_PASSWORD.getMessage());
+        }
+
+        @DisplayName("회원가입 - nickname 중복으로 회원가입 실패")
+        @Test
+        void signup_fail_nicknameDuplicate() {
+
+            // given
+            SignupRequest signupReq =
+                SignupRequest.builder()
+                    .email(TEST_USER_EMAIL)
+                    .password(TEST_USER_PASSWORD)
+                    .checkPassword(TEST_USER_CHECK_PASSWORD)
+                    .nickname(TEST_USER_NICKNAME)
+                    .build();
+
+            given(userRepository.existsByEmail(TEST_USER_EMAIL)).willReturn(false);
+            given(userRepository.existsByNickname(any())).willReturn(true);
+
+            // when
+            GlobalException exception = assertThrows(GlobalException.class,
+                () -> userService.signup(signupReq));
+
+            // then
+            assertThat(exception.getErrorCode().getMessage())
+                .isEqualTo(UserErrorCode.ALREADY_EXIST_USER_NICKNAME.getMessage());
+        }
+    }
 
     @DisplayName("닉네임 수정")
     @Nested
