@@ -1,14 +1,17 @@
 package com.moayo.moayoeats.backend.domain.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.moayo.moayoeats.backend.domain.BaseMvcTest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.entity.User;
 import com.moayo.moayoeats.backend.domain.user.repository.UserRepository;
 import com.moayo.moayoeats.backend.domain.user.service.impl.UserServiceImpl;
 import com.moayo.moayoeats.backend.global.jwt.JwtUtil;
@@ -73,4 +76,24 @@ class UserControllerTest extends BaseMvcTest implements UserTest {
 
     }
 
+    @DisplayName("마이페이지 조회 요청")
+    @Test
+    void openMyPage() throws Exception {
+
+        // given
+        given(userService.openMyPage(any(User.class)))
+            .willReturn(TEST_MYPAGE_RES);
+
+        // when
+        ResultActions action = mockMvc.perform(get("/api/v1/users/me")
+            .contentType(MediaType.APPLICATION_JSON)
+            .principal(mockPrincipal)
+            .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        action
+            .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+            .andExpect(jsonPath("$.message")
+                .value("마이페이지를 가져왔습니다."));
+    }
 }

@@ -1,8 +1,13 @@
 package com.moayo.moayoeats.test;
 
 
+import static com.moayo.moayoeats.test.OrderTest.TEST_ORDERS;
+import static com.moayo.moayoeats.test.ReviewTest.TEST_REVIEW_RES;
+import static com.moayo.moayoeats.test.ReviewTest.TEST_USER_SCORE;
+
 import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
+import com.moayo.moayoeats.backend.domain.user.dto.response.MyPageResponse;
 
 public interface UserTest extends CommonTest {
 
@@ -21,5 +26,13 @@ public interface UserTest extends CommonTest {
     InfoUpdateRequest TEST_UPDATE_INFO_REQ = InfoUpdateRequest.builder()
         .nickname(TEST_ANOTHER_USER_NICKNAME)
         .password(TEST_USER_PASSWORD)
+        .build();
+
+    MyPageResponse TEST_MYPAGE_RES = MyPageResponse.builder()
+        .nickname(TEST_USER_NICKNAME)
+        .email(TEST_USER_EMAIL)
+        .score(TEST_USER_SCORE)
+        .reviews(TEST_REVIEW_RES)
+        .pastOrderList(TEST_ORDERS)
         .build();
 }
