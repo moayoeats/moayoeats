@@ -25,13 +25,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public ChatMessage saveChatMessage(String postId, String sender, String content) {
 
-        User user = findByNickname(sender);
-
         ChatMessage chatMessage = ChatMessage.builder()
             .postId(postId)
             .sender(sender)
             .content(content)
-            .userId(String.valueOf(user.getId()))
+            .userId(findByNickname(sender))
             .build();
 
         chatMessageRepository.save(chatMessage);
@@ -60,10 +58,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             .collect(Collectors.toList());
     }
 
-    private User findByNickname(String nickname) {
-        return userRepository.findByNickname(nickname)
+    private String findByNickname(String nickname) {
+        User user = userRepository.findByNickname(nickname)
             .orElseThrow(() -> new GlobalException(UserErrorCode.UNAUTHORIZED_USER));
+
+        return String.valueOf(user.getId());
     }
 
 }
-
