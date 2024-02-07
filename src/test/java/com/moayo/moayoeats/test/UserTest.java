@@ -17,6 +17,8 @@ public interface UserTest extends CommonTest {
     String TEST_USER_INTRODUCE = "introduce";
     String TEST_USER_PROFILE_URL = "resources/images/sparta.png";
     String TEST_USER_ADDRESS = "(lat:37.5683281,lng:126.9728307)";
+    Double TEST_USER_LATITUDE = 37.5683281;
+    Double TEST_USER_LONGITUDE = 126.9728307;
 
     String TEST_WRONG_USER_PASSWORD = "WrongPassword123!";
 
@@ -49,4 +51,10 @@ public interface UserTest extends CommonTest {
     AddressUpdateRequest TEST_USER_ADDRESS_REQ = AddressUpdateRequest.builder()
         .address(TEST_USER_ADDRESS)
         .build();
+
+    AddressResponse TEST_USER_ADDRESS_RES = AddressResponse.builder()
+        .latitude(TEST_USER_LATITUDE)
+        .longitude(TEST_USER_LONGITUDE)
+        .build();
+
 }

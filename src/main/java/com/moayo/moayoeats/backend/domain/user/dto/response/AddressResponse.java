@@ -1,8 +1,11 @@
 package com.moayo.moayoeats.backend.domain.user.dto.response;
 
-public record AddressResponse (
+import lombok.Builder;
+
+@Builder
+public record AddressResponse(
     Double latitude,
     Double longitude
-){
+) {
 
 }
