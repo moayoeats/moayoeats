@@ -2,7 +2,9 @@ package com.moayo.moayoeats.backend.domain.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
+@Builder
 public record SignupRequest(
     @Email(message = "email 올바른 형식의 이메일 주소여야 합니다.")
     String email,
