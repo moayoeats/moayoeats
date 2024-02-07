@@ -1,6 +1,7 @@
 package com.moayo.moayoeats.test;
 
 
+import com.moayo.moayoeats.backend.domain.user.dto.request.InfoUpdateRequest;
 import com.moayo.moayoeats.backend.domain.user.dto.request.SignupRequest;
 
 public interface UserTest extends CommonTest {
@@ -15,5 +16,10 @@ public interface UserTest extends CommonTest {
         .password(TEST_USER_PASSWORD)
         .checkPassword(TEST_USER_CHECK_PASSWORD)
         .nickname(TEST_USER_NICKNAME)
+        .build();
+
+    InfoUpdateRequest TEST_UPDATE_INFO_REQ = InfoUpdateRequest.builder()
+        .nickname(TEST_ANOTHER_USER_NICKNAME)
+        .password(TEST_USER_PASSWORD)
         .build();
 }

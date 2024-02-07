@@ -3,6 +3,7 @@ package com.moayo.moayoeats.backend.domain.user.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -50,6 +51,26 @@ class UserControllerTest extends BaseMvcTest implements UserTest {
                 .value("회원가입을 성공했습니다."));
 
         verify(userService, times(1)).signup(any(SignupRequest.class));
+    }
+
+    @DisplayName("닉네임 수정 요청")
+    @Test
+    void updateInfo() throws Exception {
+
+        // given
+
+        // when
+        ResultActions action = mockMvc.perform(patch("/api/v1/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .principal(mockPrincipal)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(TEST_UPDATE_INFO_REQ)));
+
+        // then
+        action.andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+            .andExpect(jsonPath("$.message")
+                .value("회원정보를 수정하였습니다."));
+
     }
 
 }
