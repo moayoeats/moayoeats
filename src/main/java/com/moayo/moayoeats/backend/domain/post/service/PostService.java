@@ -10,11 +10,6 @@ import java.util.List;
 public interface PostService {
 
     /**
-     * @param postReq : 글 작성에 필요한 dto
-     */
-    void createPost(PostRequest postReq, User user);
-
-    /**
      * 인증정보 없이 전체 글 조회
      *
      * @param page : 몇페이지 조회할건지 int pageNumber

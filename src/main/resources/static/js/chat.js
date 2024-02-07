@@ -1,21 +1,27 @@
 var stompClient = null;
 const host = 'http://' + window.location.host;
+var sendButton = document.getElementById('send-button');
+var chatInput = document.getElementById('chat-input');
 
-document.getElementById('send-button').addEventListener('click', function () {
-  sendMessageFromInput();
+sendButton.addEventListener('click', function () {
+  sendChat();
 });
 
-document.addEventListener('keypress', function (event) {
+chatInput.addEventListener('keypress', function (event) {
   if (event.key === 'Enter') {
-    sendMessageFromInput();
+    sendChat();
   }
 });
 
-function sendMessageFromInput() {
-  var messageContent = document.getElementById('chat-input').value;
-  if (messageContent.trim() !== '') {
-    sendMessage(messageContent, username);
-    document.getElementById('chat-input').value = '';
+function sendChat() {
+  var messageContent = chatInput.value.trim();
+  if (messageContent !== '') {
+    if (messageContent.length > 100) {
+      alert('채팅 내용이 너무 길어요! 최대 100자까지 입력 가능합니다.');
+    } else {
+      sendMessage(messageContent, username);
+      chatInput.value = '';
+    }
   }
 }
 
@@ -27,7 +33,8 @@ function connect(postId, username) {
       console.log('Connected: ' + frame);
       stompClient.subscribe('/sub/chats/room/' + postId, function (message) {
         var receivedMessage = JSON.parse(message.body);
-        showMessage(receivedMessage.sender, receivedMessage.content, receivedMessage.createdAt);
+        showMessage(receivedMessage.sender, receivedMessage.content,
+            receivedMessage.createdAt);
       });
 
       var chatMessage = {
@@ -70,7 +77,8 @@ function showMessage(username, message, createdAt) {
     messageElement.classList.add('my-message');
   }
 
-  var messageText = (message === "님이 입장하셨습니다.") ? username + message : username + " : " + message;
+  var messageText = (message === "님이 입장하셨습니다.") ? username + message : username
+      + " : " + message;
 
   contentElement.innerText = messageText;
   timeElement.innerText = createdAt;
@@ -95,4 +103,5 @@ function fetchAndShowHistory(postId, callback) {
       }
     }
   });
+
 }

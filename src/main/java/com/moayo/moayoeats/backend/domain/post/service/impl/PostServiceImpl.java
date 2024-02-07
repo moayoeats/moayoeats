@@ -52,55 +52,6 @@ public class PostServiceImpl implements PostService {
     private final PushEventService pushEventService;
 
     @Override
-    public void createPost(PostRequest postReq, User user) {
-        //set deadline to hours and mins after now
-        LocalDateTime deadline = LocalDateTime.now()
-            .plusMinutes(getIntFromString(postReq.deadlineMins()))
-            .plusHours(getIntFromString(postReq.deadlineHours()));
-
-        //get latitude and longitude from the coordinate
-        String[] location = getAddress(postReq.address());
-        double latitude = Double.valueOf(location[0]);
-        double longitude = Double.valueOf(location[1]);
-
-        String category = postReq.category();
-        Post post;
-        if (checkIfCategoryEnum(category)) {
-            //Build new post with the post request dto
-            post = Post.builder()
-                .latitude(latitude)
-                .longitude(longitude)
-                .store(postReq.store())
-                .deliveryCost(getIntFromString(postReq.deliveryCost()))
-                .minPrice(getIntFromString(postReq.minPrice()))
-                .deadline(deadline)
-                .category(CategoryEnum.valueOf(category))
-                .postStatus(PostStatusEnum.OPEN)
-                .build();
-        } else {
-            post = Post.builder()
-                .latitude(latitude)
-                .longitude(longitude)
-                .store(postReq.store())
-                .deliveryCost(getIntFromString(postReq.deliveryCost()))
-                .minPrice(getIntFromString(postReq.minPrice()))
-                .deadline(deadline)
-                .cuisine(category)
-                .postStatus(PostStatusEnum.OPEN)
-                .build();
-        }
-        //save the post
-        postRepository.save(post);
-
-        //Build new relation between the post and the user
-        UserPost userpost = UserPost.builder().user(user).post(post).role(UserPostRole.HOST)
-            .build();
-
-        //save the relation
-        userPostRepository.save(userpost);
-    }
-
-    @Override
     public List<BriefPostResponse> getPostsForAnyone(int page) {
         List<Post> posts = findPage(page);
         return postsToBriefResponses(posts);
@@ -113,8 +64,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<BriefPostResponse> getStatusPosts(int page, String status, User user) {
-        PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
-        return getAllStatusPosts(page, statusEnum, user);
+        if(status.equals("ALL")){
+            return getAllPosts(page, user);
+        }else{
+            PostStatusEnum statusEnum = PostStatusEnum.valueOf(status);
+            return getAllStatusPosts(page, statusEnum, user);
+        }
     }
 
     @Override
@@ -435,7 +390,7 @@ public class PostServiceImpl implements PostService {
 
     private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
         return posts.stream().map((Post post) -> BriefPostResponse.builder().id(post.getId())
-            .author(getAuthor(getUserPostsByPost(post)).getNickname()).store(post.getStore())
+            .author(getAuthorNick(getUserPostsByPost(post))).store(post.getStore())
             .deadline(getDeadline(getDeadline(post))).minPrice(post.getMinPrice())
             .sumPrice(getSumPrice(getUserPostsByPost(post), post)).status(post.getPostStatus())
             .build()).toList();
@@ -448,6 +403,15 @@ public class PostServiceImpl implements PostService {
             }
         }
         throw new GlobalException(UserPostErrorCode.NOT_FOUND_HOST);
+    }
+
+    private String getAuthorNick(List<UserPost> userPosts) {
+        for (UserPost userpost : userPosts) {
+            if (userpost.getRole().equals(UserPostRole.HOST)) {
+                return userpost.getUser().getNickname();
+            }
+        }
+        return " ";
     }
 
     private int getSumPrice(List<UserPost> userposts, Post post) {

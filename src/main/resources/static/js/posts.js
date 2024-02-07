@@ -11,10 +11,6 @@ $(document).ready(function () {
   status = "ALL";
   type = "ALL"
   getData(page, ten);
-
-  if (userId !== undefined && userId !== null && userId !== '') {
-    connectSse();
-  }
 });
 
 function createPost() {
@@ -51,7 +47,7 @@ function getData(page, ten) {
   if (statusEnum === "ALL") {
     $.ajax({
       type: 'GET',
-      url: `/api/v1/posts/page/${page}`,
+      url: `/api/v1/posts/status/${statusEnum}/page/${page}`,
       dataType: "json",
       contentType: 'application/json',
       data: {},
@@ -196,29 +192,42 @@ function removeAllPosts() {
 }
 
 function drawAllPosts(data) {
-  if (data.status === "OPEN") {
-    data.forEach((post) => $('#posts').append(`
+    data.forEach((post) => drawPost(post));
+}
+
+function drawPost(post){
+  // if(post.status==="OPEN"){
+  //   drawOpenPost(post);
+  // }else{
+    drawOtherPost(post);
+  // }
+}
+
+function drawOpenPost(post){
+  $('#posts').append(`
               <div class="post" post = "${post.id}" onclick="sendData(this)">
                 <div> <span style="font-weight: bold">작성자   </span> ${post.author} </div>
                 <div> <span style="font-weight: bold">가게   </span>${post.store}</div>
                 <div> <span style="font-weight: bold">모인 금액   </span>${post.sumPrice} / ${post.minPrice}</div>
                 <div>${post.deadline}<span style="font-weight: bold"> 후에 마감됩니다!</span></div>
                 <div><span style="font-weight: bold">${post.status}   </span>${getStatus(
-        post.status)}</div>
+      post.status)}</div>
               </div>
-            `))
-  } else {
-    data.forEach((post) => $('#posts').append(`
+            `);
+}
+
+function drawOtherPost(post){
+  $('#posts').append(`
               <div class="post" post = "${post.id}" onclick="sendData(this)">
                 <div> <span style="font-weight: bold">작성자   </span> ${post.author} </div>
                 <div> <span style="font-weight: bold">가게   </span>${post.store}</div>
                 <div> <span style="font-weight: bold">모인 금액   </span>${post.sumPrice} / ${post.minPrice}</div>
                 <div><span style="font-weight: bold">${post.status}   </span>${getStatus(
-        post.status)}</div>
+      post.status)}</div>
               </div>
-            `))
-  }
+            `);
 }
+
 
 function removeAllPages() {
   const element = document.getElementById("pages");
