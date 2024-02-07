@@ -90,7 +90,7 @@ class SignupRequestTest implements CommonTest {
             assertThat(violations).hasSize(1);
             assertThat(violations)
                 .extracting("message")
-                .contains("비밀번호는 a-z, A-Z, 0-9, !@#$ 중 하나 이상을 포함하고 8-15자이어야 합니다.");
+                .contains("비밀번호는 a-z, A-Z, 0-9, !@#$ 만 포함하고 8-15자이어야 합니다.");
         }
 
         @DisplayName("회원가입 요청 DTO 생성 실패 - 잘못된 nickname")
