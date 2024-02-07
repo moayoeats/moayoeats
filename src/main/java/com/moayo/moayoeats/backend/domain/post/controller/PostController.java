@@ -7,6 +7,7 @@ import com.moayo.moayoeats.backend.domain.post.dto.response.DetailedPostResponse
 import com.moayo.moayoeats.backend.domain.post.exception.validator.Category;
 import com.moayo.moayoeats.backend.domain.post.exception.validator.PostStatus;
 import com.moayo.moayoeats.backend.domain.post.service.PostCreateService;
+import com.moayo.moayoeats.backend.domain.post.service.PostReadService;
 import com.moayo.moayoeats.backend.domain.post.service.PostService;
 import com.moayo.moayoeats.backend.global.dto.ApiResponse;
 import com.moayo.moayoeats.backend.global.security.UserDetailsImpl;
@@ -32,6 +33,7 @@ public class PostController {
 
     private final PostService postService;
     private final PostCreateService postCreateService;
+    private final PostReadService postReadService;
 
     // 글 생성하기
     @PostMapping("/posts")
@@ -49,7 +51,7 @@ public class PostController {
         @PathVariable(name = "page") int page
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPostsForAnyone(page));
+            postReadService.getPostsForAnyone(page));
     }
 
     // 모든 글 조회하기
@@ -59,7 +61,7 @@ public class PostController {
         @PathVariable(name = "page") int page
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 조회에 성공했습니다.",
-            postService.getPosts(page, userDetails.getUser()));
+            postReadService.getPosts(page, userDetails.getUser()));
     }
 
     //모든 글 상태별 조회하기
@@ -70,7 +72,7 @@ public class PostController {
         @PathVariable(name = "status") @PostStatus String status
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "모든 글 상태별 조회에 성공했습니다.",
-            postService.getStatusPosts(page, status, userDetails.getUser()));
+            postReadService.getStatusPosts(page, status, userDetails.getUser()));
     }
 
     //로그인 정보 없이 글 단독 조회
@@ -79,7 +81,7 @@ public class PostController {
         @PathVariable(name = "postId") Long postId
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
-            postService.getPostForAnyone(postId));
+            postReadService.getPostForAnyone(postId));
     }
 
     //글 단독 조회, 글 상세페이지
@@ -89,7 +91,7 @@ public class PostController {
         @PathVariable(name = "postId") Long postId
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 상세페이지 조회에 성공했습니다.",
-            postService.getPost(postId, userDetails.getUser()));
+            postReadService.getPost(postId, userDetails.getUser()));
     }
 
     //로그인 정보 없이  글 카테고리별 조회
@@ -99,7 +101,7 @@ public class PostController {
         @RequestParam @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
-            postService.getPostsByCategoryForAnyone(page, category));
+            postReadService.getPostsByCategoryForAnyone(page, category));
     }
 
     //글 카테고리별 조회
@@ -110,7 +112,7 @@ public class PostController {
         @RequestParam(name = "category") @Category String category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리별 조회에 성공했습니다.",
-            postService.getPostsByCategory(page, category, userDetails.getUser()));
+            postReadService.getPostsByCategory(page, category, userDetails.getUser()));
     }
 
     //글 카테고리 및 상태별 조회
@@ -122,7 +124,7 @@ public class PostController {
         @PathVariable(name = "status") @PostStatus String status
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 카테고리, 상태별 조회에 성공했습니다.",
-            postService.getStatusPostsByCategory(page, category, status, userDetails.getUser()));
+            postReadService.getStatusPostsByCategory(page, category, status, userDetails.getUser()));
     }
 
     //로그인 정보 없이 글 검색하기
@@ -132,7 +134,7 @@ public class PostController {
         @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
-            postService.searchPostForAnyone(page, keyword));
+            postReadService.searchPostForAnyone(page, keyword));
     }
 
     //글 검색하기
@@ -143,7 +145,7 @@ public class PostController {
         @RequestParam String keyword
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "검색 결과",
-            postService.searchPost(page, keyword, userDetails.getUser()));
+            postReadService.searchPost(page, keyword, userDetails.getUser()));
     }
 
     //글 키워드 및 상태별 조회
@@ -155,7 +157,7 @@ public class PostController {
         @PathVariable(name = "status") @PostStatus String status
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "글 상태별 검색 결과",
-            postService.searchStatusPost(page, keyword, status, userDetails.getUser()));
+            postReadService.searchStatusPost(page, keyword, status, userDetails.getUser()));
     }
 
     //모집 취소하기
