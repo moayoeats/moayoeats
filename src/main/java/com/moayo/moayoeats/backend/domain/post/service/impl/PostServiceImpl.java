@@ -48,7 +48,6 @@ public class PostServiceImpl implements PostService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
-    private final PostCustomRepository postCustomRepository;
     private final PushEventService pushEventService;
 
 
@@ -235,14 +234,6 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    private List<BriefPostResponse> postsToBriefResponses(List<Post> posts) {
-        return posts.stream().map((Post post) -> BriefPostResponse.builder().id(post.getId())
-            .author(getAuthorNick(getUserPostsByPost(post))).store(post.getStore())
-            .deadline(getDeadline(getDeadline(post))).minPrice(post.getMinPrice())
-            .sumPrice(getSumPrice(getUserPostsByPost(post), post)).status(post.getPostStatus())
-            .build()).toList();
-    }
-
     private User getAuthor(List<UserPost> userPosts) {
         for (UserPost userpost : userPosts) {
             if (userpost.getRole().equals(UserPostRole.HOST)) {
@@ -312,18 +303,6 @@ public class PostServiceImpl implements PostService {
         return userPostRepository.findAllByPost(post);
     }
 
-    private List<NickMenusResponse> getNickMenus(List<UserPost> userposts) {
-        List<NickMenusResponse> menus =
-            //List<UserPost> -> List<NickMenusResponse>
-            userposts.stream()
-                .map((UserPost userpost) -> new NickMenusResponse(userpost.getUser().getNickname(),
-                    //List<Menu> menus -> List<MenuResponse>
-                    getUserMenus(userpost.getUser(), userpost.getPost()).stream().map(
-                        (Menu menu) -> new MenuResponse(menu.getId(), menu.getMenuname(),
-                            menu.getPrice())).toList())).toList();
-        return menus;
-    }
-
     private List<Menu> getUserMenus(User user, Post post) {
         return menuRepository.findAllByUserAndPost(user, post);
     }
@@ -339,15 +318,6 @@ public class PostServiceImpl implements PostService {
         if (!user.getId().equals(host.getId())) {
             throw new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_HOST);
         }
-    }
-
-    private UserPostRole getRoleByUserAndUserPosts(User user, List<UserPost> userPosts) {
-        for (UserPost userPost : userPosts) {
-            if (userPost.getUser().getId().equals(user.getId())) {
-                return userPost.getRole();
-            }
-        }
-        return null;
     }
 
     private UserPost getUserPostByUserIfParticipant(User user, List<UserPost> userPosts) {
@@ -380,13 +350,6 @@ public class PostServiceImpl implements PostService {
             .orElseThrow(() -> new GlobalException(PostErrorCode.FORBIDDEN_ACCESS_PARTICIPANT));
     }
 
-    private String[] getAddress(String address) {
-        address = address.replace("(lat:", "");
-        address = address.replace("lng:", "");
-        address = address.replace(")", "");
-        return address.split(",");
-    }
-
     private void checkIfOrdered(PostStatusEnum status) {
         if (status == PostStatusEnum.ORDERED
             || status == PostStatusEnum.RECEIVED) {
@@ -398,40 +361,6 @@ public class PostServiceImpl implements PostService {
         menuRepository.deleteAll(getUserMenus(user, post));
         userPostRepository.delete(userPost);
     }
-
-    private int getIntFromString(String s) {
-        int i = 0;
-        if (!s.equals("")) {
-            i = Integer.parseInt(s);
-        }
-        return i;
-    }
-
-    private List<BriefPostResponse> getAllPosts(int page, User user) {
-        List<Post> posts;
-
-        if (user.getLatitude() == null || user.getLongitude() == null) {
-            posts = findPage(page);
-        } else {
-            posts = postCustomRepository.getPostsByDistance(page, user);
-        }
-        return postsToBriefResponses(posts);
-    }
-
-    private List<BriefPostResponse> getAllStatusPosts(int page, PostStatusEnum status, User user) {
-        List<Post> posts = postCustomRepository.getPostsByStatusOrderByDistance(page, status, user);
-        return postsToBriefResponses(posts);
-    }
-
-    private boolean checkIfCategoryEnum(String category) {
-        for (CategoryEnum c : CategoryEnum.values()) {
-            if (c.name().equals(category)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Scheduled(fixedRate = 60000)//executed every 1 min
     public void scheduledDelete() {
         List<Post> posts = findAll();
